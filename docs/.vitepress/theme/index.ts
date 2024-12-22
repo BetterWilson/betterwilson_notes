@@ -4,6 +4,10 @@ import { useRoute } from 'vitepress'
 import mediumZoom from 'medium-zoom'
 import './global.css'
 
+import {h} from 'vue';
+import Theme from 'vitepress/theme';
+import GiscusComment from './components/GiscusComment.vue';
+
 export default {
     extends: DefaultTheme,
 
@@ -11,7 +15,7 @@ export default {
         const route = useRoute()
         const initZoom = () => {
             // 为所有图片增加缩放功能
-            mediumZoom('.main img', { background: 'var(--vp-c-bg)' })
+            mediumZoom('.main img', {background: 'var(--vp-c-bg)'})
         }
         onMounted(() => {
             initZoom()
@@ -20,5 +24,10 @@ export default {
             () => route.path,
             () => nextTick(() => initZoom())
         )
-    }
+    },
+    Layout() {
+        return h(Theme.Layout, null, {
+            'doc-after': () => h(GiscusComment),
+        });
+    },
 }
