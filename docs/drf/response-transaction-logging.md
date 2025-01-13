@@ -17,13 +17,13 @@
 
   - 在`exceptional_handler`函数中做自定义
 
-    
+
 
 ### 1.1 正常返回
 
-![image-20240502142352055](assets\image-20240502142352055.png)
+![image-20240502142352055](assets/image-20240502142352055.png)
 
-![image-20240502142414330](assets\image-20240502142414330.png)
+![image-20240502142414330](assets/image-20240502142414330.png)
 
 ```python
 from rest_framework.views import APIView
@@ -50,7 +50,7 @@ class DemoView(APIView):
 
 #### 自定义exception_handler
 
-###### utils/handlers.py
+##### utils/handlers.py
 
 ```python
 from django.http import Http404
@@ -96,6 +96,64 @@ def exception_handler(exc, context):
         set_rollback()
         return Response(data, status=exc.status_code, headers=headers)
     return None
+```
+
+另一种方法，适合`ser.is_valid(raise_exception=True)`
+
+```python
+from django.http import Http404
+
+from rest_framework import status
+from rest_framework import exceptions
+from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import Throttled
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import NotAuthenticated
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.views import set_rollback
+
+from utils import return_code
+
+
+def exception_handler(exc, context):
+    exc.status_code = status.HTTP_200_OK    # 更改HTTP返回值状态码，方便前端编写
+    if isinstance(exc, Http404):
+        exc = exceptions.NotFound()
+        exc.ret_code = return_code.NotFound404
+    elif isinstance(exc, PermissionDenied):
+        exc = exceptions.PermissionDenied()
+        exc.ret_code = return_code.PermissionDenied
+    elif isinstance(exc, AuthenticationFailed):
+        exc.ret_code = return_code.AuthenticationFailed
+    elif isinstance(exc, NotAuthenticated):
+        exc.ret_code = return_code.NotAuthenticated
+    elif isinstance(exc, Throttled):
+        exc.ret_code = return_code.ThrottledError
+    elif isinstance(exc, ValidationError):
+        exc.ret_code = return_code.ValidationError
+
+    # 处理drf相关的异常
+    if isinstance(exc, exceptions.APIException):
+        headers = {}
+        if getattr(exc, 'auth_header', None):
+            headers['WWW-Authenticate'] = exc.auth_header
+        if getattr(exc, 'wait', None):
+            headers['Retry-After'] = '%d' % exc.wait
+
+        # if isinstance(exc.detail, (list, dict)):
+        #     data = exc.detail
+        # else:
+        #     exc_code = getattr(exc, 'ret_code', None) or -1
+        #     data = {'code': exc_code, 'message': exc.detail}
+        exc_code = getattr(exc, 'ret_code', None) or return_code.UnexpectedError
+        data = {'code': exc_code, 'message': exc.detail}
+
+        set_rollback()
+        return Response(data, status=exc.status_code, headers=headers)
+
+    data = {"code": return_code.UnexpectedError, "message": str(exc)}
+    return Response(data, status=500)
 ```
 
 
@@ -166,7 +224,6 @@ class DemoView(ListModelMixin, CreateModelMixin, RetrieveModelMixin, DestroyMode
     serializer_class = DemoSerializer
 
     def perform_create(self, serializer):
-        self.dispatch
         if True:
             # 自定义错误
             # raise ExtraException("数据异常")
@@ -186,7 +243,7 @@ class DemoView(ListModelMixin, CreateModelMixin, RetrieveModelMixin, DestroyMode
 
 ### 1.3 drf返回值机制源码
 
-![image-20240502155015927](assets\image-20240502155015927.png)
+![image-20240502155015927](assets/image-20240502155015927.png)
 
 
 
@@ -411,7 +468,7 @@ DATABASES = {
   # 视图函数执行没有报错，不会滚回。
   ```
 
-  
+
 
 
 
@@ -1089,7 +1146,7 @@ LOGGING = {
 }
 ```
 
-![image-20240307134506546](assets\image-20240307134506546.png)
+![image-20240307134506546](assets/image-20240307134506546.png)
 
 ### 3.6 Django中按照时间进行切割日志
 
@@ -1169,26 +1226,3 @@ LOGGING = {
 如果在Windows上，按照日期进行切割，报错，建议，不要在Windows上用按照时间进行切割的方式使用日志，请按照文件大小进行切割的方式用就行了。另外，默认的按照日期进行切割的配置，只在Windows上报错，在Linux上不报错。
 
 最终，建议，无论是Windows还是Linux，如果不想报错，就都用按照文件大小进行切割就行了。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -830,15 +830,15 @@ print(data)
 
 但如果遇到一些特殊情况（不常见），你就可能不知道怎么搞了，例如：
 
-![image-20210129134949419](assets\image-20210129134949419.png)
+![image-20210129134949419](assets/image-20210129134949419.png)
 
 
 
-![image-20210129140026593](assets\image-20210129140026593.png)
+![image-20210129140026593](assets/image-20210129140026593.png)
 
 
 
-![image-20210129142756667](assets\image-20210129142756667.png)
+![image-20210129142756667](assets/image-20210129142756667.png)
 
 
 
@@ -848,7 +848,7 @@ print(data)
 
 示例1：
 
-![image-20210129134831112](assets\image-20210129134831112.png)
+![image-20210129134831112](assets/image-20210129134831112.png)
 
 ```python
 mro(A) = [A] + [B,C]
@@ -888,7 +888,7 @@ print( A.__mro__ ) # (<class '__main__.A'>, <class '__main__.B'>, <class '__main
 
 示例2：
 
-![image-20210129134912674](assets\image-20210129134912674.png)
+![image-20210129134912674](assets/image-20210129134912674.png)
 
 ```python
 mro(A) = [A] + merge( mro(B), mro(C), [B,C] )
@@ -925,7 +925,7 @@ print( A.mro() ) # [<class '__main__.A'>, <class '__main__.B'>, <class '__main__
 
 示例3:
 
-![image-20210129134949419](assets\image-20210129134949419.png)
+![image-20210129134949419](assets/image-20210129134949419.png)
 
 ```python
 mro(A) = [A] + merge( mro(B),mro(C),[B,C])
@@ -961,7 +961,7 @@ print(A.mro()) # [<class '__main__.A'>, <class '__main__.B'>, <class '__main__.D
 
 示例4：
 
-![image-20210129140026593](assets\image-20210129140026593.png)
+![image-20210129140026593](assets/image-20210129140026593.png)
 
 ```python
 mro(A) = [A] + merge( mro(B), mro(C), [B,C])
@@ -1000,7 +1000,7 @@ print(A.mro()) # [<class '__main__.A'>, <class '__main__.B'>, <class '__main__.C
 
 示例5：
 
-![image-20210129142756667](assets\image-20210129142756667.png)
+![image-20210129142756667](assets/image-20210129142756667.png)
 
 ```python
 简写为：A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object
@@ -1098,7 +1098,7 @@ print(A.mro()) # 简写为：A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N
 
 所以，我自己根据经验总结了一句话赠送给大家：<span style="color:red">**从左到右，深度优先，大小钻石，留住顶端**</span>，基于这句话可以更快的找到继承关系。
 
-![image-20210129142756667](assets\image-20210129142756667.png)
+![image-20210129142756667](assets/image-20210129142756667.png)
 
 ```
 简写为：A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object

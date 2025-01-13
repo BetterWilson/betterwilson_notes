@@ -15,12 +15,12 @@ class Info(models.Model):
         abstract = True
 ```
 
-![image-20240519121201584](assets\image-20240519121201584.png)
+![image-20240519121201584](assets/image-20240519121201584.png)
 
 `abstract = True`是一个标识，标识当前类只用于为其他类提供公共的字段（继承关系），并不会单独创建一张表
 
-![image-20240519122021319](assets\image-20240519122021319.png)
+![image-20240519122021319](assets/image-20240519122021319.png)
 
 在`Mine`这张表中，除了有自己定义的`size`字段，还有继承过来的`title`字段
 
-![image-20240519122120702](assets\image-20240519122120702.png)
+![image-20240519122120702](assets/image-20240519122120702.png)

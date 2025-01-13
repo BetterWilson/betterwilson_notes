@@ -24,7 +24,7 @@ admin.site.register(models.Depart)
 
 - 创建表数据
 
-  ![image-20240428163610913](assets\image-20240428163610913.png)
+  ![image-20240428163610913](assets/image-20240428163610913.png)
 
 - 创建超级用户，用于登录admin
 
@@ -36,36 +36,36 @@ admin.site.register(models.Depart)
 
 - 创建的超级用户数据会保存在数据库`user_auth`表中
 
-  ![image-20240428162113139](assets\image-20240428162113139.png)
+  ![image-20240428162113139](assets/image-20240428162113139.png)
 
 - 登录
 
   访问路由`http://localhost:8000/admin/`
 
-  ![image-20230205071631627](assets\image-20230205071631627.png)
+  ![image-20230205071631627](assets/image-20230205071631627.png)
 
 - 配置
 
   在每一个app中有一个`admin.py`文件，我们可以在这个文件中对想要增删改查的表进行配置
 
-  ![image-20240428162922005](assets\image-20240428162922005.png)
+  ![image-20240428162922005](assets/image-20240428162922005.png)
 
   此时再次访问，就可以管理我们已注册的表
-  ![image-20240428163042460](assets\image-20240428163042460.png)
+  ![image-20240428163042460](assets/image-20240428163042460.png)
 
   关于添加数据的三个选项
 
-  ![image-20240428163410940](assets\image-20240428163410940.png)
+  ![image-20240428163410940](assets/image-20240428163410940.png)
 
 ## 3 admin配置方式
 
 - 方法一：使用`admin.site.register`，将自定义的配置类作为参数传递
 
-  ![image-20240428164934307](assets\image-20240428164934307.png)
+  ![image-20240428164934307](assets/image-20240428164934307.png)
 
 - 方法二：在自定义类上方使用装饰器`admin.register`对表进行注册
 
-  ![image-20240428170612983](assets\image-20240428170612983.png)
+  ![image-20240428170612983](assets/image-20240428170612983.png)
 
 ## 4 源码分析
 
@@ -75,9 +75,9 @@ admin.site.register(models.Depart)
 
 执行代码为`autodiscover_modules("admin", register_to=site)`
 
-![image-20240428201346638](assets\image-20240428201346638.png)
+![image-20240428201346638](assets/image-20240428201346638.png)
 
-![image-20240428201402894](assets\image-20240428201402894.png)
+![image-20240428201402894](assets/image-20240428201402894.png)
 
 此时如果我们自定义`autodiscover_modules("xxxx")`
 
@@ -85,23 +85,23 @@ admin.site.register(models.Depart)
 
 当加载`admin.py`时就会执行`admin.site`方法
 
-![image-20240428183333186](assets\image-20240428183333186.png)
+![image-20240428183333186](assets/image-20240428183333186.png)
 
 进入`admin.site`文件内部，发现site是实例化一个对象
 
-![image-20240428183506456](assets\image-20240428183506456.png)
+![image-20240428183506456](assets/image-20240428183506456.png)
 
 `site`实例化的对象实际上是`AdminSite`，而`DefaultAdminSite()`实际上是一个**懒加载**的机制
 
-![image-20240428183616977](assets\image-20240428183616977.png)
+![image-20240428183616977](assets/image-20240428183616977.png)
 
 在`AdminSite`的初始化方法中，定义了一个`_registry`空字典
 
-![image-20240428183856240](assets\image-20240428183856240.png)
+![image-20240428183856240](assets/image-20240428183856240.png)
 
 ### 4.2 注册时执行`register`方法
 
-![image-20240428185249667](assets\image-20240428185249667.png)
+![image-20240428185249667](assets/image-20240428185249667.png)
 
 `self._registry[model] = admin_class(model, self)`
 
@@ -115,13 +115,13 @@ admin.site.register(models.Depart)
 
 **注意：由于单例模式，这里`admin.site`创建的对象与`ModelAdmin`中创建的对象是同一个**,（这使得放数据拿数据是在同一个对象中）
 
-![image-20240428185647207](assets\image-20240428185647207.png)
+![image-20240428185647207](assets/image-20240428185647207.png)
 
-![image-20240428185820449](assets\image-20240428185820449.png)
+![image-20240428185820449](assets/image-20240428185820449.png)
 
 最终返回的就是基本的`urlpatterns`和我们注册的每一个类自动生成的URL
 
-![image-20240428190116538](assets\image-20240428190116538.png)
+![image-20240428190116538](assets/image-20240428190116538.png)
 
 这里又做了一个嵌套，以app名和表名做前缀，里面又套用了`model_admin.urls`
 
@@ -129,13 +129,13 @@ admin.site.register(models.Depart)
 
 这样做可以方便我们进行路由的自定制，重写某个类的urls
 
-![image-20240428190629071](assets\image-20240428190629071.png)
+![image-20240428190629071](assets/image-20240428190629071.png)
 
 下面来看`ModelAdmin`中的路由分发，本质上返回的就是一个列表，包含增删改查的具体路由
 
-![image-20240428191357011](assets\image-20240428191357011.png)
+![image-20240428191357011](assets/image-20240428191357011.png)
 
-![image-20240428191632466](assets\image-20240428191632466.png)
+![image-20240428191632466](assets/image-20240428191632466.png)
 
 
 
@@ -160,7 +160,7 @@ admin.site.register(models.Depart)
   # 或者	mine.short_description = "自定义"	等同于使用装饰器	@admin.display(description="自定义")
   ```
 
-  ![image-20240428165553633](assets\image-20240428165553633.png)
+  ![image-20240428165553633](assets/image-20240428165553633.png)
 
 - list_display_links，列表时，列可以点击跳转。
 
@@ -234,7 +234,7 @@ admin.site.register(models.Depart)
   	list_display_links = ['title']
   ```
 
-  ![image-20240428171149768](assets\image-20240428171149768.png)
+  ![image-20240428171149768](assets/image-20240428171149768.png)
 
 - search_fields，列表时，模糊搜索的功能
 
@@ -245,7 +245,7 @@ admin.site.register(models.Depart)
       search_fields = ['id', 'title']
   ```
 
-  ![image-20240428172019921](assets\image-20240428172019921.png)
+  ![image-20240428172019921](assets/image-20240428172019921.png)
 
 - date_hierarchy，列表时，对Date和DateTime类型进行搜索
 
@@ -307,7 +307,7 @@ admin.site.register(models.Depart)
       actions_selection_counter = True
   ```
 
-  ![image-20240428171545633](assets\image-20240428171545633.png)
+  ![image-20240428171545633](assets/image-20240428171545633.png)
 
   当我们选择时会以post请求将表单中的数据发送，可以在`request.POST`中获取到
 
@@ -476,7 +476,7 @@ admin.site.register(models.Depart)
       form = DepartForm
   ```
 
-  ![image-20240428172602912](assets\image-20240428172602912.png)
+  ![image-20240428172602912](assets/image-20240428172602912.png)
 
 - empty_value_display = "列数据为空时，显示默认值"
 

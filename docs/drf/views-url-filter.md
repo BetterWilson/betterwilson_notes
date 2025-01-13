@@ -2,7 +2,7 @@
 
 ## 1.视图（*）
 
-### 1.1 APIView 
+### 1.1 APIView
 
 ```python
 class GenericAPIView(APIView):
@@ -116,7 +116,7 @@ class UserView(GenericAPIView):
 
 ### 1.3 GenericViewSet
 
-![image-20210824092131703](assets\image-20210824092131703.png)
+![image-20210824092131703](assets/image-20210824092131703.png)
 
 `GenericViewSet`类中没有定义任何代码，他就是继承 `ViewSetMixin` 和 `GenericAPIView`，也就说他的功能就是将继承的两个类的功能继承到一起。
 
@@ -184,7 +184,7 @@ class UserView(GenericViewSet):
 
 
 
-### 1.4 五大类 
+### 1.4 五大类
 
 在drf的为我们提供好了5个用于做 增、删、改（含局部修改）、查列表、查单个数据的5个类（需结合 `GenericViewSet` 使用）。
 
@@ -222,7 +222,7 @@ class UserView(CreateModelMixin,RetrieveModelMixin, UpdateModelMixin, DestroyMod
 
 **示例1：**
 
-![image-20210824230441249](assets\image-20210824230441249.png)
+![image-20210824230441249](assets/image-20210824230441249.png)
 
 ```python
 # urls.py
@@ -269,7 +269,7 @@ class UserView(mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet)
 
 **示例2：**
 
-![image-20210824231043061](assets\image-20210824231043061.png)
+![image-20210824231043061](assets/image-20210824231043061.png)
 
 ```python
 # urls.py
@@ -461,7 +461,7 @@ class UserView(ModelViewSet):
 
 ### 补充：权限
 
-在之前定义权限类时，类中可以定义两个方法：`has_permission` 和 `has_object_permission` 
+在之前定义权限类时，类中可以定义两个方法：`has_permission` 和 `has_object_permission`
 
 - `has_permission` ，在请求进入视图之前就会执行。
 - `has_object_permission`，当视图中调用 `self.get_object`时就会被调用（删除、更新、查看某个对象时都会调用），一般用于检查对某个对象是否具有权限进行操作。
@@ -488,7 +488,7 @@ class PermissionA(BasePermission):
 
 ### 1.5 源码分析
 
-![image-20240503141923143](assets\image-20240503141923143.png)
+![image-20240503141923143](assets/image-20240503141923143.png)
 
 
 
@@ -538,9 +538,9 @@ class PermissionA(BasePermission):
   urlpatterns += router.urls
   ```
 
-  
 
-  也可以利用include，给URL加前缀：
+
+也可以利用include，给URL加前缀：
 
   ```python
   from django.urls import path, include
@@ -606,7 +606,7 @@ class XXXView(ModelViewSet):
 
 ### 3.1 自定义Filter（推荐）
 
-![image-20210825200814769](assets\image-20210825200814769.png)
+![image-20210825200814769](assets/image-20210825200814769.png)
 
 ```python
 # urls.py
@@ -1005,6 +1005,3 @@ drf源码中内置了2个filter，分别是：
   OR 
   "app01_userinfo"."age" LIKE %张三% ESCAPE '\'
   ```
-
-  
-

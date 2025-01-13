@@ -121,11 +121,11 @@ Database Wrappers
       return HttpResponse("OK")
   ```
 
-![image-20240519092650759](assets\image-20240519092650759.png)
+![image-20240519092650759](assets/image-20240519092650759.png)
 
 当然，我们将`args`和`kwargs`打印出来就可以看到两个信号都是由`UserInfo`表触发的
 
-![image-20240519093115406](assets\image-20240519093115406.png)
+![image-20240519093115406](assets/image-20240519093115406.png)
 
 ### 用法二：使用装饰器
 
@@ -154,7 +154,7 @@ def demo(request):
     return HttpResponse("OK")
 ```
 
-![image-20240519093455450](assets\image-20240519093455450.png)
+![image-20240519093455450](assets/image-20240519093455450.png)
 
 ##### 注意信号定义位置
 
@@ -423,14 +423,14 @@ post_delete_callback {'signal': <django.db.models.signals.ModelSignal object at 
 
 当我们执行`python manage.py makemigrations`和`python manage.py migrate`后，会自动生成两张有数据的表`django_content_type`和`auth_permission`
 
-![image-20240519095757844](assets\image-20240519095757844.png)
+![image-20240519095757844](assets/image-20240519095757844.png)
 
 其实现原理就是，在Django启动时，会在`post_migrate`信号中注册函数，当我们执行`python manage.py migrate`时，Django除了会根据已注册的app中`migrations`文件夹中的配置创建表，还会执行`post_migrate`信号中注册的函数，向`django_content_type`和`auth_permission`表中新增数据
 
 我们可以在Django-auth组件中找到源码：
 
-![image-20240519100413069](assets\image-20240519100413069.png)
+![image-20240519100413069](assets/image-20240519100413069.png)
 
 流程图：
 
-![image-20240519101823131](assets\image-20240519101823131.png)
+![image-20240519101823131](assets/image-20240519101823131.png)

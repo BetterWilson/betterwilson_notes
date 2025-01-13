@@ -10,7 +10,7 @@ python manage.py migrate
 
 我们可以在python控制台中查看所有命令
 
-![image-20240519124855291](assets\image-20240519124855291.png)
+![image-20240519124855291](assets/image-20240519124855291.png)
 
 我们也可以自定义命令，让`python manage.py`执行
 
@@ -31,7 +31,7 @@ class Command(BaseCommand):
         print("wilson")
 ```
 
-![image-20240519125723241](assets\image-20240519125723241.png)
+![image-20240519125723241](assets/image-20240519125723241.png)
 
 在其父类`BaseCommand`中，有一个`add_arguments`方法，可以支持我们解析命令后的参数（字典形式）
 
@@ -49,27 +49,27 @@ class Command(BaseCommand):
         parser.add_argument("v2")
 ```
 
-![image-20240519130206298](assets\image-20240519130206298.png)
+![image-20240519130206298](assets/image-20240519130206298.png)
 
 我们也可以为每个参数添加解释，让用户知道参数的作用（可以通过`python manage.py wilson -h`获取解释信息）
 
-![image-20240525191340325](assets\image-20240525191340325.png)
+![image-20240525191340325](assets/image-20240525191340325.png)
 
 ### 关于`python manage.py createsuperuser`命令
 
 在django中的auth-app中，有一个`createsupersuer.py`文件
 
-![image-20240519131239180](assets\image-20240519131239180.png)
+![image-20240519131239180](assets/image-20240519131239180.png)
 
 在其初始化方法中，执行函数`get_user_model()`，本质上是去寻找每个app中的model类，并读取配置文件中的`AUTH_USER_MODEL = "auth.User"`，也就是auth中的User表
 
-![image-20240519131336481](assets\image-20240519131336481.png)
+![image-20240519131336481](assets/image-20240519131336481.png)
 
 然后去寻找`USERNAME_FIELD`字段，也就是配置文件中定义的`"username"`
 
 在其`handle()`函数中，主要执行提示信息和接受我们输入的用户名，密码，邮箱
 
-![image-20240519132408154](assets\image-20240519132408154.png)
+![image-20240519132408154](assets/image-20240519132408154.png)
 
 在其最后执行了
 

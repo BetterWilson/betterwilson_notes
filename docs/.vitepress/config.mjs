@@ -1,5 +1,4 @@
 import {defineConfig} from 'vitepress'
-import baseViteConfig from '../../vite.config.js'; // 引入 Vite 配置
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -38,7 +37,6 @@ export default defineConfig({
 			{text: 'Redis', link: '/redis/'},
 			{text: 'Linux', link: '/linux/'},
 			{text: 'hadoop', link: '/hadoop/'},
-			{text: '157240', link: '/157240/'},
 		],
 
 		sidebar: {

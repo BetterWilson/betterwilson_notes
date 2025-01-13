@@ -68,7 +68,7 @@ obj2 = Foo()
 
 如果已经创建对象，即`instance=对象`，就直接返回这个对象
 
-![image-20240428200728946](assets\image-20240428200728946-1714308960488-1.png)
+![image-20240428200728946](assets/image-20240428200728946-1714308960488-1.png)
 
 可以看出两个对象的内存地址是一样的
 
@@ -92,7 +92,7 @@ obj.name = "李四"
 print(obj.name)
 ```
 
-![image-20240428203043808](assets\image-20240428203043808.png)
+![image-20240428203043808](assets/image-20240428203043808.png)
 
 当我们访问一个实例化类中不存在的对象时，一般情况下会报错
 
@@ -112,7 +112,7 @@ obj = Info()
 print(obj.xxxxxxxxxxx)
 ```
 
-![image-20240428203334676](assets\image-20240428203334676.png)
+![image-20240428203334676](assets/image-20240428203334676.png)
 
 # django-admin如何实现单例模式和懒加载
 
@@ -120,19 +120,19 @@ django-admin源码中实例化`site`对象时，并不会真正实例化创建�
 
 当它调用`register`方法时，并没有这个方法，就会执行它的父类`LazyObject`中的`__getattr__`方法
 
-![image-20240428203824126](assets\image-20240428203824126.png)
+![image-20240428203824126](assets/image-20240428203824126.png)
 
-![image-20240428203912956](assets\image-20240428203912956.png)
+![image-20240428203912956](assets/image-20240428203912956.png)
 
-![image-20240428204339952](assets\image-20240428204339952.png)
+![image-20240428204339952](assets/image-20240428204339952.png)
 
 而这里的`__getattr__`方法实际上时执行`new_method_proxy`方法
 
-![image-20240428204519387](assets\image-20240428204519387.png)
+![image-20240428204519387](assets/image-20240428204519387.png)
 
 我们需要注意，父类`LazyObject`中有一个类变量`_wrapped`默认为`None`
 
-![image-20240428204710087](assets\image-20240428204710087.png)
+![image-20240428204710087](assets/image-20240428204710087.png)
 
 当我们执行`new_method_proxy`方法时，会执行`_setup()`方法并将它赋值给`_wrapped`
 
@@ -140,7 +140,7 @@ django-admin源码中实例化`site`对象时，并不会真正实例化创建�
 
 `self._wrapped`其实就是真正的实例化对象，这就实现了**懒加载**
 
-![image-20240428205133813](assets\image-20240428205133813.png)
+![image-20240428205133813](assets/image-20240428205133813.png)
 
 
 

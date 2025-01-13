@@ -55,4 +55,4 @@ print(type(object))         # (<class 'object'>,)
 
 三者关系图
 
-![image-20240504102023071](assets\image-20240504102023071.png)
+![image-20240504102023071](assets/image-20240504102023071.png)

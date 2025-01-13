@@ -17,7 +17,7 @@
       path('users/', views.users),
   ]
   ```
-  
+
   ```python
   from django.http import JsonResponse
   
@@ -28,7 +28,7 @@
           return JsonResponse({"code":1000,"data":"xxx"})
       ...
   ```
-  
+
 - CBV，class base views，其实就是编写类来处理业务请求。
 
   ```python
@@ -38,7 +38,7 @@
       path('users/', views.UserView.as_view()),
   ]
   ```
-  
+
   ```python
   from django.views import View
   
@@ -123,13 +123,13 @@ class UserView(APIView):
 
 #### 3.1.4 drf请求入口分析
 
-![image-20240501153451481](assets\image-20240501153451481.png)
+![image-20240501153451481](assets/image-20240501153451481.png)
 
 ### 3.2 request和参数
 
 drf中的request和django中的request不一样，实际上是对django的request参数进行再封装
 
-![image-20240501121218606](assets\image-20240501121218606.png)
+![image-20240501121218606](assets/image-20240501121218606.png)
 
 可以看到，在Django中request是`WSGIRequest`对象；而在drf中的request是`rest_framework.request.Request`对象
 
@@ -137,11 +137,11 @@ drf中的request和django中的request不一样，实际上是对django的reques
 
 - 普通路由通过`self.kwargs`可以拿到请求的路由中传递的参数
 
-  ![image-20240501121814393](assets\image-20240501121814393.png)
+  ![image-20240501121814393](assets/image-20240501121814393.png)
 
 - 含正则表达式的路由通过`self.args`拿到路由中传递的参数
 
-  ![image-20240501122300016](assets\image-20240501122300016.png)
+  ![image-20240501122300016](assets/image-20240501122300016.png)
 
 #### 3.2.2 request对象
 
@@ -149,21 +149,21 @@ drf中的request和django中的request不一样，实际上是对django的reques
 
 在路由入口`dispatch`中，有一个函数`initialize_request(request, *args, **kwargs)`
 
-![image-20240501123746747](assets\image-20240501123746747.png)
+![image-20240501123746747](assets/image-20240501123746747.png)
 
 再来看函数`initialize_request(request, *args, **kwargs)`具体干了些啥
 
 这个函数将原来的Django中的request当作参数传入，返回的其实也是一个`Request`对象
 
-![image-20240501124034380](assets\image-20240501124034380.png)
+![image-20240501124034380](assets/image-20240501124034380.png)
 
 而在`Request`对象源码中，将本来的Django的`request`赋值为`_request`
 
-![image-20240501124519485](assets\image-20240501124519485.png)
+![image-20240501124519485](assets/image-20240501124519485.png)
 
 同时在源码中，有一个`__getattr__`方法，这个方法的作用是，如果我访问了类中一个不存在的变量时，就会执行这个`__getattr__`方法，并返回
 
-![image-20240501124701677](assets\image-20240501124701677.png)
+![image-20240501124701677](assets/image-20240501124701677.png)
 
 也就是说，我可以通过request._request.xxx获取到原本django中的request对象里面的值，
 
@@ -179,7 +179,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 ##### 2.request对象获取值
 
-![image-20240501125645869](assets\image-20240501125645869.png)
+![image-20240501125645869](assets/image-20240501125645869.png)
 
 
 
@@ -209,11 +209,11 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 - 设为None
 
-  ![image-20240501140713358](assets\image-20240501140713358.png)
+  ![image-20240501140713358](assets/image-20240501140713358.png)
 
 - 除了可以定义为None，也可以定义为一个函数，`request.user`和`request.auth`就分别对应两个函数的返回值
 
-  ![image-20240501141250592](assets\image-20240501141250592.png)
+  ![image-20240501141250592](assets/image-20240501141250592.png)
 
 
 
@@ -221,7 +221,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 `authentication_classes`是一个列表，可以同时应用多个认证组件
 
-![image-20240501133058471](assets\image-20240501133058471.png)
+![image-20240501133058471](assets/image-20240501133058471.png)
 
 
 
@@ -229,7 +229,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 此时，就需要用到drf的全局配置**(认证组件的类不能放在视图view.py中，会因为导入APIView导致循环引用)。**
 
-![image-20240501133711825](assets\image-20240501133711825.png)
+![image-20240501133711825](assets/image-20240501133711825.png)
 
 
 
@@ -239,7 +239,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 我们可以将个别视图类的`authentication_classes`列表置为空
 
-![image-20240501134846789](assets\image-20240501134846789.png)
+![image-20240501134846789](assets/image-20240501134846789.png)
 
 
 
@@ -247,7 +247,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 
 
-![image-20240501162055511](assets\image-20240501162055511.png)
+![image-20240501162055511](assets/image-20240501162055511.png)
 
 ### 3.4 权限
 
@@ -260,11 +260,11 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 #### 3.4.1 单视图应用
 
-![image-20240501154905696](assets\image-20240501154905696.png)
+![image-20240501154905696](assets/image-20240501154905696.png)
 
 #### 3.4.2 多视图应用
 
-![image-20240501155055984](assets\image-20240501155055984.png)
+![image-20240501155055984](assets/image-20240501155055984.png)
 
 #### 3.4.3 单视图多视图结合
 
@@ -272,7 +272,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 我们可以将个别视图类的`authentication_classes`列表置为空
 
-![image-20240501155423437](assets\image-20240501155423437.png)
+![image-20240501155423437](assets/image-20240501155423437.png)
 
 #### 3.4.4 多个认证组件关系
 
@@ -326,7 +326,7 @@ class DemoView(APIView):
 
 #### 3.4.5 源码分析
 
-![image-20240501164709247](assets\image-20240501164709247.png)
+![image-20240501164709247](assets/image-20240501164709247.png)
 
 #### 思考题1：自定义request对象
 
@@ -367,7 +367,7 @@ class LoginView(APIView):
 - 对于匿名用户，使用用户IP作为唯一标识。
 - 对于登录用户，使用用户信息主键、用户ID或名称作为唯一标识。
 
-![image-20240502091541849](assets\image-20240502091541849.png)
+![image-20240502091541849](assets/image-20240502091541849.png)
 
 
 
@@ -381,15 +381,15 @@ class LoginView(APIView):
 
 #### 3.5.1 单视图应用
 
-![image-20240502090507786](assets\image-20240502090507786.png)
+![image-20240502090507786](assets/image-20240502090507786.png)
 
 #### 3.5.2 多视图应用
 
-![image-20240502104742468](assets\image-20240502104742468.png)
+![image-20240502104742468](assets/image-20240502104742468.png)
 
 #### 3.5.3 单视图多视图结合
 
-![image-20240502104821087](assets\image-20240502104821087.png)
+![image-20240502104821087](assets/image-20240502104821087.png)
 
 
 
@@ -397,15 +397,15 @@ class LoginView(APIView):
 
 - 基于drf提供的限流类
 
-  ![image-20240502091925735](assets\image-20240502091925735.png)
+  ![image-20240502091925735](assets/image-20240502091925735.png)
 
 - drf提供的限流类源码分析
 
-  ![image-20240502102914790](assets\image-20240502102914790.png)
+  ![image-20240502102914790](assets/image-20240502102914790.png)
 
 #### 3.5.5 源码分析
 
-![image-20240502104319930](assets\image-20240502104319930.png)
+![image-20240502104319930](assets/image-20240502104319930.png)
 
 **全局配置**
 
@@ -425,7 +425,7 @@ REST_FRAMEWORK = {
 
 
 
-#### 3.6.1 GET参数传递版本 
+#### 3.6.1 GET参数传递版本
 
 ```python
 from rest_framework.versioning import QueryParameterVersioning
@@ -433,7 +433,7 @@ from rest_framework.versioning import QueryParameterVersioning
 
 - 单视图应用
 
-  ![image-20240502105555121](assets\image-20240502105555121.png)
+  ![image-20240502105555121](assets/image-20240502105555121.png)
 
 - 多视图应用
 
@@ -448,7 +448,7 @@ from rest_framework.versioning import QueryParameterVersioning
   }
   ```
 
-  ![image-20240502105901409](assets\image-20240502105901409.png)
+  ![image-20240502105901409](assets/image-20240502105901409.png)
 
 源码执行流程：
 
@@ -464,7 +464,7 @@ from rest_framework.versioning import QueryParameterVersioning
 from rest_framework.versioning import URLPathVersioning
 ```
 
-![image-20240502110650845](assets\image-20240502110650845.png)
+![image-20240502110650845](assets/image-20240502110650845.png)
 
 
 
@@ -474,11 +474,11 @@ from rest_framework.versioning import URLPathVersioning
 from rest_framework.versioning import AcceptHeaderVersioning
 ````
 
-![image-20240502110937054](assets\image-20240502110937054.png)
+![image-20240502110937054](assets/image-20240502110937054.png)
 
 #### 3.6.4 源码分析
 
-![image-20240502113926511](assets\image-20240502113926511.png)
+![image-20240502113926511](assets/image-20240502113926511.png)
 
 
 
