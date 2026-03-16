@@ -15,7 +15,7 @@ hero:
       link: /django/Django-admin
     - theme: alt
       text: Login/Register
-      link: /
+      link: /login/
 
 features:
   - title: 深度技术分享
@@ -25,4 +25,3 @@ features:
   - title: 开发者生活
     details: 不只是代码，还有开发者的日常生活、职业发展和个人成长心得。在这里，你可以找到关于时间管理、职业规划、健康生活等方面的内容，帮助你在工作和生活中找到平衡。
 ---
-

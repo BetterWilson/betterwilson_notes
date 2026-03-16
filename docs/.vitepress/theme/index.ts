@@ -7,9 +7,13 @@ import './global.css'
 import {h} from 'vue';
 import Theme from 'vitepress/theme';
 import GiscusComment from './components/GiscusComment.vue';
+import LoginPage from './components/LoginPage.vue';
 
 export default {
     extends: DefaultTheme,
+    enhanceApp({ app }) {
+        app.component('LoginPage', LoginPage)
+    },
 
     setup() {
         const route = useRoute()
