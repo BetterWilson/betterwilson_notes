@@ -71,14 +71,14 @@ const particles = ref(
     transform: translate3d(0, 0, 0) scale(0.6);
     opacity: 0;
   }
-  15% {
+  10% {
     opacity: 0.9;
   }
-  85% {
-    opacity: 0.6;
+  92% {
+    opacity: 0.85;
   }
   100% {
-    transform: translate3d(var(--drift), -110vh, 0) scale(1.1);
+    transform: translate3d(var(--drift), -105vh, 0) scale(1.1);
     opacity: 0;
   }
 }

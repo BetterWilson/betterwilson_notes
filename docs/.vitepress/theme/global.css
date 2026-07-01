@@ -70,24 +70,24 @@ body {
     --vp-nav-screen-bg-color: rgba(20, 22, 32, 0.85);
 }
 
-/* 导航栏 / 侧边栏：半透明 + 磨砂，让粒子透出来 */
+/* 导航栏 / 侧边栏：仅轻微磨砂，避免把顶部粒子糊没 */
 .VPNav,
 .VPNavBar,
 .VPNavBar .wrapper,
 .VPLocalNav,
 .VPSidebar {
     background: transparent !important;
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(3px) saturate(130%);
+    -webkit-backdrop-filter: blur(3px) saturate(130%);
     position: relative;
     z-index: 2;
 }
 
-/* NavBar 里最"顽固"的白底就是 content-body —— 全部强制半透明 */
+/* NavBar 里最"顽固"的白底就是 content-body —— 强制半透明 + 极轻磨砂 */
 .VPNavBar .content-body {
     background-color: var(--vp-nav-bg-color) !important;
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(3px) saturate(130%);
+    -webkit-backdrop-filter: blur(3px) saturate(130%);
 }
 
 /* Footer：完全透明，让粒子直接飘过；文字加一层轻微阴影保证可读 */
@@ -163,16 +163,31 @@ body:has(.VPHome)::-webkit-scrollbar {
     display: none;                     /* Chrome / Safari / Edge */
 }
 
+/* 首页：把整个 Layout 卡进一屏 —— Content 只占 100vh - 导航高度 - footer 高度 */
+body:has(.VPHome) .Layout {
+    min-height: 100vh !important;
+    height: 100vh !important;
+    overflow: hidden;
+}
+body:has(.VPHome) .VPContent {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
 .VPHome {
     position: relative;
     overflow: hidden;
+    margin-bottom: 0 !important;
     padding-bottom: 0 !important;
     z-index: 1;
 }
 
-/* 让 hero + features 高度贴合视口，同时把整体下压避开导航栏 */
+/* Hero + Features 紧凑排布，压掉大间距；顶部留够高度让 HeroVisual 圆圈上方 chip 不被 nav 挡 */
 .VPHome .VPHero {
-    padding: 64px 24px 16px !important;
+    padding: 65px 24px 8px !important;
 }
 
 /* 横向布局：左侧标题+按钮，右侧图片；下方是三张卡片 */
@@ -206,7 +221,7 @@ body:has(.VPHome)::-webkit-scrollbar {
 }
 
 .VPHome .VPFeatures {
-    padding: 0 24px 24px !important;
+    padding: 0 24px 12px !important;
 }
 
 /* 强制三段并排 —— VitePress 默认在 <=960px 时会折行，这里覆盖 */

@@ -60,6 +60,8 @@ function chipStyle(i, total, ring) {
   max-width: 100%;
   aspect-ratio: 1;
   margin: 0 auto;
+  /* 提到 nav 之上，避免顶部 chip 被磨砂遮挡 */
+  z-index: 3;
 }
 
 .rings {
