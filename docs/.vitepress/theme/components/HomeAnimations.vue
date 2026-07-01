@@ -120,7 +120,7 @@ const particles = ref(
 }
 
 .dark .blob {
-  opacity: 0.35;
+  opacity: 0.15;
 }
 
 @keyframes drift {

@@ -56,15 +56,98 @@ body {
     background: transparent !important;
 }
 
-/* 侧边栏、导航保持原本背景（可读性优先），并且盖住底下的动画 */
+/* 覆盖 VitePress 内部导航背景变量 —— 直接让全站导航底色变透明 */
+:root {
+    --vp-nav-bg-color: rgba(255, 255, 255, 0.35);
+    --vp-sidebar-bg-color: rgba(255, 255, 255, 0.30);
+    --vp-local-nav-bg-color: rgba(255, 255, 255, 0.35);
+    --vp-nav-screen-bg-color: rgba(255, 255, 255, 0.85);
+}
+.dark {
+    --vp-nav-bg-color: rgba(20, 22, 32, 0.30);
+    --vp-sidebar-bg-color: rgba(20, 22, 32, 0.25);
+    --vp-local-nav-bg-color: rgba(20, 22, 32, 0.30);
+    --vp-nav-screen-bg-color: rgba(20, 22, 32, 0.85);
+}
+
+/* 导航栏 / 侧边栏：半透明 + 磨砂，让粒子透出来 */
 .VPNav,
 .VPNavBar,
+.VPNavBar .wrapper,
+.VPLocalNav,
+.VPSidebar {
+    background: transparent !important;
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    position: relative;
+    z-index: 2;
+}
+
+/* NavBar 里最"顽固"的白底就是 content-body —— 全部强制半透明 */
+.VPNavBar .content-body {
+    background-color: var(--vp-nav-bg-color) !important;
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+
+/* Footer：完全透明，让粒子直接飘过；文字加一层轻微阴影保证可读 */
+.VPFooter {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    position: relative;
+    z-index: 2;
+}
+.VPFooter .message,
+.VPFooter .copyright {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.dark .VPFooter .message,
+.dark .VPFooter .copyright {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* NavBar 内部有一层实体背景 title/curtain，一并透明化 */
+.VPNavBar,
+.VPNavBar .container,
+.VPNavBar .title,
+.VPNavBar .content,
+.VPNavBar .content-body,
+.VPNavBar .curtain,
+.VPLocalNav .container,
+.VPSidebar .curtain {
+    background: transparent !important;
+}
+
+/* Sidebar 分组滚动区域也透明 */
+.VPSidebar .group,
+.VPSidebar nav {
+    background: transparent !important;
+}
+
+/* 消除导航栏 / 侧边栏 / 局部导航 / footer 的实体分界线，实现一体化 */
+.VPNavBar,
+.VPNavBar.has-sidebar .content,
+.VPNavBar.has-sidebar .curtain,
+.VPNavBar .divider,
+.VPNavBar .divider-line,
 .VPLocalNav,
 .VPSidebar,
 .VPFooter {
-    background: var(--vp-c-bg);
-    position: relative;
-    z-index: 2;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* VitePress 用 --vp-c-gutter 画 NavBar 下沿、Sidebar 右沿的 1px 分割线 —— 全站关掉 */
+:root,
+.dark {
+    --vp-c-gutter: transparent;
+}
+
+/* NavBar 底部 hairline (::after) 也去掉 */
+.VPNavBar::after,
+.VPNavBar .divider::after {
+    display: none !important;
 }
 
 /* ===== 首页：单屏无滚动 + 动态效果 ===== */
