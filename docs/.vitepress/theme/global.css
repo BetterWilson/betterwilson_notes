@@ -22,3 +22,228 @@ body {
 .copy {
     display: none !important;
 }
+
+/* 站点 Footer：加大内边距和行距，避免备案号被裁 */
+.VPFooter {
+    padding: 24px 24px !important;
+}
+.VPFooter .message,
+.VPFooter .copyright {
+    line-height: 1.8;
+    font-size: 14px;
+    white-space: normal;
+    word-break: break-word;
+}
+.VPFooter .copyright {
+    margin-top: 6px;
+}
+
+/* ===== 首页：单屏无滚动 + 动态效果 ===== */
+
+/* 首页：允许滚动以露出 footer，但隐藏滚动条不显示在右侧 */
+html:has(.VPHome),
+body:has(.VPHome) {
+    scrollbar-width: none;             /* Firefox */
+    -ms-overflow-style: none;          /* IE / 老 Edge */
+}
+html:has(.VPHome)::-webkit-scrollbar,
+body:has(.VPHome)::-webkit-scrollbar {
+    display: none;                     /* Chrome / Safari / Edge */
+}
+
+.VPHome {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 0 !important;
+    z-index: 1;
+}
+
+/* 让 hero + features 高度贴合视口，同时把整体下压避开导航栏 */
+.VPHome .VPHero {
+    padding: 64px 24px 16px !important;
+}
+
+/* 横向布局：左侧标题+按钮，右侧图片；下方是三张卡片 */
+.VPHome .VPHero .container {
+    max-width: 1152px;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    text-align: left !important;
+}
+
+.VPHome .VPHero .main {
+    flex: 1 1 0;
+    order: 1;
+    text-align: left !important;
+}
+
+.VPHome .VPHero .image {
+    flex: 0 0 auto;
+    display: block !important;
+    order: 2;
+    margin: 0 !important;
+    width: 380px !important;
+    max-width: 45%;
+}
+
+.VPHome .VPHero .actions {
+    justify-content: flex-start !important;
+}
+
+.VPHome .VPFeatures {
+    padding: 0 24px 24px !important;
+}
+
+/* 强制三段并排 —— VitePress 默认在 <=960px 时会折行，这里覆盖 */
+.VPHome .VPFeatures .items {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 12px;
+    margin: 0 !important;
+}
+
+.VPHome .VPFeatures .items .item {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    padding: 0 !important;
+}
+
+.VPHome .VPFeature {
+    height: 100%;
+    padding: 18px 20px;
+    transition: transform 0.35s ease, box-shadow 0.35s ease,
+        border-color 0.35s ease;
+    background: var(--vp-c-bg-soft);
+    backdrop-filter: blur(6px);
+}
+
+.VPHome .VPFeature:hover {
+    transform: translateY(-6px);
+    border-color: var(--vp-c-brand-1);
+    box-shadow: 0 12px 28px -12px rgba(100, 108, 255, 0.45);
+}
+
+.VPHome .VPFeature .title {
+    background: linear-gradient(120deg, #bd34fe 30%, #41d1ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Hero 主标题：流光渐变 */
+.VPHome .VPHero .name .clip {
+    background: linear-gradient(
+        120deg,
+        #bd34fe 10%,
+        #41d1ff 50%,
+        #bd34fe 90%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: hero-shine 6s linear infinite;
+}
+
+@keyframes hero-shine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* Hero 副标题淡入上浮 */
+.VPHome .VPHero .text,
+.VPHome .VPHero .tagline {
+    animation: hero-rise 0.9s ease-out both;
+}
+.VPHome .VPHero .text { animation-delay: 0.1s; }
+.VPHome .VPHero .tagline { animation-delay: 0.25s; }
+.VPHome .VPHero .actions { animation: hero-rise 0.9s 0.4s ease-out both; }
+
+@keyframes hero-rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero 插图：漂浮动画 */
+.VPHome .VPHero .VPImage,
+.VPHome .VPHero .image-src {
+    animation: hero-float 6s ease-in-out infinite;
+    filter: drop-shadow(0 20px 30px rgba(65, 209, 255, 0.25));
+}
+
+@keyframes hero-float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+}
+
+/* Actions 按钮微交互 */
+.VPHome .VPHero .VPButton {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.VPHome .VPHero .VPButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -10px rgba(189, 52, 254, 0.6);
+}
+
+/* Hero 图片容器：让自定义组件自主占位 */
+.VPHome .VPHero .image-container {
+    transform: none !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+.VPHome .VPHero .image-bg {
+    display: none !important;
+}
+
+/* 小屏时压缩内边距、卡片改成一列 */
+@media (max-width: 960px) {
+    .VPHome .VPHero {
+        padding: 48px 20px 12px !important;
+    }
+    .VPHome .VPHero .container {
+        gap: 12px;
+    }
+    .VPHome .VPHero .container {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+    .VPHome .VPHero .main {
+        text-align: center !important;
+    }
+    .VPHome .VPHero .actions {
+        justify-content: center !important;
+    }
+    .VPHome .VPHero .image {
+        width: 200px !important;
+        max-width: 60vw;
+    }
+    .VPHome .VPFeatures .items {
+        flex-wrap: wrap !important;
+    }
+    .VPHome .VPFeatures .items .item {
+        flex: 1 1 100% !important;
+    }
+    .VPHome .VPFeature {
+        padding: 12px 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .VPHome .VPHero .name .clip,
+    .VPHome .VPHero .VPImage,
+    .VPHome .VPHero .image-src,
+    .VPHome .VPHero .text,
+    .VPHome .VPHero .tagline,
+    .VPHome .VPHero .actions {
+        animation: none;
+    }
+}

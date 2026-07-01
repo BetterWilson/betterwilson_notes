@@ -8,6 +8,8 @@ import {h} from 'vue';
 import Theme from 'vitepress/theme';
 import GiscusComment from './components/GiscusComment.vue';
 import LoginPage from './components/LoginPage.vue';
+import HomeAnimations from './components/HomeAnimations.vue';
+import HeroVisual from './components/HeroVisual.vue';
 
 export default {
     extends: DefaultTheme,
@@ -31,6 +33,8 @@ export default {
     },
     Layout() {
         return h(Theme.Layout, null, {
+            'home-hero-before': () => h(HomeAnimations),
+            'home-hero-image': () => h(HeroVisual),
             'doc-after': () => h(GiscusComment),
         });
     },

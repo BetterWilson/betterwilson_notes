@@ -6,9 +6,6 @@ hero:
   name: "Welcome BetterWilson"
   text: "Software Engineering"
   tagline: 
-  image:
-    src: /picture1.svg
-    alt: VitePress
   actions:
     - theme: brand
       text: Notes
