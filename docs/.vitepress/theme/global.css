@@ -52,8 +52,24 @@ body {
 .VPContent,
 .VPDoc,
 .VPDoc .container,
-.VPHome {
+.VPHome,
+.VPPage {
     background: transparent !important;
+}
+
+/* 移动端菜单弹层：半透明磨砂，让粒子透出来；去掉与 nav 之间的分割线 */
+.VPNavScreen {
+    z-index: 60 !important;
+    top: var(--vp-nav-height) !important;   /* 去掉 VitePress 默认 +1px 分隔缝 */
+    background: var(--vp-nav-screen-bg-color) !important;
+    backdrop-filter: blur(6px) saturate(140%);
+    -webkit-backdrop-filter: blur(6px) saturate(140%);
+    border-top: none !important;
+    box-shadow: none !important;
+}
+.VPNavBarHamburger {
+    position: relative;
+    z-index: 61 !important;
 }
 
 /* 覆盖 VitePress 内部导航背景变量 —— 直接让全站导航底色变透明 */
@@ -61,26 +77,53 @@ body {
     --vp-nav-bg-color: rgba(255, 255, 255, 0.35);
     --vp-sidebar-bg-color: rgba(255, 255, 255, 0.30);
     --vp-local-nav-bg-color: rgba(255, 255, 255, 0.35);
-    --vp-nav-screen-bg-color: rgba(255, 255, 255, 0.85);
+    --vp-nav-screen-bg-color: rgba(255, 255, 255, 0.35);
 }
 .dark {
     --vp-nav-bg-color: rgba(20, 22, 32, 0.30);
     --vp-sidebar-bg-color: rgba(20, 22, 32, 0.25);
     --vp-local-nav-bg-color: rgba(20, 22, 32, 0.30);
-    --vp-nav-screen-bg-color: rgba(20, 22, 32, 0.85);
+    --vp-nav-screen-bg-color: rgba(20, 22, 32, 0.30);
 }
 
-/* 导航栏 / 侧边栏：仅轻微磨砂，避免把顶部粒子糊没 */
-.VPNav,
+/* 导航栏 / 侧边栏：让粒子透出来
+   注意：不能给 .VPNav 加 backdrop-filter —— 它会成为 fixed 子元素的 containing block,
+   导致移动端 VPNavScreen 下拉菜单被框在 nav 高度内 */
+.VPNav {
+    background: transparent !important;
+    z-index: 2;
+}
 .VPNavBar,
 .VPNavBar .wrapper,
-.VPLocalNav,
-.VPSidebar {
+.VPLocalNav {
     background: transparent !important;
     backdrop-filter: blur(3px) saturate(130%);
     -webkit-backdrop-filter: blur(3px) saturate(130%);
     position: relative;
     z-index: 2;
+}
+
+/* VPSidebar 是移动端 slide-in drawer + 桌面固定侧栏，都是 position: fixed
+   —— 不能用 position: relative 覆盖，会破坏 drawer 动画。只覆盖 background */
+.VPSidebar {
+    background-color: var(--vp-sidebar-bg-color) !important;
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+}
+
+/* VPBackdrop（移动端 drawer 打开时的黑色遮罩）：改成极淡，让粒子透出 */
+.VPBackdrop {
+    background: rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+.dark .VPBackdrop {
+    background: rgba(0, 0, 0, 0.35) !important;
+}
+
+/* VPLocalNav 底部分割线（--vp-c-gutter 已透明，这里再兜底一次） */
+.VPLocalNav {
+    border-bottom: none !important;
 }
 
 /* NavBar 里最"顽固"的白底就是 content-body —— 强制半透明 + 极轻磨砂 */
@@ -163,18 +206,21 @@ body:has(.VPHome)::-webkit-scrollbar {
     display: none;                     /* Chrome / Safari / Edge */
 }
 
-/* 首页：把整个 Layout 卡进一屏 —— Content 只占 100vh - 导航高度 - footer 高度 */
-body:has(.VPHome) .Layout {
-    min-height: 100vh !important;
-    height: 100vh !important;
-    overflow: hidden;
-}
-body:has(.VPHome) .VPContent {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
+/* 首页单屏锁定：只在"足够大"的桌面视口生效
+   —— 小屏 (<960px) 或矮屏 (<720px) 允许自然滚动，避免内容被裁 */
+@media (min-width: 961px) and (min-height: 720px) {
+    body:has(.VPHome) .Layout {
+        min-height: 100vh !important;
+        height: 100vh !important;
+        overflow: hidden;
+    }
+    body:has(.VPHome) .VPContent {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+    }
 }
 
 .VPHome {
@@ -331,15 +377,30 @@ body:has(.VPHome) .VPContent {
     display: none !important;
 }
 
-/* 小屏时压缩内边距、卡片改成一列 */
+/* 中屏 (961-1200)：hero 图适度缩小，防止挤到左侧文字 */
+@media (min-width: 961px) and (max-width: 1200px) {
+    .VPHome .VPHero .image {
+        width: 300px !important;
+    }
+}
+
+/* 矮屏 (< 720px 高)：压缩 hero 顶部 padding 让内容能容进一屏 */
+@media (min-width: 961px) and (max-height: 720px) {
+    .VPHome .VPHero {
+        padding: 32px 24px 4px !important;
+    }
+    .VPHome .VPFeature {
+        padding: 12px 16px;
+    }
+}
+
+/* 小屏 (<= 960px)：单列 + 卡片折行；不再锁死 100vh，允许自然滚动 */
 @media (max-width: 960px) {
     .VPHome .VPHero {
-        padding: 48px 20px 12px !important;
+        padding: 40px 20px 12px !important;
     }
     .VPHome .VPHero .container {
         gap: 12px;
-    }
-    .VPHome .VPHero .container {
         flex-direction: column !important;
         text-align: center !important;
     }
@@ -350,7 +411,7 @@ body:has(.VPHome) .VPContent {
         justify-content: center !important;
     }
     .VPHome .VPHero .image {
-        width: 200px !important;
+        width: 220px !important;
         max-width: 60vw;
     }
     .VPHome .VPFeatures .items {
@@ -361,6 +422,16 @@ body:has(.VPHome) .VPContent {
     }
     .VPHome .VPFeature {
         padding: 12px 14px;
+    }
+}
+
+/* 极窄屏 (<= 480px)：进一步压缩 */
+@media (max-width: 480px) {
+    .VPHome .VPHero {
+        padding: 32px 16px 8px !important;
+    }
+    .VPHome .VPHero .image {
+        width: 180px !important;
     }
 }
 

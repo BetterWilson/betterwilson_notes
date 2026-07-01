@@ -45,23 +45,34 @@ const inner = ['Gin', 'Git', 'DRF']
 
 function chipStyle(i, total, ring) {
   const angle = (360 / total) * i
+  // ring 半径改用 var(--vh-size) * 比例，让 chip 轨道随容器大小缩放，不会溢出
   return {
     '--angle': `${angle}deg`,
-    '--ring': ring === 'outer' ? '150px' : '100px',
+    '--ring': ring === 'outer'
+      ? 'calc(var(--vh-size, 340px) * 0.44)'
+      : 'calc(var(--vh-size, 340px) * 0.29)',
   }
 }
 </script>
 
 <style scoped>
 .hero-visual {
+  --vh-size: 340px;
   position: relative;
-  width: 340px;
-  height: 340px;
+  width: var(--vh-size);
+  height: var(--vh-size);
   max-width: 100%;
   aspect-ratio: 1;
   margin: 0 auto;
-  /* 提到 nav 之上，避免顶部 chip 被磨砂遮挡 */
+  /* 桌面：提到 nav 之上，避免顶部 chip 被磨砂遮挡 */
   z-index: 3;
+}
+
+/* 移动端：图放到按钮之下，避免圆圈盖住 Notes/Login 按钮 */
+@media (max-width: 960px) {
+  .hero-visual {
+    z-index: 0;
+  }
 }
 
 .rings {
@@ -208,13 +219,28 @@ function chipStyle(i, total, ring) {
   50%      { transform: scale(1.15); opacity: 1; }
 }
 
+@media (min-width: 961px) and (max-width: 1200px) {
+  .hero-visual { --vh-size: 300px; }
+}
+
 @media (max-width: 960px) {
-  .hero-visual {
-    width: 260px;
-    height: 260px;
-  }
+  .hero-visual { --vh-size: 240px; }
   .chip-inner { font-size: 12px; padding: 4px 10px; }
   .orbit-inner .chip .chip-inner { font-size: 11px; }
+  .core { width: 90px; height: 90px; }
+  .core-w { font-size: 24px; }
+  .core-label { font-size: 20px; }
+}
+
+@media (max-width: 480px) {
+  .hero-visual { --vh-size: 200px; }
+  .chip-inner { font-size: 11px; padding: 3px 8px; }
+  .orbit-inner .chip .chip-inner { font-size: 10px; }
+}
+
+/* 矮屏：图缩小让整体挤进一屏 */
+@media (min-width: 961px) and (max-height: 720px) {
+  .hero-visual { --vh-size: 280px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

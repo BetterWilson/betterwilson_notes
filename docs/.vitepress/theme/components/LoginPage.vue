@@ -342,17 +342,21 @@ function handlePhoneRegister() {
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  background: var(--vp-c-bg);
+  background: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 .login-card {
   width: 100%;
   max-width: 420px;
-  background: var(--vp-c-bg-soft);
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   border: 1px solid var(--vp-c-divider);
   border-radius: 12px;
   padding: 2.5rem 2rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 32px -8px rgba(65, 90, 200, 0.25);
 }
 
 .login-logo {
