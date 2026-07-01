@@ -38,6 +38,35 @@ body {
     margin-top: 6px;
 }
 
+/* ===== 全站：动态背景层 ===== */
+
+/* 让 body 透明，动画层在 body 底下可见；
+   仍然保留原本背景色作为兜底 */
+html,
+body {
+    background: var(--vp-c-bg);
+}
+
+/* 主内容容器透明，让 fixed 的动画层可以透出来 */
+.Layout,
+.VPContent,
+.VPDoc,
+.VPDoc .container,
+.VPHome {
+    background: transparent !important;
+}
+
+/* 侧边栏、导航保持原本背景（可读性优先），并且盖住底下的动画 */
+.VPNav,
+.VPNavBar,
+.VPLocalNav,
+.VPSidebar,
+.VPFooter {
+    background: var(--vp-c-bg);
+    position: relative;
+    z-index: 2;
+}
+
 /* ===== 首页：单屏无滚动 + 动态效果 ===== */
 
 /* 首页：允许滚动以露出 footer，但隐藏滚动条不显示在右侧 */

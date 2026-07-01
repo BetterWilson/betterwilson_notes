@@ -33,7 +33,7 @@ export default {
     },
     Layout() {
         return h(Theme.Layout, null, {
-            'home-hero-before': () => h(HomeAnimations),
+            'layout-top': () => h(HomeAnimations),
             'home-hero-image': () => h(HeroVisual),
             'doc-after': () => h(GiscusComment),
         });
