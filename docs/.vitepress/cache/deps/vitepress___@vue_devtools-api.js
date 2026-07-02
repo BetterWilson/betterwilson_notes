@@ -2445,7 +2445,7 @@ Object.defineProperty(devtoolsState.tabs, "push", {
     value(...args) {
       const result = Array.prototype[method].apply(this, args);
       devtoolsState.commands = this;
-      apiHooks.callHook("custom-commands:updated", this);
+      apiHooks.callHook("custom-commands.md:updated", this);
       return result;
     }
   });

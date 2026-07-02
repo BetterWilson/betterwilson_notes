@@ -31,12 +31,9 @@ export default defineConfig({
 			{text: 'Git', link: '/git/'},
 			{text: 'Django', link: '/django/'},
 			{text: 'DRF', link: '/drf/'},
-			// {text: 'Go', link: '/go/'},
-			{text: 'Gin', link: '/gin/'},
 			{text: 'Vue', link: '/vue/'},
 			{text: 'Redis', link: '/redis/'},
 			{text: 'Linux', link: '/linux/'},
-			{text: 'hadoop', link: '/hadoop/'},
 		],
 
 		sidebar: {
@@ -73,6 +70,9 @@ export default defineConfig({
 					{text: 'socket模块', link: '/python/supplement/socket'},
 					{text: 'cookie,session缓存', link: '/python/supplement/cookie-session'},
 					{text: 'JWT', link: '/python/supplement/jwt'},
+					{text: 're正则', link: '/python/supplement/re'},
+					{text: '深copy与浅copy', link: '/python/supplement/copy'},
+					{text: '模块', link: '/python/supplement/model'},
 				]
 			},
 			'/git': {
@@ -122,6 +122,7 @@ export default defineConfig({
 			'/linux': {
 				text: 'linux',
 				items: [
+					{text: 'Linux命令(Ubuntu)', link: '/linux/commands.md'},
 					{text: '项目准备', link: '/linux/ProjectPreparation'},
 					{text: 'MySQL8.0安装(centos7)', link: '/linux/mysql8.0(centos7)'},
 					{text: 'nginx1.24.0安装(centos7)', link: '/linux/nginx1.24.0(centos7)'},
@@ -129,14 +130,6 @@ export default defineConfig({
 					{text: 'Redis5.0.7安装(centos7)', link: '/linux/redis5.0.7(centos7)'},
 					{text: '报错解决', link: '/linux/ResolveError'},
 					{text: '项目部署', link: '/linux/ProjectDeployment'},
-				]
-			},
-			'/hadoop': {
-				text: 'hadoop',
-				items: [
-					{text: 'Hadoop3.3.5(win11)安装', link: '/hadoop/hadoop3.3.5(win11)-install'},
-					{text: 'Hadoop3.3.5(centos7)安装', link: '/hadoop/hadoop3.3.5(centos7)-install'},
-					{text: 'Hadoop集群', link: '/hadoop/hadoop-cluster'},
 				]
 			},
 			'/vue': {
@@ -147,12 +140,6 @@ export default defineConfig({
 					{text: 'vue-pinia', link: '/vue/pinia'},
 					{text: 'vue-axios', link: '/vue/axios'},
 					{text: 'vue-cookie', link: '/vue/cookie'},
-				]
-			},
-			'/gin': {
-				text: 'Gin',
-				items: [
-					{text: 'gin路由框架', link: '/gin/gin-router'},
 				]
 			},
 		},

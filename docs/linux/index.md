@@ -1,4 +1,6 @@
 # Linux
+[Linux命令(Ubuntu)](commands.md)
+
 [项目准备](ProjectPreparation)
 
 [MySQL8.0安装(centos7)](mysql8.0(centos7))

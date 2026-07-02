@@ -305,3 +305,23 @@ $ git stash pop
 $ git archive
 ```
 
+### git上传代码，自动添加时间戳
+
+- **配置别名**：在终端执行以下命令，创建一个名为 `ct`（commit with time）的别名
+
+  ```bash
+  git config --global alias.ct '!git commit -m "Commit at $(date +%Y-%m-%d\ %H:%M:%S)"'
+  ```
+
+  > **注意**：这个命令会**覆盖**你手动输入的提交信息。如果你希望保留自定义信息，可以使用下面这个更灵活的版本：
+  >
+  > ```bash
+  > git config --global alias.tcommit '!f() { git commit -m "$(date +\"%Y-%m-%d %H:%M:%S\") $*"; }; f'
+  > ```
+
+- **使用**：
+
+    - 对于第一种别名，直接运行 `git ct` 即可提交，信息会自动生成。
+    - 对于第二种别名，运行 `git tcommit <你的提交信息>`，时间会被自动添加到你的信息前面。
+
+
