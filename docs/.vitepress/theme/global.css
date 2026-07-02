@@ -19,9 +19,9 @@
 /*    user-select: none;         !* 标准语法 *!*/
 /*}*/
 
-.copy {
-    display: none !important;
-}
+/*.copy {*/
+/*    display: none !important;*/
+/*}*/
 
 /* 站点 Footer：加大内边距和行距，避免备案号被裁 */
 .VPFooter {
