@@ -40,8 +40,8 @@
 </template>
 
 <script setup>
-const outer = ['Django', 'Vue', 'Python', 'Redis', 'Linux', 'Hadoop']
-const inner = ['Gin', 'Git', 'DRF']
+const outer = ['Django', 'Vue', 'Redis']
+const inner = ['Python', 'Git', 'Linux']
 
 function chipStyle(i, total, ring) {
   const angle = (360 / total) * i
