@@ -445,3 +445,179 @@ body:has(.VPHome)::-webkit-scrollbar {
         animation: none;
     }
 }
+
+/* ===== 滚动揭示动画 ===== */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 标题延迟稍短，显得轻快 */
+.vp-doc h2.reveal,
+.vp-doc h3.reveal,
+.vp-doc h4.reveal {
+    transition-duration: 0.4s;
+}
+
+/* 代码块和表格延迟稍长，显得稳重 */
+.vp-doc pre.reveal,
+.vp-doc table.reveal {
+    transition-duration: 0.65s;
+    transform: translateY(24px);
+}
+.vp-doc pre.reveal.visible,
+.vp-doc table.reveal.visible {
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* ===== 页面路由过渡动画 ===== */
+
+/* 文章主体：路由切换时淡入上浮 */
+.vp-doc {
+    animation: doc-enter 0.38s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes doc-enter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vp-doc {
+        animation: none;
+    }
+}
+
+/* ===== 暗色模式切换过渡动画 ===== */
+
+/*
+ * 核心思路：
+ * 1. 初始加载时 html 没有 theme-ready 类 → 所有过渡为 none，避免闪烁
+ * 2. 挂载后延迟注入 theme-ready → 之后每次切换暗色/亮色都有平滑过渡
+ * 3. 只针对会随主题变化的属性：background-color, color, border-color, box-shadow
+ */
+
+/* 页面加载阶段：全局禁用颜色过渡 */
+html:not(.theme-ready) *,
+html:not(.theme-ready) *::before,
+html:not(.theme-ready) *::after {
+    transition: none !important;
+}
+
+/* theme-ready 注入后：关键结构元素启用颜色过渡 */
+html.theme-ready body,
+html.theme-ready .Layout,
+html.theme-ready .VPContent,
+html.theme-ready .VPNav,
+html.theme-ready .VPNavBar,
+html.theme-ready .VPSidebar,
+html.theme-ready .VPFooter,
+html.theme-ready .VPLocalNav,
+html.theme-ready .VPNavScreen,
+html.theme-ready .VPDoc,
+html.theme-ready .vp-doc,
+html.theme-ready .VPHome,
+html.theme-ready .VPPage,
+html.theme-ready .VPFeatures,
+html.theme-ready .VPHero,
+html.theme-ready .VPButton,
+html.theme-ready .container,
+html.theme-ready .content-container,
+html.theme-ready .VPNavBarMenu,
+html.theme-ready .VPSidebarItem,
+html.theme-ready .VPNavBarTitle,
+html.theme-ready .VPLink,
+html.theme-ready .title,
+html.theme-ready .main,
+html.theme-ready .aside,
+html.theme-ready .group,
+html.theme-ready .curtain,
+html.theme-ready .VPSwitch,
+html.theme-ready .VPSwitchAppearance,
+html.theme-ready .VPNavBarHamburger,
+html.theme-ready .VPNavBarSearch,
+html.theme-ready .VPNavBarMenuLink,
+html.theme-ready .VPNavBarMenuGroup,
+html.theme-ready .VPSidebarItem .item,
+html.theme-ready .VPSidebarItem .link,
+html.theme-ready .VPSidebarItem .text,
+html.theme-ready .VPFeature,
+html.theme-ready .vp-doc h1,
+html.theme-ready .vp-doc h2,
+html.theme-ready .vp-doc h3,
+html.theme-ready .vp-doc h4,
+html.theme-ready .vp-doc p,
+html.theme-ready .vp-doc li,
+html.theme-ready .vp-doc th,
+html.theme-ready .vp-doc td,
+html.theme-ready .vp-doc blockquote,
+html.theme-ready .vp-doc code,
+html.theme-ready .article-meta,
+html.theme-ready .article-meta .meta-item,
+html.theme-ready .login-card,
+html.theme-ready .login-container,
+html.theme-ready .tab-switch,
+html.theme-ready .method-switch,
+html.theme-ready .field input,
+html.theme-ready .submit-btn {
+    transition:
+        background-color 0.4s ease,
+        color 0.3s ease,
+        border-color 0.35s ease,
+        box-shadow 0.4s ease;
+}
+
+/* 代码背景过渡稍快，减少视觉拖沓 */
+html.theme-ready .vp-doc code,
+html.theme-ready .vp-doc pre,
+html.theme-ready .vp-doc pre code,
+html.theme-ready div[class*='language-'] {
+    transition:
+        background-color 0.25s ease,
+        color 0.2s ease,
+        border-color 0.25s ease;
+}
+
+/* 自定义组件的过渡 */
+html.theme-ready .chip-inner,
+html.theme-ready .core-label,
+html.theme-ready .core-glow,
+html.theme-ready .core-ring,
+html.theme-ready .bracket {
+    transition:
+        background-color 0.4s ease,
+        color 0.3s ease,
+        border-color 0.35s ease,
+        box-shadow 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.theme-ready *,
+    html.theme-ready *::before,
+    html.theme-ready *::after {
+        transition-duration: 0s !important;
+    }
+}
