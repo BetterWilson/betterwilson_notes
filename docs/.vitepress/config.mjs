@@ -40,7 +40,7 @@ export default defineConfig({
 		sidebar: SIDEBAR,
 
 		socialLinks: [
-			{icon: 'github', link: 'https://github.com/3127993395/Notes'},
+			{icon: 'github', link: 'https://github.com/BetterWilson/Blogs'},
 		],
 
 		lastUpdated: true,
