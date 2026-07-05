@@ -621,3 +621,31 @@ html.theme-ready .bracket {
         transition-duration: 0s !important;
     }
 }
+
+/* ===== 主题切换圆形扩散动画（View Transitions API）===== */
+
+/*
+ * 配合 index.ts 中的 setupThemeTransition：
+ * - 关闭默认的交叉淡入，改用 JS 驱动的 clip-path 圆形扩散
+ * - 让新视图覆盖在旧视图之上，从点击点向外扩散展开
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+    z-index: 1;
+}
+
+::view-transition-new(root) {
+    z-index: 9999;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: none !important;
+    }
+}
