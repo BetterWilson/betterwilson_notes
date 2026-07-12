@@ -35,6 +35,8 @@ export default defineConfig({
 			{text: 'Vue', link: '/vue/'},
 			{text: 'Redis', link: '/redis/'},
 			{text: 'Linux', link: '/linux/'},
+			{text: 'Machine Learning', link: '/machine_learning/'},
+			{text: 'Deep Learning', link: '/deep_learning/'},
 		],
 
 		sidebar: SIDEBAR,
