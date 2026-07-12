@@ -102,9 +102,9 @@ plt.ylabel('Frequency')
 plt.savefig('Normal Distribution')
 ```
 
-![Uniform Distribution](assets/Uniform Distribution.png)
+![Uniform Distribution](assets/Uniform_Distribution.png)
 
-![Normal Distribution](assets/Normal Distribution.png)
+![Normal Distribution](assets/Normal_Distribution.png)
 
 ### 创建线性张量
 
@@ -635,9 +635,9 @@ print("Learned bias:", model.bias.item())
 print("True coef:", coef)
 ```
 
-![Loss during training](assets/Loss during training.png)
+![Loss during training](assets/Loss_during_training.png)
 
-![Fitted vs True Linear Relationship](assets/Fitted vs True Linear Relationship.png)
+![Fitted vs True Linear Relationship](assets/Fitted_vs_True_Linear_Relationship.png)
 
 ## Dataset
 

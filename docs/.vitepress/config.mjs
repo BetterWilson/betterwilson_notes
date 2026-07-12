@@ -1,6 +1,6 @@
 import {defineConfig} from 'vitepress'
 import {SIDEBAR} from './sidebar-data.js'
-import katex from 'markdown-it-katex'
+import mathjax3 from 'markdown-it-mathjax3'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -10,7 +10,7 @@ export default defineConfig({
 
 	markdown: {
 		config: (md) => {
-			md.use(katex)
+			md.use(mathjax3)
 		}
 	},
 
