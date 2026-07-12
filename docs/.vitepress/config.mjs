@@ -1,11 +1,19 @@
 import {defineConfig} from 'vitepress'
 import {SIDEBAR} from './sidebar-data.js'
+import katex from 'markdown-it-katex'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
 	title: "BetterWilson Notes",
 	description: "Notes from BetterWilson",
 	ignoreDeadLinks: true,
+
+	markdown: {
+		config: (md) => {
+			md.use(katex)
+		}
+	},
+
 	themeConfig: {
 
 		search: {

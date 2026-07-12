@@ -117,7 +117,7 @@ export const SIDEBAR = {
         items: [
             {text: '依赖安装', link: '/deep_learning/dependencies'},
             {text: 'Pytorch', link: '/deep_learning/Pytorch'},
-            {text: 'Pytorch分类与回归', link: '/deep_learning/PyTorchCR'},
+            {text: 'Pytorch分类与回归', link: '/deep_learning/PytorchCR'},
             {text: '神经网络概念', link: '/deep_learning/neural_network'},
         ]
     }

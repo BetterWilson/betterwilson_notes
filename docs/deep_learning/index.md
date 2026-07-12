@@ -3,6 +3,6 @@
 
 [Pytorch](Pytorch)
 
-[Pytorch分类与回归](PyTorchCR)
+[Pytorch分类与回归](PytorchCR)
 
 [神经网络概念](neural_network)

@@ -3,6 +3,7 @@ import { onMounted, watch, nextTick } from 'vue'
 import { useRoute, useData } from 'vitepress'
 import mediumZoom from 'medium-zoom'
 import './global.css'
+import 'katex/dist/katex.min.css'
 
 import {h} from 'vue';
 import Theme from 'vitepress/theme';

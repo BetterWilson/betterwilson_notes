@@ -1,61 +1,55 @@
 {
-  "hash": "e3d5c4a4",
+  "hash": "82b18782",
   "configHash": "ab154228",
-  "lockfileHash": "bb17c473",
-  "browserHash": "c1e85171",
+  "lockfileHash": "a9926708",
+  "browserHash": "df958fdf",
   "optimized": {
     "vue": {
       "src": "../../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "083631f2",
+      "fileHash": "2997ac7c",
       "needsInterop": false
     },
     "vitepress > @vue/devtools-api": {
       "src": "../../../../node_modules/@vue/devtools-api/dist/index.js",
       "file": "vitepress___@vue_devtools-api.js",
-      "fileHash": "680631f6",
+      "fileHash": "b2caf007",
       "needsInterop": false
     },
     "vitepress > @vueuse/core": {
       "src": "../../../../node_modules/@vueuse/core/index.mjs",
       "file": "vitepress___@vueuse_core.js",
-      "fileHash": "e590fd6b",
+      "fileHash": "bf55e805",
       "needsInterop": false
     },
     "vitepress > @vueuse/integrations/useFocusTrap": {
       "src": "../../../../node_modules/@vueuse/integrations/useFocusTrap.mjs",
       "file": "vitepress___@vueuse_integrations_useFocusTrap.js",
-      "fileHash": "6423253f",
+      "fileHash": "94f29ac9",
       "needsInterop": false
     },
     "vitepress > mark.js/src/vanilla.js": {
       "src": "../../../../node_modules/mark.js/src/vanilla.js",
       "file": "vitepress___mark__js_src_vanilla__js.js",
-      "fileHash": "b0f33379",
+      "fileHash": "0c1cc754",
       "needsInterop": false
     },
     "vitepress > minisearch": {
       "src": "../../../../node_modules/minisearch/dist/es/index.js",
       "file": "vitepress___minisearch.js",
-      "fileHash": "6ddb08f4",
+      "fileHash": "f68d7f3a",
       "needsInterop": false
     },
     "medium-zoom": {
       "src": "../../../../node_modules/medium-zoom/dist/medium-zoom.esm.js",
       "file": "medium-zoom.js",
-      "fileHash": "8a277ed2",
-      "needsInterop": false
-    },
-    "vue-router": {
-      "src": "../../../../node_modules/vue-router/dist/vue-router.mjs",
-      "file": "vue-router.js",
-      "fileHash": "bded0722",
+      "fileHash": "f29c16b2",
       "needsInterop": false
     },
     "@giscus/vue": {
       "src": "../../../../node_modules/@giscus/vue/dist/index.js",
       "file": "@giscus_vue.js",
-      "fileHash": "e338f88c",
+      "fileHash": "a72e8f92",
       "needsInterop": false
     }
   },
