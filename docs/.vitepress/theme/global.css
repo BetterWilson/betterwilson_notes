@@ -468,7 +468,14 @@ body:has(.VPHome)::-webkit-scrollbar {
     transition-duration: 0.4s;
 }
 
-/* 代码块和表格延迟稍长，显得稳重 */
+/* 代码块和表格延迟稍长，显得稳重
+   注意：代码块内的 pre 不参与 reveal 动画，避免超大代码块因
+   IntersectionObserver 时序问题导致 opacity:0 无法恢复 */
+.vp-doc [class*='language-'] pre.reveal,
+.vp-doc [class*='language-'] pre.reveal.visible {
+    opacity: 1 !important;
+    transform: none !important;
+}
 .vp-doc pre.reveal,
 .vp-doc table.reveal {
     transition-duration: 0.65s;
