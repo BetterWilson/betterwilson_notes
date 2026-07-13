@@ -23,6 +23,11 @@ export default defineConfig({
 		// https://vitepress.dev/reference/default-theme-config
 		siteTitle: "BetterWilson Notes",
 
+		outline: {
+			level: [2, 6],
+			label: '目录'
+		},
+
 		logo: "/logo.png",
 
 		head: [
