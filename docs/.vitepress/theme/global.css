@@ -57,6 +57,62 @@ body {
     background: transparent !important;
 }
 
+/* ===== 导航栏自适应：宽屏横向排列，窄屏/平板折叠为汉堡菜单 ===== */
+
+/*
+ * VitePress 默认在 960px 才切换为汉堡菜单，但本项目有 9 个导航项，
+ * 在平板上（768~1200px）横向排列会溢出或挤压。将断点提前到 1200px，
+ * 让 iPad / 小平板也能使用折叠菜单。
+ *
+ * 注意：VPNavScreen 的打开/关闭由 index.ts 中的 setupNavResponsive()
+ * 通过 JS 手动接管（VitePress 原生逻辑仅在 <=960px 生效）。
+ */
+
+/* 窄屏/平板（< 1200px）：显示汉堡按钮，隐藏横向菜单 */
+@media (max-width: 1199px) {
+    .VPNavBarMenu,
+    .VPNavBarMenuGroup {
+        display: none !important;
+    }
+
+    .VPNavBarHamburger {
+        display: flex !important;
+    }
+
+    /* VitePress 原生设计里，"更多"弹出按钮（VPNavBarExtra，vpi-more-horizontal）
+       与汉堡按钮按断点互斥：前者 768~1279px 显示，后者仅 <=767px 显示，两者从不共存。
+       本项目把汉堡断点提到 1199px 后，768~1199px 区间两个按钮同时出现且相邻，
+       "更多"弹层（position:absolute; right:0）会叠在汉堡按钮上，造成"点一个影响另一个"的错觉。
+       这里在汉堡可见区间隐藏"更多"按钮，恢复原生互斥关系。
+       功能无损：汉堡的全屏菜单 VPNavScreen 已含外观切换与社交链接。 */
+    .VPNavBarExtra {
+        display: none !important;
+    }
+
+    /* VitePress 的 scoped 样式在 >=768px 会把 VPNavScreen 设为 display:none，
+       导致 768~1199px 平板区间点击汉堡后弹层被隐藏（VPNavScreen 用 v-if 渲染，
+       打开时才进 DOM，这里覆盖其 display 即可，关闭时元素不存在，规则无副作用）。
+       弹层的开/关沿用 VitePress 原生的 toggleScreen 逻辑，无需 JS 接管。 */
+    .VPNavScreen {
+        display: block !important;
+    }
+}
+
+/* 宽屏（>= 1200px）：显示横向菜单，隐藏汉堡按钮，强制关闭弹层 */
+@media (min-width: 1200px) {
+    .VPNavBarMenu {
+        display: flex !important;
+    }
+
+    .VPNavBarHamburger {
+        display: none !important;
+    }
+
+    .VPNavScreen {
+        display: none !important;
+    }
+}
+
 /* 移动端菜单弹层：半透明磨砂，让粒子透出来；去掉与 nav 之间的分割线 */
 .VPNavScreen {
     z-index: 60 !important;

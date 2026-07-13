@@ -117,7 +117,6 @@ function setupThemeTransition(isDark) {
     )
 }
 
-// ---------- 主题导出 ----------
 export default {
     extends: DefaultTheme,
     enhanceApp({ app }) {
