@@ -629,6 +629,69 @@ html.theme-ready .bracket {
     }
 }
 
+/* ===== MathJax / LaTeX 公式自适应 ===== */
+
+/*
+ * MathJax 3 渲染的 LaTeX 公式（尤其是矩阵、多行联立、长分式等）
+ * 在小屏幕和平板上容易溢出内容区。通过 overflow-x:auto 让宽公式
+ * 出现横向滚动条，同时保证容器不撑破页面布局。
+ *
+ * 涉及两种公式：
+ * - 块级公式（$$...$$）：mjx-container[display="true"]
+ * - 行内公式（$...$）：mjx-container:not([display="true"])
+ */
+
+/* 块级公式：水平溢出时滚动 */
+mjx-container[display="true"] {
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    /* 移动端平滑惯性滚动 */
+    -webkit-overflow-scrolling: touch;
+    /* 给滚动条留一点呼吸空间 */
+    padding: 2px 0;
+}
+
+/* 行内公式：超长时也可滚动，不撑破段落 */
+mjx-container:not([display="true"]) {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    vertical-align: middle;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* SVG 保持原始宽度，不缩放变形，由外层容器负责滚动 */
+mjx-container > svg {
+    max-width: none;
+    display: block;
+}
+
+/* 移动端/平板：公式上下稍加间距，滚动条更容易触发 */
+@media (max-width: 768px) {
+    mjx-container[display="true"] {
+        padding: 4px 0;
+    }
+}
+
+/* 暗色模式下的公式滚动条配色（可选，Webkit 内核） */
+mjx-container[display="true"]::-webkit-scrollbar {
+    height: 4px;
+}
+
+mjx-container[display="true"]::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background-color: var(--vp-c-text-3, #999);
+}
+
+/* 尊重用户的减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+    mjx-container {
+        -webkit-overflow-scrolling: auto;
+    }
+}
+
 /* ===== 主题切换圆形扩散动画（View Transitions API）===== */
 
 /*
