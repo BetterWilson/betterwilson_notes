@@ -150,8 +150,7 @@ body {
     z-index: 2;
 }
 .VPNavBar,
-.VPNavBar .wrapper,
-.VPLocalNav {
+.VPNavBar .wrapper {
     background: transparent !important;
     backdrop-filter: blur(3px) saturate(130%);
     -webkit-backdrop-filter: blur(3px) saturate(130%);
@@ -159,19 +158,45 @@ body {
     z-index: 2;
 }
 
-/* VPSidebar 是移动端 slide-in drawer + 桌面固定侧栏，都是 position: fixed
-   —— 不能用 position: relative 覆盖，会破坏 drawer 动画。只覆盖 background */
-.VPSidebar {
-    background-color: var(--vp-sidebar-bg-color) !important;
-    backdrop-filter: blur(10px) saturate(140%);
-    -webkit-backdrop-filter: blur(10px) saturate(140%);
+/* VPLocalNav 自身不能带 backdrop-filter：它是"目录"下拉弹层(.items)的祖先，
+   祖先的 backdrop-filter 会建立 backdrop root，导致子级下拉只能磨砂横条那一小条区域、
+   而磨不到它盖住的正文（与 CLAUDE.md 里 .VPNav 不加 backdrop-filter 让 VPNavScreen
+   正常磨砂同理）。改用 ::before 伪元素给横条本身做磨砂 —— 伪元素与 .items 是兄弟、
+   不是祖先，互不影响，下拉即可正常磨砂 */
+.VPLocalNav {
+    background: transparent !important;
+    position: relative;
+    z-index: 2;
+}
+.VPLocalNav::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(3px) saturate(130%);
+    -webkit-backdrop-filter: blur(3px) saturate(130%);
+    z-index: -1;
+    pointer-events: none;
 }
 
-/* VPBackdrop（移动端 drawer 打开时的黑色遮罩）：改成极淡，让粒子透出 */
+/* VPSidebar 是移动端 slide-in drawer + 桌面固定侧栏，都是 position: fixed
+   —— 不能用 position: relative 覆盖，会破坏 drawer 动画。只覆盖 background
+   —— 毛玻璃效果与 VPNavScreen 菜单统一：blur(6px) saturate(140%)
+   —— 不用 CSS 变量（会被 VitePress scoped 样式覆写为纯色），直接硬编码半透明值 */
+.VPSidebar {
+    background: rgba(255, 255, 255, 0.30) !important;
+    backdrop-filter: blur(6px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(6px) saturate(140%) !important;
+}
+.dark .VPSidebar {
+    background: rgba(20, 22, 32, 0.25) !important;
+}
+
+/* VPBackdrop（移动端 drawer 打开时的黑色遮罩）：改成极淡，让粒子透出
+   —— 毛玻璃效果与 VPNavScreen 菜单统一 */
 .VPBackdrop {
     background: rgba(0, 0, 0, 0.15) !important;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(6px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(6px) saturate(140%) !important;
 }
 .dark .VPBackdrop {
     background: rgba(0, 0, 0, 0.35) !important;
@@ -180,6 +205,25 @@ body {
 /* VPLocalNav 底部分割线（--vp-c-gutter 已透明，这里再兜底一次） */
 .VPLocalNav {
     border-bottom: none !important;
+}
+
+/* 移动端"目录"下拉弹层（VPLocalNavOutlineDropdown .items）：默认 .header/.outline
+   用 --vp-c-bg-soft 是纯白实底。改成半透明磨砂，与汉堡菜单 VPNavScreen 统一。
+   磨砂加在外层 .items 上，内部 header/outline 透明，避免叠加两层模糊 */
+.VPLocalNavOutlineDropdown .items {
+    background: rgba(255, 255, 255, 0.30) !important;
+    backdrop-filter: blur(6px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(6px) saturate(140%) !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+.dark .VPLocalNavOutlineDropdown .items {
+    background: rgba(20, 22, 32, 0.25) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+.VPLocalNavOutlineDropdown .header,
+.VPLocalNavOutlineDropdown .outline {
+    background: transparent !important;
 }
 
 /* NavBar 里最"顽固"的白底就是 content-body —— 强制半透明 + 极轻磨砂 */
@@ -251,6 +295,11 @@ body {
 
 /* ===== 首页：单屏无滚动 + 动态效果 ===== */
 
+/* 首页：隐藏阅读进度条 */
+body:has(.VPHome) .reading-progress-bar {
+    display: none !important;
+}
+
 /* 首页：允许滚动以露出 footer，但隐藏滚动条不显示在右侧 */
 html:has(.VPHome),
 body:has(.VPHome) {
@@ -287,9 +336,9 @@ body:has(.VPHome)::-webkit-scrollbar {
     z-index: 1;
 }
 
-/* Hero + Features 紧凑排布，压掉大间距；顶部留够高度让 HeroVisual 圆圈上方 chip 不被 nav 挡 */
+/* Hero + Features 紧凑排布，压掉大间距；顶部留够高度让标题和 HeroVisual 圆圈上方 chip 不被 nav 挡 */
 .VPHome .VPHero {
-    padding: 65px 24px 8px !important;
+    padding: 80px 24px 8px !important;
 }
 
 /* 横向布局：左侧标题+按钮，右侧图片；下方是三张卡片 */
@@ -452,8 +501,25 @@ body:has(.VPHome)::-webkit-scrollbar {
 
 /* 小屏 (<= 960px)：单列 + 卡片折行；不再锁死 100vh，允许自然滚动 */
 @media (max-width: 960px) {
+    /* 解除桌面端 100vh 锁定，允许首页自然滚动 */
+    body:has(.VPHome) .Layout {
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow: visible !important;
+    }
+    body:has(.VPHome) .VPContent {
+        overflow: visible !important;
+        display: block !important;
+    }
+
+    /* 允许 HeroVisual 的轨道 chip 超出容器边界，不被裁切 */
+    .VPHome {
+        overflow: visible !important;
+    }
+
+    /* 增加顶部内边距，让 HeroVisual 的轨道 chip 不会被顶部导航栏遮挡 */
     .VPHome .VPHero {
-        padding: 40px 20px 12px !important;
+        padding: 72px 20px 12px !important;
     }
     .VPHome .VPHero .container {
         gap: 12px;
@@ -481,10 +547,10 @@ body:has(.VPHome)::-webkit-scrollbar {
     }
 }
 
-/* 极窄屏 (<= 480px)：进一步压缩 */
+/* 极窄屏 (<= 480px)：进一步压缩，但保留足够顶部空间避免被 nav 遮挡 */
 @media (max-width: 480px) {
     .VPHome .VPHero {
-        padding: 32px 16px 8px !important;
+        padding: 64px 16px 8px !important;
     }
     .VPHome .VPHero .image {
         width: 180px !important;
