@@ -127,7 +127,7 @@ $$
 > 原始数据 X (n×d)          目标值 y (n×1)
 >      │                         │
 >      ▼                         │
-> ① 加一列全 1 → X_b (n×(d+1))    │
+> ① 加一列全 1 → X_b (n×(d+1))	 │
 >      │                         │
 >      ▼                         ▼
 > ② 计算 XᵀX  (d+1)×(d+1)    ③ 计算 Xᵀy  (d+1)×1
@@ -369,7 +369,7 @@ $\frac{\partial J(\theta)}{\partial\theta_i}$如何理解：
 
   ![image-20260627132707040](assets/image-20260627132707040.png)
 
-#### 全梯度下降法FGD(Focus Group Discussion)
+#### 全梯度下降法FGD(Full Gradient Descent)
 
 $$
 \theta_{i+1}=\theta_i-\eta\nabla J(\theta)
@@ -425,14 +425,14 @@ $$
 >
 > 这就是为什么深度学习几乎都用 MGD（Mini-batch GD）！
 
-#### 随机平均梯度下降法ASGD(Average Stochastic Gradient Descent)
+#### 随机平均梯度下降法ASGD(Averaged Stochastic Gradient Descent)
 
 $$
 \bar{\theta_t}=\frac{1}{t}\sum_{i=1}^{t}\theta_i
 $$
 
-- 把所有历史参数做算术平均，最后用平均参数
-- 在深度学习中的EMA机制中使用
+- 把所有历史参数做算术平均，最后用平均参数（注意：这里的 ASGD 是"参数平均"策略，不同于 SAG / SAGA 等梯度平均算法）
+- 在深度学习中的EMA（指数移动平均）机制中也有类似思想
 
 #### 示例-加利福尼亚房价
 

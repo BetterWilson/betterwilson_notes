@@ -168,7 +168,11 @@ x = torch.randint(0, 10, (2, 3))
 x = x.numpy()
 print(x)
 
-# 张量转换为列表
+# ndarray 转换回张量
+t = torch.from_numpy(x)  # 共享内存；torch.tensor(x) 则会拷贝一份
+print(t)
+
+# ndarray 转换为列表（注意：此时 x 已是 ndarray，调用的是 numpy 的 tolist()，不是张量方法）
 x = x.tolist()
 print(x)
 ```
@@ -272,7 +276,7 @@ print(x)
 
 ## 张量的运算函数
 
-- `sum()`求和 
+- `sum()`求和
 - `mean()`求均值
 - `max()`求最大值
 - ` min()`求最小值
@@ -366,7 +370,7 @@ print(x[[0, 1], [0, 1]])  # 返回(0, 0)和(1, 1)
 print(x[[0, 1], :])  # 返回(0, :), (1, :)
 
 # 范围索引
-print(x[1:3, 1:3])  # 返回第一行到第三行，第一列到第三列
+print(x[1:3, 1:3])  # 返回第2~3行、第2~3列（索引1、2，切片含头不含尾）
 
 # 布尔索引
 # 返回所有大于5的元素
@@ -435,7 +439,9 @@ x = x.squeeze(dim=1)
 print(x.shape)
 
 # 调整形状，需要连续内存
-# 经过升维和降维操作，张量的数据存储位置（内存）可能会改变，所以内存可能不连续
+# transpose/permute 等操作是"视图"：底层数据并没有移动，只是修改了 stride 等元信息，
+# 导致张量的逻辑顺序与内存中的物理顺序不一致——这才是"内存不连续"的来源
+# （unsqueeze/squeeze 本身通常不破坏连续性，此处不连续是前面 transpose/permute 造成的）
 # 使用view方法，如果内存不连续，那么会报错
 # x = x.view(3,-1)
 # print(x)
@@ -483,7 +489,7 @@ print(z.shape)
 
 训练神经网络时，最常用的算法就是反向传播
 
-在该算法中，参数（模型权重）会根据损失函数关于对应的参数的梯度进行调整。为了计算这些梯度，Pytorch内置了自动微分模块，具体来说就是名为`torch.autograd`的自动微分引擎，支持任意计算图（计算图就是建好的神经网络）的自动梯度计算
+在该算法中，参数（模型权重）会根据损失函数关于对应的参数的梯度进行调整。为了计算这些梯度，Pytorch内置了自动微分模块，具体来说就是名为`torch.autograd`的自动微分引擎，支持任意计算图的自动梯度计算。计算图是由张量运算构成的有向无环图（不限于神经网络，任何张量计算都会建图）；PyTorch 是动态图，在前向计算执行时即时构建
 
 ![image-20260630151811179](assets/image-20260630151811179.png)
 
@@ -499,9 +505,9 @@ print(z.shape)
 
 - 通过模型$y'=w·x+b$可以得到拟合效果
 
-- 然后对拟合效果与真是结果求损失函数
+- 然后对拟合效果与真实结果求损失函数
 
-- 利用损失函数，对$w$与$b$求偏导，得到梯度下降的深度
+- 利用损失函数，对$w$与$b$求偏导，得到梯度（梯度决定下降的方向，配合学习率$\eta$决定步长）
   $$
   w_n=w_{n-1}-\eta\frac{\partial Loss}{\partial w}
   $$
@@ -519,7 +525,7 @@ print(z.shape)
 ```python
 import torch
 
-# 准备数据: 参数与目标值
+# 准备数据: 特征与目标值
 x = torch.tensor(5)  # 特征
 y = torch.tensor(0.)
 
@@ -580,7 +586,8 @@ optimizer = optim.SGD(model.parameters(), lr=0.01)  # learning rate 学习率
 # 为什么全梯度下降，比mini-batch损失下降的更慢
 #
 # 全梯度下降（Batch Gradient Descent）每次参数更新都需要遍历全部的训练数据，计算完整的梯度。
-# 这导致每一次权重更新都很慢，特别是在数据量较大时，每次epoch的耗时很长。
+# 就单个epoch的计算量而言，它和mini-batch都要完整遍历一遍数据，耗时其实相当；
+# 它慢在每次参数更新的代价很大、每个epoch只更新一次参数（更新频率低）。
 # 此外，由于每次都用全部数据，模型参数的更新方向每次都很“稳定”，可能会卡在某些平坦区域，收敛速度慢。
 #
 # Mini-batch（小批量梯度下降）则是每次用一个小批数据计算梯度和更新参数。
@@ -597,7 +604,7 @@ for epoch in range(200):
         loss = criterion(y_pred, yb)  # 计算损失
         optimizer.zero_grad()  # 梯度清零
         loss.backward()  # 反向传播
-        optimizer.step()  # 更新参数 w=w-lr*w.gard
+        optimizer.step()  # 更新参数 w=w-lr*w.grad
         epoch_loss += loss.item() * xb.shape[0]  # 加权累计损失
     losses.append(epoch_loss / len(X))  # 记录每轮平均损失
 
@@ -635,9 +642,9 @@ print("Learned bias:", model.bias.item())
 print("True coef:", coef)
 ```
 
-![Loss during training](assets/Loss_during_training.png)
+![Loss during training](assets/Loss during training.png)
 
-![Fitted vs True Linear Relationship](assets/Fitted_vs_True_Linear_Relationship.png)
+![Fitted vs True Linear Relationship](assets/Fitted vs True Linear Relationship.png)
 
 ## Dataset
 
@@ -645,9 +652,9 @@ Dataset是Pytorch中的一个抽象类，用于表示数据集，允许用户自
 
 PyTorch 要求自定义Dataset必须继承`torch.utils.data.Dataset`，并实现 3 个核心方法—— 这 3 个方法就是 “数据容器的说明书”，告诉框架 “数据有多少、怎么取”：
 
-- `__init(self)__`：加载原始数据，保存数据处理需要的配置，如样本的大小，总个数等，相当于 “把所有包裹装进快递箱”
-- `__len(self)__`：作用是告诉框架，容器中有多少个样本，返回总样本个数即可
-- `__getitem(self, index)__`：通过数据的索引，获取样本
+- `__init__(self)`：加载原始数据，保存数据处理需要的配置，如样本的大小，总个数等，相当于 “把所有包裹装进快递箱”
+- `__len__(self)`：作用是告诉框架，容器中有多少个样本，返回总样本个数即可
+- `__getitem__(self, index)`：通过数据的索引，获取样本
 
 ```python
 # 自定义Dataset
@@ -680,7 +687,7 @@ DataLoader是 PyTorch 中用于批量加载数据的工具
 
 它允许用户根据自定义的Dataset对象创建一个数据加载器，用于批量加载和处理数据
 
-DataLoader可以按照批次大小对数据集进行分割，并提供多线程数据加载和预取功能
+DataLoader可以按照批次大小对数据集进行分割，并提供多进程数据加载（通过 `num_workers` 参数，官方称 multi-process data loading，用子进程绕开 Python 的 GIL）和预取功能
 
 ```python
 from torch.utils.data import DataLoader
@@ -724,7 +731,7 @@ for data in dataloader:
   - 潜在的过拟合风险: 如果数据集有某种顺序，模型可能会记住这种顺序，导致过拟合
   - 梯度下降效果可能较差: 在固定数据顺序下，梯度下降可能会遇到一些问题，例如容易陷入局部最小值，训练过程可能不如随机打乱时平稳
 - 对损失的影响
-  - `shuffle=True`: 通常会导致损失函数的变化更加平滑，因为每个 batch 的数据是随机的，梯度下降会更稳定，损失会逐渐减少
+  - `shuffle=True`: batch 级的损失曲线通常会因随机性而**更抖动**（而非更平滑），但每个 batch 的梯度是对全数据梯度的近似无偏估计，消除了数据顺序带来的系统性偏差，整体收敛更健康、泛化更好
   - `shuffle=False`: 损失函数的变化可能会有一定的模式或周期性，因为每个 epoch 的数据顺序是固定的。如果数据有某种顺序性，模型可能会更快地在这种顺序上取得较低的训练损失，但这并不意味着模型的泛化能力更好
 
 - 结论
