@@ -26,7 +26,7 @@ There are no tests, linters, or type checks configured.
 `docs/.vitepress/theme/index.ts` extends `DefaultTheme` and wires custom behavior through `setup()` and a custom `Layout()`:
 
 **`Layout()` slot wiring** (this is where custom components attach):
-- `layout-top` → `HomeAnimations` (particle background) + `ReadingProgress` (bar). Note: `layout-top` renders on **every** page, so the particle background currently runs site-wide, not just on the home page.
+- `layout-top` → `ReadingProgress` (bar).
 - `home-hero-image` → `HeroVisual` (replaces the default hero illustration).
 - `doc-before` → `ArticleMeta` (category / reading time / char count / last-updated row, article pages only).
 - `doc-after` → `RelatedArticles` then `GiscusComment`.

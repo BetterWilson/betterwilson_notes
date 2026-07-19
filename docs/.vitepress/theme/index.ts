@@ -8,7 +8,6 @@ import {h} from 'vue';
 import Theme from 'vitepress/theme';
 import GiscusComment from './components/GiscusComment.vue';
 import LoginPage from './components/LoginPage.vue';
-import HomeAnimations from './components/HomeAnimations.vue';
 import HeroVisual from './components/HeroVisual.vue';
 import ReadingProgress from './components/ReadingProgress.vue';
 import ArticleMeta from './components/ArticleMeta.vue';
@@ -153,7 +152,7 @@ export default {
     },
     Layout() {
         return h(Theme.Layout, null, {
-            'layout-top': () => [h(HomeAnimations), h(ReadingProgress)],
+            'layout-top': () => [h(ReadingProgress)],
             'home-hero-image': () => h(HeroVisual),
             'doc-before': () => h(ArticleMeta),
             'doc-after': () => [h(RelatedArticles), h(GiscusComment)],
