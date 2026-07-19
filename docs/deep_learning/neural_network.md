@@ -1603,10 +1603,9 @@ $$\boxed{\text{Training Memory} = \underbrace{P}_{\text{参数}} + \underbrace{P
 
 ```python
 """
-FashionMNIST 分类 + 加利福尼亚房价回归 综合实战
-================================================
-本脚本整合了文件夹1中所有 notebook 的内容，仿照 2.py 的代码风格，
-涵盖以下主题：
+FashionMNIST 分类
+==========================
+本脚本涵盖以下主题：
   1. FashionMNIST 基础分类 —— 3层全连接网络（784→300→100→10）
   2. FashionMNIST 分类 + 数据标准化 + 早停（以准确率为判据）
   3. FashionMNIST 深度神经网络 DNN（20层, ReLU, 无早停）
@@ -1623,14 +1622,10 @@ import torch  # PyTorch 核心库，提供张量运算与自动求导
 import torch.nn as nn  # 神经网络模块，提供 Linear、ReLU、SELU、BatchNorm 等层与损失函数
 import torch.nn.init as init  # 参数初始化模块，提供 Xavier 等初始化方法
 import torch.optim as optim  # 优化器模块，提供 SGD、Adam 等
-from torch.utils.data import Dataset, DataLoader  # 数据集基类与批量加载器
 from torch.utils.tensorboard import SummaryWriter  # TensorBoard 写入器，用于记录训练日志
 from torchvision import datasets, transforms  # torchvision：提供 FashionMNIST 数据集与图像变换
 import matplotlib.pyplot as plt  # 绘图库，用于训练曲线绘制与样本可视化
 import os  # 操作系统接口，用于创建目录、判断文件是否存在等
-from sklearn.datasets import fetch_california_housing  # sklearn 自带的加利福尼亚房价数据集
-from sklearn.preprocessing import StandardScaler  # 标准化器，将特征缩放为均值 0、方差 1
-from sklearn.model_selection import train_test_split  # 用于划分训练集与验证集
 
 # 设置中文字体，防止 matplotlib 中文显示为方块
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
@@ -1713,81 +1708,6 @@ class Trainer:
         acc = 100 * correct / total if total > 0 else 0  # 计算准确率（百分比）
         avg_loss = running_loss / len(dataloader)  # 计算平均损失
         return avg_loss, acc  # 返回平均损失和准确率
-
-    def regression_evaluating(self, dataloader):
-        """回归任务评估：仅返回平均损失（无准确率概念）。"""
-        self.model.eval()  # 切换到评估模式
-        running_loss = 0.0  # 累计损失
-        with torch.no_grad():  # 关闭梯度计算
-            for data, target in dataloader:  # 遍历每个 batch
-                data = data.to(self.device)  # 输入移至设备
-                target = target.to(self.device)  # 目标值移至设备
-                output = self.model(data)  # 前向传播得到预测值
-                loss = self.criterion(output, target)  # 计算损失
-                running_loss += loss.item()  # 累加损失
-        avg_loss = running_loss / len(dataloader)  # 计算平均损失
-        return avg_loss  # 返回平均损失
-
-    def regression_train(self):
-        """回归任务训练循环：仅记录损失，不计算准确率。"""
-        self.model.to(self.device)  # 模型移至设备
-        for epoch in range(self.epochs):  # 逐轮训练
-            self.model.train()  # 切换到训练模式
-            running_loss = 0.0  # 本轮损失累加器清零
-            for batch_idx, (inputs, targets) in enumerate(self.trainloader):  # 遍历 batch
-                inputs = inputs.to(self.device)  # 输入移至设备
-                targets = targets.to(self.device)  # 目标移至设备
-                self.optimizer.zero_grad()  # 梯度清零（PyTorch 默认累加梯度）
-                outputs = self.model(inputs)  # 前向传播
-                loss = self.criterion(outputs, targets)  # 计算损失
-                loss.backward()  # 反向传播求梯度
-                self.optimizer.step()  # 更新参数: w = w - lr * grad
-                running_loss += loss.item()  # 累加损失
-                if (batch_idx + 1) % 100 == 0:  # 每 100 步打印一次
-                    print(
-                        f"[Regression] Epoch [{epoch + 1}/{self.epochs}], Step [{batch_idx + 1}/{len(self.trainloader)}], Loss: {loss.item():.4f}")
-            avg_train_loss = running_loss / len(self.trainloader)  # 本轮平均训练损失
-            train_loss = self.regression_evaluating(self.trainloader)  # 评估训练集损失
-            val_loss = self.regression_evaluating(self.valloader)  # 评估验证集损失
-            self.train_losses.append(train_loss)  # 记录训练损失
-            self.val_losses.append(val_loss)  # 记录验证损失
-            print(
-                f"[Regression] Epoch [{epoch + 1}/{self.epochs}], Loss: {avg_train_loss:.4f}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
-            # ====== TensorBoard 日志记录 ======
-            if self.use_tensorboard and self._writer is not None:  # 若启用写入器
-                self._writer.add_scalar('Train/Loss', train_loss, epoch + 1)  # 记录训练损失
-                self._writer.add_scalar('Val/Loss', val_loss, epoch + 1)  # 记录验证损失
-                for i, param_group in enumerate(self.optimizer.param_groups):  # 遍历每个参数组
-                    self._writer.add_scalar(f'LR/group_{i}', param_group['lr'], epoch + 1)  # 记录学习率
-
-            # ====== 早停与模型保存 ======
-            metric = val_loss  # 回归任务只用验证损失作为度量
-            if self.early_stopping:  # 若启用早停
-                if self.best_metric is None or metric < self.best_metric:  # 首次或损失下降
-                    self.best_metric = metric  # 更新最优损失
-                    self.early_stop_counter = 0  # 重置计数器
-                    self.best_epoch = epoch + 1  # 记录最优轮次
-                    torch.save(self.model.state_dict(), self.save_path)  # 保存最优权重
-                    print(f"[Info][Regression] Model improved at epoch {epoch + 1}, saving to {self.save_path}")
-                else:  # 损失未下降
-                    self.early_stop_counter += 1  # 计数器加一
-                    print(f"[Info][Regression] Early stop counter: {self.early_stop_counter}/{self.patience}")
-                    if self.early_stop_counter >= self.patience:  # 超过容忍度则停止
-                        print(
-                            f"[Regression] Early stopping triggered at epoch {epoch + 1}. Best epoch: {self.best_epoch}, Best Loss: {self.best_metric:.4f}")
-                        if os.path.isfile(self.save_path):  # 若已保存过最优权重
-                            self.model.load_state_dict(torch.load(self.save_path, map_location=self.device))  # 恢复最优权重
-                        if self.use_tensorboard and self._writer is not None:  # 关闭写入器
-                            self._writer.close()
-                        return  # 结束训练
-
-        # 全部轮次跑完且未触发早停：加载最优权重
-        if self.early_stopping and self.best_metric is not None:  # 曾保存过最优
-            print(f"[Regression] Training finished. Loading best model from {self.save_path}")
-            if os.path.isfile(self.save_path):  # 若存在权重文件
-                self.model.load_state_dict(torch.load(self.save_path, map_location=self.device))  # 恢复最优权重
-        if self.use_tensorboard and self._writer is not None:  # 训练结束关闭写入器
-            self._writer.close()
 
     def _is_improvement(self, metric):
         """根据早停模式判断当前度量是否优于历史最优。"""
@@ -2306,9 +2226,6 @@ print(f"模型6 测试集结果 - Test Loss: {test_loss:.4f}, Test Accuracy: {te
 #    AlphaDropout 是专门为 SELU 设计的 Dropout 变体，
 #    在训练时随机将神经元置为 SELU 的负饱和值（而非 0），
 #    以保持自归一化特性。
-#    ⚠️ 注意：本模型故意使用 ReLU + AlphaDropout 作为对照实验——
-#    AlphaDropout 的均值/方差修正是按 SELU 推导的，配 ReLU 并不合适，
-#    正确搭配见模型8（SELU + AlphaDropout）。
 # ----------------------------------------------------------
 
 class DeepNN_AlphaDropout(nn.Module):  # 带 AlphaDropout 的深度网络（ReLU + AlphaDropout）

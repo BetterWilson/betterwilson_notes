@@ -6,3 +6,7 @@
 [Pytorch分类与回归](PytorchCR)
 
 [神经网络概念](neural_network)
+
+[自定义损失/全连接层/求导与反向传播](custom)
+
+[卷积神经网络CNN](cnn)
