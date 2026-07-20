@@ -2063,7 +2063,7 @@ optimizer = optim.Adam(model.fc.parameters(), lr=1e-3)
 
 > **经验法则**：数据量不足一万张时，**几乎总是优先考虑迁移学习**。这是深度学习实践中最有效的"捷径"之一。
 
-## ResNet50
+## [ResNet50]([ResNet50](https://docs.pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html))
 
 ### 背景：网络越深，效果越好吗？
 
