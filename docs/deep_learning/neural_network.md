@@ -95,6 +95,137 @@ $$A^{(l)} = f(Z^{(l)})$$
 
 > **维度说明**：若第 $l-1$ 层有 $n_{in}$ 个神经元，第 $l$ 层有 $n_{out}$ 个神经元，则 $W^{(l)} \in R^{n_{in} \times n_{out}}$，$b^{(l)} \in R^{n_{out}}$。注意本文采用 $W^T x$ 的写法约定（见下文反向传播章节的详细说明）。
 
+### 前向传播的代码调用原理：`model(x)` 背后发生了什么？
+
+#### 核心调用链
+
+```python
+import torch.nn as nn
+
+# 1. 定义一个简单的网络
+class MyModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(10, 20)   # 第1层：10维输入 → 20维
+        self.fc2 = nn.Linear(20, 5)    # 第2层：20维 → 5维
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.fc1(x)                # 前向传播第1步
+        x = self.relu(x)               # 激活函数
+        x = self.fc2(x)                # 前向传播第2步
+        return x
+
+# 2. 实例化并"调用"
+model = MyModel()
+x = torch.randn(3, 10)                # batch_size=3, 特征维度=10
+output = model(x)                      # ← 这一行到底发生了什么？
+```
+
+当你写 `model(x)` 时，触发的是 Python 的 `__call__` 魔法方法。整个调用链如下：
+
+```
+model(x)
+  ↓
+MyModel 类没有 __call__ → 查父类 nn.Module
+  ↓
+nn.Module.__call__(self, x)           # Python 魔法方法，让实例"可调用"
+  ↓ 实际调用 _call_impl，内部做了四件事：
+  ① 执行 forward_pre_hook（用户注册的前置钩子）
+  ② 如有注册的 backward_hook，在此处注册到 autograd 计算图（供后续 .backward() 触发）
+  ③ 调用 self.forward(x)              # ← 这才是你写的 forward 方法！
+  ④ 执行 forward_hook（用户注册的后置钩子）
+  ↓
+返回 forward 的输出
+```
+
+> **补充说明**：上述步骤 ②（backward hook 注册）包含输入端的注册（在 `forward` 前）和输出端的注册（在 `forward` 后取到返回值时），但整体上 backward hook 的"准备工作"由 `_call_impl` 统一完成，用户无需感知。`_backward_hooks` 字典同时容纳 `register_backward_hook` 和 `register_full_backward_hook` 两种钩子，统一处理。
+
+> **关键理解**：`nn.Module` 通过 `__call__`（指向 `_call_impl`）包裹了 `forward`，**你永远不应该直接调用 `model.forward(x)`**。直接调 `forward` 会跳过 hook 派发和 JIT 编译拦截——比如你注册的 `register_forward_pre_hook` 会完全失效。虽然 `self.training` 模式和 autograd 图记录在 `forward` 内部仍然正常工作，但丢失 Hook 这条"后门"会让调试、特征可视化等高级功能不可用。
+
+#### `nn.Module.__call__` 的核心源码（简化版）
+
+以下是 PyTorch 源码中 `nn.Module.__call__` 的逻辑简化版，帮助理解调用流程：
+
+```python
+# 以下代码是 PyTorch 源码的简化示意，非实际源码
+# 实际中 __call__ = _call_impl（类型注解赋值，非传统 def 语句）
+class Module:
+    def _call_impl(self, *input, **kwargs):
+        # ① 执行 forward_pre_hooks（用户注册的前置钩子）
+        for hook in self._forward_pre_hooks.values():
+            hook(self, input)
+
+        # ② 如有 backward hooks，在此注册到 autograd（先注册 input hook，计算 result 后再注册 output hook）
+        bw_hook = None
+        if len(self._backward_hooks) > 0:
+            bw_hook = BackwardHook(self, self._backward_hooks.values())
+            input = bw_hook.setup_input_hook(input)
+
+        # ③ 核心：调用用户定义的 forward 方法
+        result = self.forward(*input, **kwargs)
+
+        # 继续步骤②——output 端 backward hook 注册
+        if bw_hook is not None:
+            result = bw_hook.setup_output_hook(result)
+
+        # ④ 执行 forward_hooks（用户注册的后置钩子）
+        for hook in self._forward_hooks.values():
+            hook_result = hook(self, input, result)
+
+        return result
+```
+
+#### 嵌套调用：`self.fc1(x)` 也是同样的流程
+
+`nn.Linear` 也是 `nn.Module` 的子类，所以：
+
+```python
+x = self.fc1(x)                       # 触发 nn.Linear.__call__
+  ↓
+nn.Module.__call__(self.fc1, x)
+  ↓
+self.fc1.forward(x)                   # nn.Linear 内置的 forward
+  ↓
+return x @ W.T + b                    # 矩阵乘法 + 偏置（即 z = Wx + b）
+```
+
+整个网络的前向传播就是一层层 `__call__` → `forward` 的嵌套调用链：
+
+```
+model(x)                              # 你的模型
+  → __call__ → forward:
+    → self.fc1(x)                     # 第1个线性层
+      → __call__ → forward: x @ W₁.T + b₁
+    → self.relu(x)                    # ReLU 激活
+      → __call__ → forward: max(0, x)
+    → self.fc2(x)                     # 第2个线性层
+      → __call__ → forward: x @ W₂.T + b₂
+```
+
+#### 为什么要绕个弯子用 `__call__` 而不是直接调 `forward`？
+
+设计 `__call__` 这个"中间层"是因为 PyTorch 需要在**每次前向计算前后**做一些框架级的"额外工作"，这些工作由 `_call_impl` 统一调度，框架使用者不需要关心：
+
+| 机制 | 做什么 | 说明 |
+|------|--------|------|
+| **Hook 派发** | 在 `forward` 前后执行用户注册的钩子（打印中间值、修改梯度、特征可视化等）| `__call__` 的核心功能，直接调 `forward` 会跳过 |
+| **反向 Hook 注册** | 将 `full_backward_hook` 等反向钩子注册到 autograd 计算图 | 在 `_call_impl` 中完成注册，供 `.backward()` 时触发 |
+| **JIT / 编译拦截** | `torch.jit.script`、`torch.jit.trace`、`torch.compile` 对前向传播的拦截和优化 | 通过 `__call__` 入口统一处理 |
+| **全局 Forward Hook** | 注册在 `nn.Module` 全局的 hook（非单模块级别），对所有模块生效 | 在 `_call_impl` 中派发 |
+
+> **注意区分**：`model.train()` / `model.eval()` 设置的 `self.training` 标志，以及 autograd 的图记录（受 `torch.no_grad()` 控制），是**独立于 `__call__` 的机制**——它们在你的 `forward` 内部和 PyTorch 算子层面生效，无论你用 `model(x)` 还是 `model.forward(x)` 调用都一样。但直接调 `forward` 会丢失上述表格中的 Hook 和 JIT 能力，所以**仍然不应直接调用 `model.forward(x)`**。
+
+#### 总结：数学公式与代码的对应关系
+
+| 数学公式 | 代码 |
+|----------|------|
+| $z^{(l)} = W^{(l)} a^{(l-1)} + b^{(l)}$ | `x = self.fc(x)` → 触发 `nn.Linear.forward` → `x @ W.T + b` |
+| $a^{(l)} = f(z^{(l)})$ | `x = self.relu(x)` → 触发 `nn.ReLU.forward` → `max(0, x)` |
+| 逐层串联 | `__call__` → `forward` 的嵌套链 |
+
+> **一句话记住**：`model(x)` 本质就是 Python 的 `__call__` 魔法方法 → 内部调用你写的 `forward` → 而 `forward` 里每一层子模块（`self.fc`、`self.relu`）对输入的调用又走各自的 `__call__` → `forward`，以此形成一个递归嵌套的前向传播链。
+
 ### 网络的三要素
 
 一个完整的神经网络由以下三要素定义：
