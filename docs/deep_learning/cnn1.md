@@ -1,4 +1,4 @@
-# 卷积神经网络CNN
+# 卷积神经网络CNN1
 
 前置知识：图像
 
@@ -167,7 +167,6 @@ $$
 >
 > 这就是为什么示例代码中 `(1, 3, 32, 32)` 经过 `kernel_size=3, stride=2` 卷积后变成 `(1, 8, 15, 15)` 而不是 15.5。
 
-
 ### 示例
 
 ```python
@@ -200,7 +199,7 @@ print("卷积后y的shape:", y.shape)  # torch.Size([1, 8, 15, 15])
 
 工作原理：
 
-与卷积操作类似，池化层也使用一个 “池化窗口”（如2x2），并按照指定的**步长（Stride）** 在特征图上滑动
+与卷积操作类似，池化层也使用一个 “池化窗口”（如2x2），并按照指定的**步长(Stride)** 在特征图上滑动
 
 不同之处在于，池化窗口内执行的是聚合操作（取最大或平均），而不是卷积操作
 
@@ -2029,19 +2028,7 @@ optimizer = optim.Adam(model.fc.parameters(), lr=1e-3)
 
 ### 策略选择指南
 
-```
-你的数据集有多大？
-    │
-    ├── < 1000 张 ──→ 与 ImageNet 相似？
-    │                   ├── 是 → 冻结 + 只训练分类头
-    │                   └── 否 → 冻结 + 分类头（数据太少，微调也容易过拟合）
-    │
-    ├── 1000 ~ 10000 张 ──→ 微调顶层几层 + 训练分类头
-    │
-    └── > 10000 张 ──→ 与 ImageNet 相似？
-                        ├── 是 → 微调全部层（小学习率）
-                        └── 否 → 微调全部层（中等学习率）
-```
+![strategy](assets/strategy.png)
 
 ### 常见预训练模型对比
 
@@ -2063,7 +2050,7 @@ optimizer = optim.Adam(model.fc.parameters(), lr=1e-3)
 
 > **经验法则**：数据量不足一万张时，**几乎总是优先考虑迁移学习**。这是深度学习实践中最有效的"捷径"之一。
 
-## [ResNet50]([ResNet50](https://docs.pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html))
+## [ResNet50](https://docs.pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html)
 
 ### 背景：网络越深，效果越好吗？
 
@@ -2077,12 +2064,7 @@ optimizer = optim.Adam(model.fc.parameters(), lr=1e-3)
 
 ResNet 的核心创新是**跳跃连接（Skip Connection / Shortcut）**——在普通卷积层的输出上直接加上原始输入：
 
-```
-输入 x ──┬──→ 卷积层 → ReLU → 卷积层 → F(x) ─────┐
-         │                                      ├──→ F(x) + x → ReLU → 输出
-         └──────────────────────────────────────┘
-                    (shortcut / skip connection)
-```
+![skip_connection](assets/skip_connection.png)
 
 与其让网络直接学习目标映射 $H(x)$，不如让它学习**残差** $F(x) = H(x) - x$。那么最终输出就是 $H(x) = F(x) + x$。
 
@@ -2106,21 +2088,7 @@ ResNet50 中的 "50" 指共有 50 层带权重的层（卷积层 + 全连接层�
 
 ResNet50 使用**瓶颈结构（Bottleneck）**，每个残差块由 3 层卷积组成：
 
-```
-输入 (256-d)
-    │
-    ├── 1×1 Conv, 64  ──→  BN + ReLU   （降维：256 → 64）
-    │         │
-    │    3×3 Conv, 64  ──→  BN + ReLU   （空间卷积，通道不变）
-    │         │
-    │    1×1 Conv, 256 ──→  BN           （升维：64 → 256）
-    │         │
-    └─────────┼────── 逐元素相加
-              │
-            ReLU
-              │
-        输出 (256-d)
-```
+![Bottleneck](assets/Bottleneck.png)
 
 > **为什么叫"瓶颈"？** 1×1 卷积先把 256 维压到 64 维（瓶颈），中间做 3×3 空间卷积（参数少），再用 1×1 卷积恢复到 256 维。这样三层参数量 = `256×64 + 64×64×3×3 + 64×256 ≈ 70K`，而直接两个 3×3 在 256 维上操作则需要 `256×256×3×3×2 ≈ 1.18M`——**参数量降低约 17 倍**。
 
@@ -3417,7 +3385,6 @@ for images, labels in train_loader:  # 取训练集第一个 batch
 # ============================================================
 # 该类封装了完整的训练流水线: 训练循环 + 验证评估 + 早停 + 模型保存 + TensorBoard + 绘图
 # 同时支持分类任务（带准确率）与回归任务（仅损失）
-# 注意: 此类与 wangdao_train.py 完全一致，若当前目录下有该文件也可直接 from wangdao_train import Trainer
 
 
 class Trainer:

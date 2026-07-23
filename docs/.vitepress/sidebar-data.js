@@ -120,7 +120,8 @@ export const SIDEBAR = {
             {text: 'Pytorch分类与回归', link: '/deep_learning/PytorchCR'},
             {text: '神经网络概念', link: '/deep_learning/neural_network'},
             {text: '自定义损失/全连接层/求导与反向传播', link: '/deep_learning/custom'},
-            {text: '卷积神经网络CNN', link: '/deep_learning/cnn'},
+            {text: '卷积神经网络CNN1', link: '/deep_learning/cnn1'},
+            {text: '卷积神经网络CNN2', link: '/deep_learning/cnn2'},
         ]
     }
 }
