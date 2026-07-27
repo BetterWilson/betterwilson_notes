@@ -309,8 +309,11 @@ body:has(.VPHome)::-webkit-scrollbar {
 }
 
 /* 首页单屏锁定：只在"足够大"的桌面视口生效
-   —— 小屏 (<960px) 或矮屏 (<720px) 允许自然滚动，避免内容被裁 */
-@media (min-width: 961px) and (min-height: 720px) {
+   —— 平板 (961~1200px)、小屏 (<960px) 或矮屏 (<720px) 允许自然滚动，避免内容被裁。
+   平板横屏（如 iPad 1024×768）高度虽 >=720，但 hero+features 常高于可视高，
+   若强锁 100vh + overflow:hidden，超出部分会顶到固定 nav 后被裁切并遮挡标题，
+   故把锁定断点提到 1201px，让平板走自然滚动分支。 */
+@media (min-width: 1201px) and (min-height: 720px) {
     body:has(.VPHome) .Layout {
         min-height: 100vh !important;
         height: 100vh !important;
@@ -322,6 +325,10 @@ body:has(.VPHome)::-webkit-scrollbar {
         flex-direction: column;
         justify-content: center;
         overflow: hidden;
+        /* 预留顶部导航栏高度：居中区域从 nav 下方开始，
+           避免平板横屏（如 iPad 1024×768）时 hero 标题与右侧 .image
+           因 justify-content:center 在整屏内居中而被固定的 nav 遮挡 */
+        padding-top: var(--vp-nav-height);
     }
 }
 
@@ -347,6 +354,7 @@ body:has(.VPHome)::-webkit-scrollbar {
     justify-content: space-between;
     gap: 32px;
     text-align: left !important;
+    margin-top: var(--vp-nav-height);
 }
 
 .VPHome .VPHero .main {

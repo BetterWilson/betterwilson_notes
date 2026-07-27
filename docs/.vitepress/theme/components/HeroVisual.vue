@@ -49,8 +49,8 @@ function chipStyle(i, total, ring) {
   return {
     '--angle': `${angle}deg`,
     '--ring': ring === 'outer'
-      ? 'calc(var(--vh-size, 340px) * 0.44)'
-      : 'calc(var(--vh-size, 340px) * 0.29)',
+        ? 'calc(var(--vh-size, 340px) * 0.44)'
+        : 'calc(var(--vh-size, 340px) * 0.29)',
   }
 }
 </script>
