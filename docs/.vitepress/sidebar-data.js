@@ -122,6 +122,7 @@ export const SIDEBAR = {
             {text: '自定义损失/全连接层/求导与反向传播', link: '/deep_learning/custom'},
             {text: '卷积神经网络CNN1', link: '/deep_learning/cnn1'},
             {text: '卷积神经网络CNN2', link: '/deep_learning/cnn2'},
+            {text: '卷积神经网络CNN3', link: '/deep_learning/cnn3'},
         ]
     }
 }
