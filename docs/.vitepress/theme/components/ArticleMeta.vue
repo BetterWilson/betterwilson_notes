@@ -6,15 +6,15 @@
     </span>
     <span class="meta-item" v-if="readingTime">
       <span class="meta-icon">⏱️</span>
-      <span class="meta-text">阅读约 {{ readingTime }}</span>
+      <span class="meta-text">{{ readingTime }}</span>
     </span>
     <span class="meta-item" v-if="charCount">
       <span class="meta-icon">📝</span>
-      <span class="meta-text">{{ charCount.toLocaleString() }} 字</span>
+      <span class="meta-text">{{ t(lang, 'chars', { n: charCount.toLocaleString() }) }}</span>
     </span>
     <span class="meta-item" v-if="lastUpdated">
       <span class="meta-icon">📅</span>
-      <span class="meta-text">更新于 {{ lastUpdated }}</span>
+      <span class="meta-text">{{ t(lang, 'updatedAt') }} {{ lastUpdated }}</span>
     </span>
   </div>
 </template>
@@ -22,20 +22,28 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute, useData } from 'vitepress'
+import { t, getLang } from '../locales'
 
 const route = useRoute()
 const { page } = useData()
 
 const charCount = ref(0)
 
+// 当前语言：'zh' | 'en'
+const lang = computed(() => getLang(route.path))
+
 const show = computed(() => {
   const p = route.path
-  // 只在文章页面显示，首页和登录页不显示
-  return p !== '/' && !p.startsWith('/login')
+  // 只在文章页面显示，首页、跳转页和登录页不显示
+  return p !== '/' &&
+    p !== '/zh/' && p !== '/en/' &&
+    !p.startsWith('/zh/login') && !p.startsWith('/en/login')
 })
 
 const category = computed(() => {
   const segments = route.path.split('/').filter(Boolean)
+  // 去掉语言前缀（/zh/... /en/... → python/...）
+  if (segments[0] === 'zh' || segments[0] === 'en') segments.shift()
   if (segments.length > 0) {
     // 取第一段路径作为分类名，首字母大写
     const raw = segments[0]
@@ -49,14 +57,15 @@ const category = computed(() => {
 const readingTime = computed(() => {
   if (charCount.value === 0) return ''
   // 中文阅读速度：约 400 字/分钟
-  const minutes = Math.ceil(charCount.value / 400)
-  return minutes <= 1 ? '1 分钟' : `${minutes} 分钟`
+  const minutes = Math.max(1, Math.ceil(charCount.value / 400))
+  return t(lang.value, 'readingTime', { n: minutes })
 })
 
 const lastUpdated = computed(() => {
   const ts = page.value?.lastUpdated
   if (!ts) return ''
-  return new Date(ts).toLocaleDateString('zh-CN', {
+  const locale = lang.value === 'en' ? 'en-US' : 'zh-CN'
+  return new Date(ts).toLocaleDateString(locale, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

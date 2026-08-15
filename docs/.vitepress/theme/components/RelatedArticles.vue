@@ -1,6 +1,6 @@
 <template>
   <div v-if="related.length > 0" class="related-articles">
-    <h3 class="related-heading">📎 相关文章</h3>
+    <h3 class="related-heading">{{ t(lang, 'relatedHeading') }}</h3>
     <div class="related-grid">
       <a
         v-for="item in related"
@@ -18,21 +18,36 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vitepress'
-import { SIDEBAR } from '../../sidebar-data.js'
+import { SIDEBAR, SIDEBAR_EN } from '../../sidebar-data.js'
+import { t, getLang } from '../locales'
 
 const route = useRoute()
 
+// 当前语言：'zh' | 'en'
+const lang = computed(() => getLang(route.path))
+
+// 当前语言对应的侧边栏数据
+const activeSidebar = computed(() =>
+  route.path.startsWith('/zh/') ? SIDEBAR : SIDEBAR_EN
+)
+
 const related = computed(() => {
   const currentPath = route.path
-  // 首页和登录页不显示推荐
-  if (currentPath === '/' || currentPath.startsWith('/login')) return []
+  // 首页、跳转页和登录页不显示推荐
+  if (
+    currentPath === '/' ||
+    currentPath === '/zh/' ||
+    currentPath === '/en/' ||
+    currentPath.startsWith('/zh/login') ||
+    currentPath.startsWith('/en/login')
+  ) return []
 
   // ---------- 在当前 sidebar 组中定位当前页面 ----------
   let currentGroupItems = null
   let currentGroupKey = ''
   let currentIndex = -1
 
-  for (const [key, group] of Object.entries(SIDEBAR)) {
+  for (const [key, group] of Object.entries(activeSidebar.value)) {
     if (!group || !group.items || !Array.isArray(group.items)) continue
 
     const idx = group.items.findIndex(
@@ -49,7 +64,7 @@ const related = computed(() => {
   // 如果当前页面是某个分类的索引页（sidebar key 匹配 path）
   let isIndexPage = false
   if (!currentGroupItems) {
-    for (const [key, group] of Object.entries(SIDEBAR)) {
+    for (const [key, group] of Object.entries(activeSidebar.value)) {
       if (!group || !group.items) continue
       if (normalize(key) === normalize(currentPath)) {
         currentGroupItems = group.items
@@ -107,7 +122,7 @@ const related = computed(() => {
   // 4. 如果还不够，从兄弟分组中补（同一顶级路径下）
   if (result.length < 3) {
     const parentPath = getParentPath(currentGroupKey)
-    for (const [key, group] of Object.entries(SIDEBAR)) {
+    for (const [key, group] of Object.entries(activeSidebar.value)) {
       if (result.length >= 3) break
       if (key === currentGroupKey) continue
       if (!group || !group.items) continue
