@@ -2,6 +2,9 @@ import {defineConfig} from 'vitepress'
 import {SIDEBAR, SIDEBAR_EN} from './sidebar-data.js'
 import mathjax3 from 'markdown-it-mathjax3'
 
+// 站点线上地址：sitemap 与 og 标签共用
+const SITE_URL = 'https://www.betterwilson.com'
+
 // sidebar-data.js 以"单分组对象"组织数据（供 RelatedArticles.vue 共用），
 // 此处包一层数组以满足 VitePress 的 SidebarMulti 类型：'/path/': [{ text, items }]
 /**
@@ -10,6 +13,14 @@ import mathjax3 from 'markdown-it-mathjax3'
  */
 const sidebarOf = (sidebar) =>
 	Object.fromEntries(Object.entries(sidebar).map(([k, v]) => [k, [v]]))
+
+// 把 VitePress 传入的 markdown 路径规范成干净 URL 路径（去掉 .md、前导斜杠、目录页的 /index）
+const ogPath = (page) => {
+	const p = page.replace(/\.md$/, '').replace(/^\/+/, '')
+	if (p === 'index') return '/'
+	if (p.endsWith('/index')) return `/${p.slice(0, -'/index'.length)}/`
+	return `/${p}`
+}
 
 // https://vitepress.dev/reference/site-config
 // 国际化目录结构：
@@ -21,6 +32,21 @@ export default defineConfig({
 	title: "BetterWilson Notes",
 	ignoreDeadLinks: true,
 
+	// 每个 .md 页面都会被打包成独立的懒加载 chunk，
+	// 长文页面（如 deep_learning/neural_network）压缩后超过默认 500KB 阈值，
+	// 触发打包警告。这里是纯文档站，按需加载不会拖慢其他页面，调高阈值消除噪音。
+	// 注意：Vite 构建选项必须写在 vite.build 下，顶层 build 不会被 VitePress 透传。
+	vite: {
+		build: {
+			chunkSizeWarningLimit: 6000, // kB
+		},
+	},
+
+	// 自动生成 sitemap.xml（https://vitepress.dev/reference/site-config#sitemap）
+	sitemap: {
+		hostname: SITE_URL,
+	},
+
 	markdown: {
 		config: (md) => {
 			md.use(mathjax3)
@@ -30,6 +56,25 @@ export default defineConfig({
 	head: [
 		['link', {rel: 'icon', href: '/logo.png'}],
 	],
+
+	// 每个页面统一注入 Open Graph / Twitter 标签，方便社交分享与搜索引擎展示
+	transformHead({page, pageData, title, description, siteData}) {
+		const isArticle = pageData?.frontmatter?.layout !== 'home'
+		const url = `${SITE_URL}${ogPath(page)}`
+		const suffix = ` | ${siteData.title}`
+		const ogTitle = title.endsWith(suffix) ? title.slice(0, -suffix.length) : title
+		return [
+			['meta', {property: 'og:type', content: isArticle ? 'article' : 'website'}],
+			['meta', {property: 'og:url', content: url}],
+			['meta', {property: 'og:title', content: ogTitle}],
+			['meta', {property: 'og:description', content: description}],
+			['meta', {property: 'og:image', content: `${SITE_URL}/logo.png`}],
+			['meta', {property: 'og:site_name', content: 'BetterWilson Notes'}],
+			['meta', {name: 'twitter:card', content: 'summary_large_image'}],
+			['meta', {name: 'twitter:title', content: ogTitle}],
+			['meta', {name: 'twitter:description', content: description}],
+		]
+	},
 
 	// 语言配置：root 为中文（路径不带前缀），en 为英文（/en/ 前缀）
 	// 语言切换下拉框由 VitePress 根据 locales 自动生成

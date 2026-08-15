@@ -432,8 +432,7 @@ var mediumZoom = function mediumZoom2(selector) {
   return zoom;
 };
 function styleInject(css2, ref) {
-  if (ref === void 0)
-    ref = {};
+  if (ref === void 0) ref = {};
   var insertAt = ref.insertAt;
   if (!css2 || typeof document === "undefined") {
     return;

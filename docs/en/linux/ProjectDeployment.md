@@ -104,7 +104,7 @@ wheel                   0.42.0
 
 ### 2 Database Migration
 
-```mysql
+```sql
 # 云服务器中执行
 cd到data.sql文件所在的目录，执行下面的命令
 mysql -uroot -p123 <dahe_data.sql
