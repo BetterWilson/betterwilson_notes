@@ -1,5 +1,6 @@
 import DefaultTheme from 'vitepress/theme'
 import { onMounted, watch, nextTick } from 'vue'
+import type { App, Ref } from 'vue'
 import { useRoute, useData } from 'vitepress'
 import mediumZoom from 'medium-zoom'
 import './global.css'
@@ -64,16 +65,20 @@ function initScrollReveal() {
 // 拦截 VitePress 的亮/暗切换按钮，用 startViewTransition 包裹，
 // 从点击位置向外做圆形 clip-path 扩散，亮↔暗两个方向都有动画。
 // 不支持 View Transitions API 的浏览器自动回退到 global.css 里的颜色过渡。
-function setupThemeTransition(isDark) {
+function setupThemeTransition(isDark: Ref<boolean>) {
     if (typeof document === 'undefined') return
     // 不支持 API 时直接放行，让 VitePress 默认切换 + CSS 颜色过渡接管
     if (!document.startViewTransition) return
+
+    // 标记：View Transitions API 接管主题切换动画。global.css 据此关闭逐元素的
+    // 颜色过渡，避免整屏快照动画与上千个元素各自过渡并发，造成卡顿与末帧闪色。
+    document.documentElement.classList.add('theme-vt')
 
     // 捕获阶段拦截，确保早于 VitePress 自身的 click 监听
     document.addEventListener(
         'click',
         (e) => {
-            const switchEl = e.target.closest('.VPSwitchAppearance')
+            const switchEl = (e.target as HTMLElement | null)?.closest('.VPSwitchAppearance')
             if (!switchEl) return
             e.preventDefault()
             e.stopPropagation()
@@ -118,7 +123,7 @@ function setupThemeTransition(isDark) {
 
 export default {
     extends: DefaultTheme,
-    enhanceApp({ app }) {
+    enhanceApp({ app }: { app: App }) {
         app.component('LoginPage', LoginPage)
     },
 

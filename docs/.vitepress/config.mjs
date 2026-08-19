@@ -1,6 +1,5 @@
 import {defineConfig} from 'vitepress'
 import {SIDEBAR, SIDEBAR_EN} from './sidebar-data.js'
-import mathjax3 from 'markdown-it-mathjax3'
 
 // 站点线上地址：sitemap 与 og 标签共用
 const SITE_URL = 'https://www.betterwilson.com'
@@ -47,14 +46,24 @@ export default defineConfig({
 		hostname: SITE_URL,
 	},
 
+	// 启用 VitePress 内置数学公式支持（内部即 markdown-it-mathjax3），
+	// 关键：它会把 mjx-* 标签注册为 isCustomElement，否则 Vue 编译时会被剥离成 <!---->
 	markdown: {
-		config: (md) => {
-			md.use(mathjax3)
-		}
+		math: true
 	},
 
 	head: [
-		['link', {rel: 'icon', href: '/logo.png'}],
+		['link', {rel: 'icon', type: 'image/png', href: '/favicon.png'}],
+		['link', {rel: 'apple-touch-icon', href: '/apple-touch-icon.png'}],
+		['meta', {name: 'author', content: 'BetterWilson'}],
+		// WebSite 结构化数据：让搜索引擎识别站点名称/别名/正式域名（url 复用 SITE_URL 常量）
+		['script', {type: 'application/ld+json'}, JSON.stringify({
+			'@context': 'https://schema.org',
+			'@type': 'WebSite',
+			name: 'BetterWilson Notes',
+			alternateName: 'BetterWilson 技术笔记',
+			url: SITE_URL,
+		})],
 	],
 
 	// 每个页面统一注入 Open Graph / Twitter 标签，方便社交分享与搜索引擎展示
@@ -64,6 +73,8 @@ export default defineConfig({
 		const suffix = ` | ${siteData.title}`
 		const ogTitle = title.endsWith(suffix) ? title.slice(0, -suffix.length) : title
 		return [
+			// canonical：与 og:url 同一 URL（ogPath 已含 locale 前缀，多语言各自指向自身，无重复）
+			['link', {rel: 'canonical', href: url}],
 			['meta', {property: 'og:type', content: isArticle ? 'article' : 'website'}],
 			['meta', {property: 'og:url', content: url}],
 			['meta', {property: 'og:title', content: ogTitle}],

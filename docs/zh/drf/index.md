@@ -1,3 +1,7 @@
+---
+description: "Django REST Framework 学习笔记，涵盖返回值与事务、解析器序列化分页、认证权限限流版本，以及视图路由与筛选器。"
+---
+
 # Django RestFramework
 [drf返回值，事务，Logging日志](response-transaction-logging)
 

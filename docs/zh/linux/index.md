@@ -1,3 +1,7 @@
+---
+description: "Linux 运维笔记，涵盖常用命令、CentOS 7 环境下 MySQL、Nginx、Python、Redis 的安装配置，以及项目部署与报错解决。"
+---
+
 # Linux
 [Linux命令(Ubuntu)](commands.md)
 

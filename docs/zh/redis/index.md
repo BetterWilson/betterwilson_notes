@@ -1,3 +1,7 @@
+---
+description: "Redis 学习笔记，涵盖数据类型、持久化、主从复制、集群 Cluster 与哨兵 Sentinel，以及 Python 与 Django 的连接实践。"
+---
+
 # Redis
 [多台服务器无密码传输数据](no-password)
 

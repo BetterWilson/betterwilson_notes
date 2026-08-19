@@ -316,19 +316,26 @@ body:has(.VPHome)::-webkit-scrollbar {
 @media (min-width: 1201px) and (min-height: 720px) {
     body:has(.VPHome) .Layout {
         min-height: 100vh !important;
-        height: 100vh !important;
-        overflow: hidden;
+        /* 不再强锁 100vh + overflow:hidden：内容高于一屏时（如英文首页
+           三张 feature 卡文字更长）会把底部三张卡片裁掉。改为随内容自然增高，
+           超出部分走页面滚动（首页滚动条已隐藏），不再裁切。 */
     }
     body:has(.VPHome) .VPContent {
         flex: 1 1 auto;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        overflow: hidden;
-        /* 预留顶部导航栏高度：居中区域从 nav 下方开始，
-           避免平板横屏（如 iPad 1024×768）时 hero 标题与右侧 .image
-           因 justify-content:center 在整屏内居中而被固定的 nav 遮挡 */
+        overflow: visible;
+        /* 居中改用 .VPHome 的 margin:auto 而非 justify-content:center：
+           justify-content:center 在内容高于容器时会向上下两侧等量溢出，
+           导致顶部（hero 标题）被裁且无法滚动到；margin:auto 在内容不足一屏时
+           垂直居中（单屏观感不变），高于一屏时 auto margin 归零、顶部对齐，
+           只向下溢出、可正常滚动。 */
         padding-top: var(--vp-nav-height);
+    }
+    body:has(.VPHome) .VPHome {
+        flex: 0 0 auto;
+        margin-top: auto !important;
+        margin-bottom: auto !important;
     }
 }
 
@@ -652,6 +659,9 @@ body:has(.VPHome)::-webkit-scrollbar {
  * 1. 初始加载时 html 没有 theme-ready 类 → 所有过渡为 none，避免闪烁
  * 2. 挂载后延迟注入 theme-ready → 之后每次切换暗色/亮色都有平滑过渡
  * 3. 只针对会随主题变化的属性：background-color, color, border-color, box-shadow
+ * 4. 支持 View Transitions API 时，index.ts 会给 html 额外加 theme-vt 类，
+ *    关闭下面逐元素的颜色过渡，改由 startViewTransition 的整屏圆形扩散动画接管；
+ *    否则两种动画并发（整屏快照 + 上千元素各自过渡）会导致明显卡顿与末帧闪色。
  */
 
 /* 页面加载阶段：全局禁用颜色过渡 */
@@ -662,61 +672,61 @@ html:not(.theme-ready) *::after {
 }
 
 /* theme-ready 注入后：关键结构元素启用颜色过渡 */
-html.theme-ready body,
-html.theme-ready .Layout,
-html.theme-ready .VPContent,
-html.theme-ready .VPNav,
-html.theme-ready .VPNavBar,
-html.theme-ready .VPSidebar,
-html.theme-ready .VPFooter,
-html.theme-ready .VPLocalNav,
-html.theme-ready .VPNavScreen,
-html.theme-ready .VPDoc,
-html.theme-ready .vp-doc,
-html.theme-ready .VPHome,
-html.theme-ready .VPPage,
-html.theme-ready .VPFeatures,
-html.theme-ready .VPHero,
-html.theme-ready .VPButton,
-html.theme-ready .container,
-html.theme-ready .content-container,
-html.theme-ready .VPNavBarMenu,
-html.theme-ready .VPSidebarItem,
-html.theme-ready .VPNavBarTitle,
-html.theme-ready .VPLink,
-html.theme-ready .title,
-html.theme-ready .main,
-html.theme-ready .aside,
-html.theme-ready .group,
-html.theme-ready .curtain,
-html.theme-ready .VPSwitch,
-html.theme-ready .VPSwitchAppearance,
-html.theme-ready .VPNavBarHamburger,
-html.theme-ready .VPNavBarSearch,
-html.theme-ready .VPNavBarMenuLink,
-html.theme-ready .VPNavBarMenuGroup,
-html.theme-ready .VPSidebarItem .item,
-html.theme-ready .VPSidebarItem .link,
-html.theme-ready .VPSidebarItem .text,
-html.theme-ready .VPFeature,
-html.theme-ready .vp-doc h1,
-html.theme-ready .vp-doc h2,
-html.theme-ready .vp-doc h3,
-html.theme-ready .vp-doc h4,
-html.theme-ready .vp-doc p,
-html.theme-ready .vp-doc li,
-html.theme-ready .vp-doc th,
-html.theme-ready .vp-doc td,
-html.theme-ready .vp-doc blockquote,
-html.theme-ready .vp-doc code,
-html.theme-ready .article-meta,
-html.theme-ready .article-meta .meta-item,
-html.theme-ready .login-card,
-html.theme-ready .login-container,
-html.theme-ready .tab-switch,
-html.theme-ready .method-switch,
-html.theme-ready .field input,
-html.theme-ready .submit-btn {
+html.theme-ready:not(.theme-vt) body,
+html.theme-ready:not(.theme-vt) .Layout,
+html.theme-ready:not(.theme-vt) .VPContent,
+html.theme-ready:not(.theme-vt) .VPNav,
+html.theme-ready:not(.theme-vt) .VPNavBar,
+html.theme-ready:not(.theme-vt) .VPSidebar,
+html.theme-ready:not(.theme-vt) .VPFooter,
+html.theme-ready:not(.theme-vt) .VPLocalNav,
+html.theme-ready:not(.theme-vt) .VPNavScreen,
+html.theme-ready:not(.theme-vt) .VPDoc,
+html.theme-ready:not(.theme-vt) .vp-doc,
+html.theme-ready:not(.theme-vt) .VPHome,
+html.theme-ready:not(.theme-vt) .VPPage,
+html.theme-ready:not(.theme-vt) .VPFeatures,
+html.theme-ready:not(.theme-vt) .VPHero,
+html.theme-ready:not(.theme-vt) .VPButton,
+html.theme-ready:not(.theme-vt) .container,
+html.theme-ready:not(.theme-vt) .content-container,
+html.theme-ready:not(.theme-vt) .VPNavBarMenu,
+html.theme-ready:not(.theme-vt) .VPSidebarItem,
+html.theme-ready:not(.theme-vt) .VPNavBarTitle,
+html.theme-ready:not(.theme-vt) .VPLink,
+html.theme-ready:not(.theme-vt) .title,
+html.theme-ready:not(.theme-vt) .main,
+html.theme-ready:not(.theme-vt) .aside,
+html.theme-ready:not(.theme-vt) .group,
+html.theme-ready:not(.theme-vt) .curtain,
+html.theme-ready:not(.theme-vt) .VPSwitch,
+html.theme-ready:not(.theme-vt) .VPSwitchAppearance,
+html.theme-ready:not(.theme-vt) .VPNavBarHamburger,
+html.theme-ready:not(.theme-vt) .VPNavBarSearch,
+html.theme-ready:not(.theme-vt) .VPNavBarMenuLink,
+html.theme-ready:not(.theme-vt) .VPNavBarMenuGroup,
+html.theme-ready:not(.theme-vt) .VPSidebarItem .item,
+html.theme-ready:not(.theme-vt) .VPSidebarItem .link,
+html.theme-ready:not(.theme-vt) .VPSidebarItem .text,
+html.theme-ready:not(.theme-vt) .VPFeature,
+html.theme-ready:not(.theme-vt) .vp-doc h1,
+html.theme-ready:not(.theme-vt) .vp-doc h2,
+html.theme-ready:not(.theme-vt) .vp-doc h3,
+html.theme-ready:not(.theme-vt) .vp-doc h4,
+html.theme-ready:not(.theme-vt) .vp-doc p,
+html.theme-ready:not(.theme-vt) .vp-doc li,
+html.theme-ready:not(.theme-vt) .vp-doc th,
+html.theme-ready:not(.theme-vt) .vp-doc td,
+html.theme-ready:not(.theme-vt) .vp-doc blockquote,
+html.theme-ready:not(.theme-vt) .vp-doc code,
+html.theme-ready:not(.theme-vt) .article-meta,
+html.theme-ready:not(.theme-vt) .article-meta .meta-item,
+html.theme-ready:not(.theme-vt) .login-card,
+html.theme-ready:not(.theme-vt) .login-container,
+html.theme-ready:not(.theme-vt) .tab-switch,
+html.theme-ready:not(.theme-vt) .method-switch,
+html.theme-ready:not(.theme-vt) .field input,
+html.theme-ready:not(.theme-vt) .submit-btn {
     transition:
         background-color 0.4s ease,
         color 0.3s ease,
@@ -725,10 +735,10 @@ html.theme-ready .submit-btn {
 }
 
 /* 代码背景过渡稍快，减少视觉拖沓 */
-html.theme-ready .vp-doc code,
-html.theme-ready .vp-doc pre,
-html.theme-ready .vp-doc pre code,
-html.theme-ready div[class*='language-'] {
+html.theme-ready:not(.theme-vt) .vp-doc code,
+html.theme-ready:not(.theme-vt) .vp-doc pre,
+html.theme-ready:not(.theme-vt) .vp-doc pre code,
+html.theme-ready:not(.theme-vt) div[class*='language-'] {
     transition:
         background-color 0.25s ease,
         color 0.2s ease,
@@ -736,11 +746,11 @@ html.theme-ready div[class*='language-'] {
 }
 
 /* 自定义组件的过渡 */
-html.theme-ready .chip-inner,
-html.theme-ready .core-label,
-html.theme-ready .core-glow,
-html.theme-ready .core-ring,
-html.theme-ready .bracket {
+html.theme-ready:not(.theme-vt) .chip-inner,
+html.theme-ready:not(.theme-vt) .core-label,
+html.theme-ready:not(.theme-vt) .core-glow,
+html.theme-ready:not(.theme-vt) .core-ring,
+html.theme-ready:not(.theme-vt) .bracket {
     transition:
         background-color 0.4s ease,
         color 0.3s ease,
@@ -749,9 +759,9 @@ html.theme-ready .bracket {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    html.theme-ready *,
-    html.theme-ready *::before,
-    html.theme-ready *::after {
+    html.theme-ready:not(.theme-vt) *,
+    html.theme-ready:not(.theme-vt) *::before,
+    html.theme-ready:not(.theme-vt) *::after {
         transition-duration: 0s !important;
     }
 }
@@ -789,8 +799,10 @@ mjx-container:not([display="true"]) {
     -webkit-overflow-scrolling: touch;
 }
 
-/* SVG 保持原始宽度，不缩放变形，由外层容器负责滚动 */
-mjx-container > svg {
+/* 块级公式的 SVG：保持原始宽度，不缩放变形，由外层容器负责滚动。
+   注意：display:block 只应作用于块级公式（$$...$$），若误加在行内公式（$...$）
+   的 SVG 上，会把行内公式拆成独占一行的块级元素。 */
+mjx-container[display="true"] > svg {
     max-width: none;
     display: block;
 }

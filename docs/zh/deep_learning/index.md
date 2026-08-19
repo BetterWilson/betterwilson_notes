@@ -1,3 +1,7 @@
+---
+description: "深度学习学习笔记，基于 PyTorch 讲解神经网络基础、损失函数与反向传播，以及卷积神经网络 CNN。"
+---
+
 # Deep_Learning
 [依赖安装](dependencies)
 

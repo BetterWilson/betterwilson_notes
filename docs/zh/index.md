@@ -1,6 +1,7 @@
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
+description: "BetterWilson 的个人技术博客，专注前后端技术的深度解析与实战案例，涵盖 Python、Django、DRF、Vue、Redis、Linux、机器学习与深度学习等主题。"
 
 hero:
   name: "Welcome BetterWilson"
