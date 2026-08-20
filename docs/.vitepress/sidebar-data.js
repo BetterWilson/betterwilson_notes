@@ -123,6 +123,7 @@ export const SIDEBAR = {
             {text: '卷积神经网络CNN1', link: '/zh/deep_learning/cnn1'},
             {text: '卷积神经网络CNN2', link: '/zh/deep_learning/cnn2'},
             {text: '卷积神经网络CNN3', link: '/zh/deep_learning/cnn3'},
+            {text: '卷积神经网络RNN', link: '/zh/deep_learning/rnn'},
         ]
     }
 }

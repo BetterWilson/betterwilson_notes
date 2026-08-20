@@ -32,6 +32,7 @@ Sutskever于2012年与Alex Krizhevsky和Geoffrey Hinton一起提出了AlexNet，
   - 卷积核数量：96个
   - 步长（stride）：4
   - 激活函数：ReLU（修正线性单元）
+  - 后接 **LRN（局部响应归一化）**
 - 第二层（池化层）
   - 池化类型：最大池化（Max Pooling）
   - 池化核大小：3×3
@@ -41,6 +42,7 @@ Sutskever于2012年与Alex Krizhevsky和Geoffrey Hinton一起提出了AlexNet，
   - 卷积核数量：256个
   - 步长：1
   - 激活函数：ReLU
+  - 后接 **LRN（局部响应归一化）**
 - 第四层（池化层）
   - 池化类型：最大池化（Max Pooling）
   - 池化核大小：3×3
@@ -197,9 +199,9 @@ Karen Simonyan和Andrew Zisserman都是英国知名的计算机视觉科学家�
 
   VGGNet在训练和预测时采用了多尺度的方法，即对输入图像进行不同尺寸的缩放，增加了训练数据量，防止过拟合，提升了预测准确率。（数据增强）
 
-- **1×1卷积核的应用**
+- **1×1卷积核的探索**
 
-  VGGNet中也使用了1×1的卷积核，这可以看作是对输入通道的线性变换，有助于在通道层级进行降维或升维，提高模型的非线性能力。
+  VGG 论文中**实验过**带 1×1 卷积的配置（Config C），可看作对输入通道的线性变换。但最终获奖并且成为标准的 **VGG16（Config D）和 VGG19（Config E）只用了 3×3 卷积，没有 1×1 卷积**。真正把 1×1 卷积发扬光大的是后来的 GoogLeNet（Inception）和 ResNet（瓶颈结构中的降维/升维）。
 
 - **网络结构清晰简单**
 
@@ -250,9 +252,45 @@ VGG19相较于VGG16，增加了3个额外的卷积层，具有更深的网络结
 ![image-20260720201149618](assets/image-20260720201149618.png)
 
 - 从11层（没有参数的层不算）增至19层
-- LRN是局部做归一化
+
+- **去掉了 AlexNet 的 LRN（局部响应归一化）**：VGG 作者实验发现 LRN 对准确率几乎没有提升，反而增加计算开销，所以直接移除
+
+  >**LRN (Local Response Normalization，局部响应归一化)** 是 AlexNet 中使用的一项技术，灵感来自生物神经元的**侧抑制（lateral inhibition）**——一个活跃的神经元会抑制它周围神经元的活性。
+  >
+  >- **做法**：对同一空间位置上、相邻通道间的激活值做归一化（让激活值较大的通道抑制周围的通道）
+  >- **为什么 AlexNet 用了 LRN？** 在 Batch Normalization (BN) 还没被发明的 2012 年，LRN 被认为能帮助训练
+  >- **为什么 VGG 不用 LRN？** VGG 作者实验发现 LRN **对准确率几乎没有提升**，反而增加了计算开销和内存消耗。所以 VGG 直接去掉了 LRN，让网络结构更简洁
+  >
+  > **历史线索**：AlexNet(2012) 用 LRN → VGG(2014) 发现 LRN 没用，去掉 → ResNet(2015) 大量使用 Batch Normalization（比 LRN 强大得多）。这个演进反映了深度学习社区对"归一化技术"的认知深化过程。
+  
 - **为什么都在后面加层：** 前面空间尺寸大（224×224、112×112），在 3×3 卷积的计算量公式 $K^2 \times C_{in} \times C_{out} \times H \times W$ 中，H×W 很大，如果在前面加太多层，计算量会爆炸。后面经过 pooling 后空间变小（14×14、7×7），虽然通道数翻倍了，但 H×W 缩小为原来的 1/4，计算量大致平衡。所以"后面加层"本质上是在计算量可控的前提下，让深层网络学到更抽象的语义特征。VGG 5个阶段的计算量分布大致均匀，正体现了这一设计智慧
-- 总体参数数目基本保持不变
+
+- 总体参数数目基本保持不变（VGG11→VGG16→VGG19 的参数量递增: ~133M → ~138M → ~144M，差异主要来自后几层增加的 3×3×512 卷积）
+
+> **VGG 的致命弱点——参数量集中在哪里？**
+>
+> VGG16 的 ~138M 参数中，**约 124M（90%）都在全连接层！** 具体来说：
+> - 第一个 FC (25088→4096): 约 102M 参数
+> - 第二个 FC (4096→4096): 约 17M 参数
+> - 第三个 FC (4096→1000): 约 4M 参数
+> - 所有卷积层加起来: 仅约 15M 参数
+>
+> 这就是为什么后来的网络（ResNet、GoogLeNet）都在"去全连接化"——用全局平均池化替代庞大的 FC 层。VGG 虽然思路正确（小而深的卷积核），但巨大的 FC 层让它在实际部署中非常笨重。
+
+```python
+import torchvision.models as models
+
+vgg16 = models.vgg16()
+total = sum(p.numel() for p in vgg16.parameters())
+conv_params = sum(p.numel() for n, p in vgg16.named_parameters()
+                  if 'features' in n)
+fc_params = sum(p.numel() for n, p in vgg16.named_parameters()
+                if 'classifier' in n)
+print(f"VGG16 总参数量:      {total/1e6:.0f}M")
+print(f"  卷积层参数:        {conv_params/1e6:.1f}M ({conv_params/total*100:.0f}%)")
+print(f"  全连接层参数:      {fc_params/1e6:.1f}M ({fc_params/total*100:.0f}%)")
+# 输出: 卷积层仅占约 10%，全连接层占了 ~90%！
+```
 
 ### 卷积核是奇数的原因
 
@@ -268,73 +306,7 @@ VGG19相较于VGG16，增加了3个额外的卷积层，具有更深的网络结
 
   由于奇数核拥有天然的绝对中心点，因此在做卷积的时候能更好地获取到中心这样的概念信息。
 
-### 视野域验证：2个3×3 等价于 1个5×5
-
-视野域又叫做感受野
-
-下面用代码验证"堆叠小卷积核 = 更大的感受野"这一关键原理：
-
-```python
-import torch
-import torch.nn as nn
-
-"""
-验证：两个 3×3 卷积的感受野 = 一个 5×5 卷积的感受野
-
-直观理解（一维）：
-  第1个3×3：看到 [-1, 0, +1] 三个位置
-  第2个3×3：每个位置"看到"前一层3个位置
-  → 总共覆盖原始输入的 5 个连续位置 = 5×5 感受野
-
-类比：两层渔网接力 → 最终覆盖的范围 = 一层大渔网
-"""
-
-# 创建7×7输入，只有中心是1，其余是0（"脉冲"信号）
-x = torch.zeros(1, 1, 7, 7)
-x[0, 0, 3, 3] = 1.0
-
-# 两个3×3卷积 (无padding)
-conv3_1 = nn.Conv2d(1, 1, 3, padding=0, bias=False)
-conv3_2 = nn.Conv2d(1, 1, 3, padding=0, bias=False)
-# 一个5×5卷积
-conv5 = nn.Conv2d(1, 1, 5, padding=0, bias=False)
-
-# 用全1权重（方便观察感受野范围）
-with torch.no_grad():
-    conv3_1.weight.fill_(1.0)
-    conv3_2.weight.fill_(1.0)
-    conv5.weight.fill_(1.0)
-
-# 前向传播
-out_3x3_1 = conv3_1(x)   # 7×7 → 5×5
-out_3x3_2 = conv3_2(out_3x3_1)  # 5×5 → 3×3
-out_5x5 = conv5(x)        # 7×7 → 3×3
-
-print(f"两个3×3最终输出尺寸: {out_3x3_2.shape}")  # [1, 1, 3, 3]
-print(f"一个5×5最终输出尺寸: {out_5x5.shape}")     # [1, 1, 3, 3]
-print("✓ 输出尺寸相同，感受野都是 5×5")
-
-# 参数量对比
-C = 64  # 假设通道数
-params_2x3 = 2 * (3 * 3 * C * C)   # 两个 3×3
-params_1x5 = 5 * 5 * C * C          # 一个 5×5
-print(f"\n参数量对比 (C={C}):")
-print(f"  两个3×3: {params_2x3:,}")
-print(f"  一个5×5: {params_1x5:,}")
-print(f"  节省 {(1-params_2x3/params_1x5)*100:.0f}% 参数，且中间多一个ReLU非线性！")
-```
-
-### LRN（局部响应归一化）
-
-笔记前面的图中提到了 LRN。**LRN (Local Response Normalization，局部响应归一化)** 是 AlexNet 中使用的一项技术，灵感来自生物神经元的**侧抑制（lateral inhibition）**——一个活跃的神经元会抑制它周围神经元的活性。
-
-- **做法**：对同一空间位置上、相邻通道间的激活值做归一化（让激活值较大的通道抑制周围的通道）
-- **为什么 AlexNet 用了 LRN？** 在 Batch Normalization (BN) 还没被发明的 2012 年，LRN 被认为能帮助训练
-- **为什么 VGG 不用 LRN？** VGG 作者实验发现 LRN **对准确率几乎没有提升**，反而增加了计算开销和内存消耗。所以 VGG 直接去掉了 LRN，让网络结构更简洁
-
-> **历史线索**：AlexNet(2012) 用 LRN → VGG(2014) 发现 LRN 没用，去掉 → ResNet(2015) 大量使用 Batch Normalization（比 LRN 强大得多）。这个演进反映了深度学习社区对"归一化技术"的认知深化过程。
-
-## ResNet
+## [ResNet](https://arxiv.org/abs/1512.03385)
 
 ResNet是由微软亚洲研究院的何凯明（Kaiming He）和他的团队在2015年提出的一种深度卷积神经网络结构，被广泛认为是深度学习领域中的重要突破之一。ResNet通过引入残差连接来解决深层神经网络训练时出现的梯度消失和梯度爆炸等问题，使得网络可以更加深层、更加高效地训练。
 
@@ -694,6 +666,38 @@ print("eval 两次结果相同（确定性）:",
 
 > **踩坑提醒**：正因为 BN 依赖 batch 内的统计量，**batch size 太小（比如 1、2）时 BN 效果会明显变差**——统计量噪声太大。这也是后来出现 GroupNorm、LayerNorm 等替代方案的原因之一。
 
+### 残差连接的方法
+
+在ResNet中，为了确保残差连接时两个尺寸一致，有几种常见的方法：
+
+- Padding和Stride
+
+  残差连接在特征图尺寸不同时，可以通过合适的填充（padding）和步幅（stride）来保持尺寸一致。使用填充可以在特征图边界周围添加额外的像素，以便在卷积操作中保持尺寸。同时，调整步幅可以控制特征图的尺寸变化。
+
+  **优势：** 这种方法直接在卷积层中进行填充或者调整步幅，能够直接控制特征图的尺寸变化，减少额外的计算开销。
+
+  **劣势：** 对于深度较大的网络，可能需要大量的填充或者调整步幅，导致网络计算复杂度增加，同时可能会限制网络的有效信息提取能力。
+
+- 1×1卷积（Projection Shortcut）
+
+  如果残差连接中输入和输出的尺寸不同，可以通过在残差连接中使用额外的1×1卷积来进行尺寸匹配。这种方法在残差连接中引入一个额外的卷积层，以调整特征图的尺寸，使得输入和输出的尺寸一致，从而能够进行元素级的相加。
+
+  **优势：** 通过引入额外的1×1卷积进行尺寸匹配，能够更精确地调整特征图的尺寸，同时避免了大量的填充操作，有利于保持网络的参数效率。
+
+  **劣势：** 需要额外的计算成本和参数数量，并且可能增加模型的复杂性，容易导致过拟合的风险。
+
+- 平均池化（Average Pooling Shortcut）
+
+  当输入和输出的尺寸不同时，可以使用平均池化来降低输入特征图的尺寸，使其与输出特征图的尺寸一致。这种方法将输入特征图经过平均池化操作，以匹配输出特征图的尺寸。
+
+  **优势：** 通过平均池化操作降低输入特征图的尺寸，能够直接匹配输出特征图的尺寸，避免了额外的填充或卷积操作。
+
+  **劣势：** 可能会导致信息丢失，因为池化操作会丢失部分细节信息，可能影响模型性能。同时，池化操作会降低特征图的分辨率，可能会影响模型的感知能力。
+
+这些方法中的选择取决于网络结构和层之间的尺寸变化情况。通过这些手段，ResNet中的残差连接可以确保在不同层之间传递信息时，输入和输出的尺寸保持一致，以便进行元素级的相加操作。
+
+需要综合考虑，选择合适的方法取决于具体的网络架构、数据集特征以及性能需求。Padding和 Stride是直接且简单的方法，但可能会增加计算复杂度；1×1卷积需要更多的参数，但能够更精确地匹配尺寸；平均池化简单有效，但可能损失信息。在实际应用中，根据具体情况选择合适的方法是关键。
+
 ### 模型结构图解析
 
 #### ResNet 整体数据流
@@ -707,6 +711,10 @@ print("eval 两次结果相同（确定性）:",
 - 每次空间减半（stride=2）时，通道数翻倍，保持计算量大致平衡
 
 ---
+
+#### Bottleneck瓶颈层
+
+在ResNet中，Bottleneck layer是一种特定的卷积层，它通常由三个卷积操作组成：首先是1×1的卷积，然后是3×3的卷积，最后又是1×1的卷积。这种结构的设计使得1×1的卷积层在3×3卷积层的前后起到降维和升维的作用，因此被称为瓶颈层，**进一步减少了计算量和参数量**。
 
 #### 五个 ResNet 版本的配置对比
 
@@ -754,6 +762,48 @@ FLOPs               1.8G           3.6G           3.8G           7.6G           
 3. **为什么 ResNet-50 比 ResNet-34 层多但参数差不多？** 因为 Bottleneck 中的 1×1 卷积大大减少了 3×3 卷积的输入输出通道数（64 而非 256）
 
 ---
+
+#### 卷积降采样和池化降采样差异
+
+降采样（Downsampling）是指减少特征图空间分辨率（H×W）的操作。在 CNN 中主要有两种实现方式：卷积降采样和池化降采样。ResNet 中两种方式都会用到——卷积降采样用于改变通道数时同时降尺寸，池化降采样用于卷积前的初始下采样。
+
+**卷积降采样**（如 stride>1 的卷积）是通过卷积操作本身直接让输出特征图尺寸变小，同时可以改变通道数，还能通过卷积权重学习到更有代表性的特征，具备更强的表达能力。但这样会引入新的可学习参数，使模型复杂度上升。
+
+> **举例**：ResNet conv1 用 7×7 卷积 + stride=2 将 224×224 压缩到 112×112；每个残差层的第一个 Bottleneck 的 3×3 卷积用 stride=2 将空间减半。
+
+**池化降采样**（如最大池化、平均池化）是通过对一定区域内的特征进行聚合（如取最大值或均值）来降低空间分辨率，不引入新参数，只是统计操作，能够让特征具有平移不变性，但表达能力相对卷积弱一些。池化会丢失一些信息，但通常有助于缓解过拟合。
+
+> **举例**：ResNet conv1 之后跟的 3×3 MaxPool(stride=2) 将 112×112 进一步压缩到 56×56。
+
+**两者如何选择？**
+
+| 场景 | 推荐方式 | 原因 |
+|------|---------|------|
+| 需要同时改变通道数 | 卷积降采样 (stride=2) | 一步完成尺寸+通道的转换，ResNet 各阶段过渡的标准做法 |
+| 仅缩小尺寸、不改变通道数 | 池化降采样 | 简单高效，无额外参数 |
+| 减小最终特征图到固定大小 | 自适应平均池化 (AdaptiveAvgPool) | 无论输入多大都能输出固定尺寸，ResNet 最后的池化层就用它 |
+
+```python
+import torch
+import torch.nn as nn
+
+x = torch.randn(1, 64, 56, 56)
+
+# 方式1: 卷积降采样 —— 尺寸减半 + 通道翻倍（ResNet 做法）
+conv_down = nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1)
+out_conv = conv_down(x)
+print(f"卷积降采样: {x.shape} → {out_conv.shape}")  # [1,64,56,56] → [1,128,28,28]
+
+# 方式2: 池化降采样 —— 尺寸减半，通道数不变
+pool_down = nn.MaxPool2d(kernel_size=2, stride=2)
+out_pool = pool_down(x)
+print(f"池化降采样: {x.shape} → {out_pool.shape}")  # [1,64,56,56] → [1,64,28,28]
+
+# 方式3: 自适应平均池化 —— 无论输入多大，强制输出固定尺寸（如 1×1）
+adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))
+out_adapt = adaptive_pool(x)
+print(f"自适应池化: {x.shape} → {out_adapt.shape}")  # [1,64,56,56] → [1,64,1,1]
+```
 
 #### VGG-19 vs Plain-34 vs ResNet-34 结构对比
 
@@ -849,11 +899,6 @@ FLOPs               1.8G           3.6G           3.8G           7.6G           
 最终: F(x) + 投影后的 x → 维度匹配，可以相加！
 ```
 
-> **记法口诀**：
-> - 实线 = "原样通过"（输入输出一样大，直接加）
-> - 虚线 = "需要转换"（输入输出不一样大，先用 1×1 卷积调整再加）
-> - 弯曲箭头 = 跳跃连接的标志，ResNet 的核心特征
-
 ---
 
 **这张对比图的实验结论（论文中的核心发现）：**
@@ -869,1148 +914,378 @@ FLOPs               1.8G           3.6G           3.8G           7.6G           
 - ResNet-34 比 ResNet-18 更深，误差如其期望地降低了 → **残差连接解决了退化**
 - 这说明退化**不是过拟合**（Plain-34 的训练误差也高），而是**优化困难**
 
-
-
 ### 示例--VGG11 + ResNet18训练CIFAR-10
 
+## [InceptionNet](https://arxiv.org/abs/1409.4842)
+
+InceptionNet是由Google Brain团队的Christian Szegedy、Wei Liu、Yangqing Jia等人在2014年提出的一种深度卷积神经网络结构，被广泛应用于图像分类、目标检测、人脸识别等领
+
+域。InceptionNet通过引入多个不同大小和不同结构的卷积核来提高特征提取的能力，并采用了模块化设计的思想，使得神经网络可以更加高效地训练和优化。
+
+**InceptionNet V3** 是由Google Brain团队的Christian Szegedy、Vincent Vanhoucke、Sergey Ioffe、Jonathon Shlens和Zbigniew Wojna等人在2015年提出的一种深度卷积神经网络结构，是InceptionNet系列中的第三个版本。与之前的版本相比，InceptionNet V3采用了更加高效的网络设计，引入了一系列创新的技术，如分支结构、增强的侧面输出、标签平滑等，进一步提高了网络的性能和泛化能力。
+
+除了Christian Szegedy以外，Vincent Vanhoucke、Sergey Ioffe、Jonathon Shlens和Zbigniew Wojna也都是Google Brain团队的资深研究员，在计算机视觉和深度学习领域做出了多项重要贡献。他们的工作为图像分类、目标检测、语义分割等领域提供了有力的支持和帮助。
+
+InceptionNet V3的成功推动了图像识别和计算机视觉领域的发展，并成为深度学习领域中一个重要的里程碑。
+
+### 创新点
+
+- 引入了多尺度卷积
+
+  InceptionNet通过使用不同大小的卷积核来处理不同尺度的特征，从而提高了网络对图像中不同尺度目标的识别能力。
+
+- 使用了多个并行分支
+
+  InceptionNet采用了多个并行分支来同时学习不同层次的特征，这些分支可以在不同的尺度上提取特征并将它们合并起来（concat）。这样可以增加网络的表达能力，使得网络更加适应于任务的需求。
+
+- 采用 1×1 卷积降维（Bottleneck）减少特征冗余
+
+  InceptionNet 通过在 3×3 和 5×5 卷积前插入 1×1 卷积，先将输入通道数"压缩"到一个较小的中间维度，做完空间卷积后再通过 concat 与其他分支汇合。这种"先压缩→再卷积"的瓶颈设计大幅降低了计算量，同时 1×1 卷积本身也起到通道间信息融合和去冗余的作用，提高了网络的泛化能力和参数效率。
+
+  > **⚠️ 注意**：有些资料误将此称为"卡方正则化"，这是一个术语错误。Inception 论文中减少特征冗余的手段是 **1×1 卷积降维（Dimension Reduction）**，而非统计学中的卡方检验或卡方正则化。
+
+- 网络结构模块化
+
+  InceptionNet采用了模块化设计的思想，在网络中加入了多个类似的Inception模块，这样可以使得网络结构更加清晰、简单，并且易于扩展和修改。
+
+### Inception优势
+
+- 一层上同时使用多种卷积核，看到各种层级的feature
+- 不同组之间的feature不交叉计算，减少了计算量
+
+- 256到480通道，就是64(1×1通道）+128(3×3通道）+32(5×5通道）+256=480
+
+![Inception_module](assets/image-20260725103132325.png)
+
+> **上图解读（Naive Inception 模块）**：输入分别通过 1×1 卷积、3×3 卷积、5×5 卷积、3×3 最大池化四条并行路径，各自提取不同尺度的特征，最后在通道维度上**拼接（concatenate）**。但这会带来计算量爆炸——尤其是 3×3 和 5×5 卷积直接作用在高维输入上。因此 Inception V1 在 3×3 和 5×5 卷积前**增加了 1×1 卷积 bottleneck**（图中未画出，见下方"带降维的 Inception 模块"），先压缩通道再做大核卷积，大幅降低计算量。
+
+### Inception 模块代码实现
+
 ```python
-"""
-CIFAR-10 分类 —— VGG11 + ResNet18 双模型对比
-======================================================
-本脚本实现了 CIFAR-10 数据集的 10 分类任务，包括：
-1. 自定义 Dataset 类读取 CSV 标签 + PNG 图片
-2. 数据预处理与增强（RandomHorizontalFlip、RandomCrop、Normalize）
-3. Trainer 通用训练器类（含早停、模型保存、绘图）
-4. VGG11 模型构建、训练与评估
-5. ResNet18 模型（含残差块）构建、训练与评估
-6. 测试集预测与 Kaggle 提交文件生成
-7. 双模型对比总结
-
-数据集: CIFAR-10（10 类彩色 32×32 图片）
-训练集: 前 45000 张（从 trainLabels.csv 切片）
-验证集: 后 5000 张（从 trainLabels.csv 切片）
-测试集: 独立 test 文件夹（按 sampleSubmission.csv 的 id 顺序加载）
-"""
-
-import torch  # PyTorch 核心库，提供张量运算与自动求导
-import torch.nn as nn  # 神经网络模块，提供 Conv2d、Linear、BatchNorm2d、ReLU 等层
-import torch.optim as optim  # 优化器模块，提供 SGD、Adam 等
-from torchvision import transforms  # transforms: 数据预处理变换（ToTensor、Normalize 等）
-from torch.utils.data import Dataset, DataLoader  # Dataset: 自定义数据集基类；DataLoader: 批量加载器
-import matplotlib.pyplot as plt  # 绘图库，用于训练曲线绘制
-from matplotlib import rcParams  # matplotlib 配置字典
-import os  # 操作系统接口，用于文件路径拼接
-import pandas as pd  # 数据处理库，用于读取 CSV 标签文件
-from PIL import Image  # 图像处理库，用于加载 PNG 图片
-from torch.utils.tensorboard import SummaryWriter  # TensorBoard 写入器
-
-# 设置中文字体，防止 matplotlib 中文显示为方块
-rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体字体显示中文
-rcParams['axes.unicode_minus'] = False  # 正常显示负号（避免负号显示为方块）
+import torch
+import torch.nn as nn
 
 
-# ============================================================
-# 1. 数据路径配置
-# ============================================================
-# CIFAR-10 数据集目录结构:
-#   data/cifar-10/
-#     train/train/          ← 训练图片目录（50000 张 PNG）
-#     trainLabels.csv       ← 训练标签 CSV（id, label 两列）
-#     test/test/            ← 测试图片目录
-#     sampleSubmission.csv  ← 提交文件模板（id, label 两列）
-
-data_dir = '../data/cifar-10/train/train'  # 训练集图片所在目录路径
-label_csv = '../data/cifar-10/trainLabels.csv'  # 训练集标签 CSV 文件路径
-
-
-# ============================================================
-# 2. 数据集加载与预处理 —— 自定义 Dataset 类
-# ============================================================
-# 设计思路:
-#   1. 用 pandas 读取 trainLabels.csv（包含 id 和 label 两列）
-#   2. 前 45000 行作为训练集，后 5000 行作为验证集
-#   3. 基于全部标签建立 class_to_idx 映射，保证训练/验证/测试类别一致
-#   4. 通过自定义 Dataset 类按 id 加载对应 PNG 图片
-
-# 用 pandas 读取全部标签 CSV 文件
-labels_df = pd.read_csv(label_csv)  # DataFrame: 列 'id'=图片编号, 'label'=类别名称（如 'cat'）
-train_size = 45000  # 训练集样本数: 前 45000 张
-val_size = 5000  # 验证集样本数: 后 5000 张
-assert train_size + val_size <= len(labels_df), "数据集图片数量不足！"  # 断言确保数据量足够
-
-# 按行切片: 前 45000 行 → 训练集标签，后 5000 行 → 验证集标签
-train_labels_df = labels_df.iloc[:train_size].reset_index(drop=True)  # 训练集标签 DataFrame，重置索引
-val_labels_df = labels_df.iloc[train_size:train_size + val_size].reset_index(drop=True)  # 验证集标签 DataFrame，重置索引
-
-# 基于全部标签（所有 50000 行）建立类别名 → 索引的映射字典
-class_names = sorted(labels_df['label'].unique())  # 按字母序排序，得到 10 个类别名列表
-class_to_idx = {cls: idx for idx, cls in enumerate(class_names)}  # {'airplane':0, 'automobile':1, ..., 'truck':9}
-
-# ---- 训练集数据预处理（含图像增强） ----
-train_transform = transforms.Compose([
-    transforms.RandomHorizontalFlip(),  # 随机水平翻转: 以 50% 概率左右翻转图片，增加数据多样性
-    transforms.RandomCrop(32, padding=4),  # 随机裁剪: 先在四周各补 4 像素零值，再随机裁出 32×32 区域
-    transforms.ToTensor(),  # 将 PIL.Image (0-255) 转为 torch.Tensor (0.0-1.0)，并 H×W×C → C×H×W
-    transforms.Normalize((0.4917, 0.4823, 0.4467), (0.2024, 0.1995, 0.2010))  # CIFAR-10 三通道标准化
-])
-
-# ---- 验证集数据预处理（仅基础预处理，不做图像增强） ----
-val_transform = transforms.Compose([
-    transforms.ToTensor(),  # 将 PIL.Image 转为 Tensor
-    transforms.Normalize((0.4917, 0.4823, 0.4467), (0.2024, 0.1995, 0.2010))  # 使用与训练集相同的标准化参数
-])
-
-
-class CIFAR10WithCSV(Dataset):
+class InceptionModule(nn.Module):
     """
-    自定义 CIFAR-10 数据集类，继承 torch.utils.data.Dataset
-
-    根据 DataFrame 子集读取 CIFAR-10 PNG 图片与对应的类别标签。
-    必须实现 __len__ 和 __getitem__ 两个方法。
-
-    参数:
-        img_dir:       图片所在目录路径
-        labels_frame:  包含图片 id 和标签名的 DataFrame
-        class_to_idx:  类别名称 → 索引的映射字典
-        transform:     数据预处理变换（Compose 对象），默认为 None
+    带 1×1 降维的 Inception 模块（Inception V1 / GoogLeNet 标准模块）
+    
+    结构（自下而上，四个并行分支）:
+      ┌──────────────────────────────────────────────────────┐
+      │                    输入 (in_channels)                 │
+      ├──────────┬──────────────┬──────────────┬─────────────┤
+      │ 1×1 Conv │ 1×1 Conv     │ 1×1 Conv     │ 3×3 MaxPool │
+      │          │ (降维)        │ (降维)        │ (stride=1)  │
+      │          │   ↓          │   ↓          │   ↓         │
+      │          │ 3×3 Conv     │ 5×5 Conv     │ 1×1 Conv    │
+      │          │              │              │ (升维/降维)   │
+      ├──────────┼──────────────┼──────────────┼─────────────┤
+      │   out1   │    out2      │    out3      │    out4     │
+      └──────────┴──────────────┴──────────────┴─────────────┘
+                            ↓ 拼接 (concat)
+                        最终输出
     """
-
-    def __init__(self, img_dir, labels_frame, class_to_idx, transform=None):
-        """初始化数据集，保存路径和标签信息"""
-        self.img_dir = img_dir  # 图片目录路径
-        self.labels_frame = labels_frame  # 标签 DataFrame（列: id, label）
-        self.class_to_idx = class_to_idx  # 类别名 → 索引映射字典
-        self.transform = transform  # 数据预处理变换
-
-    def __len__(self):
-        """返回数据集总样本数"""
-        return len(self.labels_frame)  # DataFrame 的行数即为样本数
-
-    def __getitem__(self, idx):
+    
+    def __init__(self, in_channels, out_1x1, reduce_3x3, out_3x3, reduce_5x5, out_5x5, out_pool):
         """
-        根据索引 idx 返回第 idx 个样本的 (image, label)
-
-        参数:
-            idx: 样本索引（0 ~ len-1）
-        返回:
-            image: 预处理后的 Tensor，形状 (C, H, W) = (3, 32, 32)
-            label: 类别索引，0~9 的整数
+        参数说明（以 GoogLeNet 第一个 Inception 模块 3a 为例）:
+          in_channels=192   — 输入通道数
+          out_1x1=64        — 1×1 卷积分支输出通道
+          reduce_3x3=96     — 3×3 卷积前的 1×1 降维通道
+          out_3x3=128       — 3×3 卷积分支输出通道
+          reduce_5x5=16     — 5×5 卷积前的 1×1 降维通道
+          out_5x5=32        — 5×5 卷积分支输出通道
+          out_pool=32       — 池化分支输出通道
+        最终输出 = 64 + 128 + 32 + 32 = 256 通道
         """
-        img_number = str(self.labels_frame.iloc[idx, 0])  # 取第 idx 行第 0 列: 图片 id（转为字符串）
-        img_name = os.path.join(self.img_dir, img_number + '.png')  # 拼接完整图片路径: dir/1234.png
-        image = Image.open(img_name).convert('RGB')  # 用 PIL 打开图片并确保为 RGB 三通道
-        label_name = self.labels_frame.iloc[idx, 1]  # 取第 idx 行第 1 列: 类别名称（如 'cat'）
-        label = self.class_to_idx[label_name]  # 将类别名称映射为整数索引（如 'cat' → 3）
-        if self.transform:  # 如果有预处理变换
-            image = self.transform(image)  # 对图片应用变换（ToTensor + Normalize 等）
-        return image, label  # 返回 (图像 Tensor, 标签索引)
-
-
-# ---- 构建训练集和验证集 Dataset 实例 ----
-train_dataset = CIFAR10WithCSV(data_dir, train_labels_df, class_to_idx, transform=train_transform)  # 训练集: 45000 张
-val_dataset = CIFAR10WithCSV(data_dir, val_labels_df, class_to_idx, transform=val_transform)  # 验证集: 5000 张
-
-# ---- 构建 DataLoader（批量加载器） ----
-# batch_size: 每批 128 张图片（根据显存可调整）
-# shuffle: 训练集打乱顺序，验证集不打乱
-# pin_memory=True: 将 batch 数据放入 CUDA 固定内存，GPU 训练时数据传输更快
-train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True, pin_memory=True)  # 训练集 DataLoader
-val_loader = DataLoader(val_dataset, batch_size=128, shuffle=False, pin_memory=True)  # 验证集 DataLoader
-
-# ============================================================
-# 3. 数据集基本信息检查
-# ============================================================
-
-# 查看类别映射字典
-print("类别映射 (class_to_idx):", class_to_idx)  # 打印 10 个类别名与索引的对应关系
-
-# 查看单张图片的 shape: (C, H, W) = (3, 32, 32)
-print("单张图片 shape (C, H, W):", train_dataset[0][0].shape)  # torch.Size([3, 32, 32])
-
-# 查看单张图片的标签: 0~9 的整数
-print("第一张图片的标签编号:", train_dataset[0][1])  # 0~9
-
-# 查看一个 batch 的数据形状
-for images, labels in train_loader:  # 取训练集第一个 batch
-    print("一个 batch 的图片 shape:", images.shape)  # torch.Size([128, 3, 32, 32])
-    print("一个 batch 的标签 shape:", labels.shape)  # torch.Size([128])
-    break  # 只取第一个 batch
-
-
-# ============================================================
-# 4. Trainer 通用训练器类
-# ============================================================
-# 该类封装了完整的训练流水线: 训练循环 + 验证评估 + 早停 + 模型保存 + 绘图
-# 同时支持分类任务（带准确率）与回归任务（仅损失）
-
-
-class Trainer:
-    """
-    通用训练器：封装训练循环、评估、早停、模型保存与可视化
-
-    支持两种任务:
-      - 分类: 使用 train() + evaluating()，记录损失与准确率
-      - 回归: 使用 regression_train() + regression_evaluating()，仅记录损失
-    """
-
-    def __init__(
-            self,
-            model,  # 待训练的 PyTorch 模型实例
-            trainloader,  # 训练集 DataLoader
-            valloader,  # 验证集 DataLoader
-            criterion,  # 损失函数（如 CrossEntropyLoss）
-            optimizer,  # 优化器（如 Adam、SGD）
-            device='cuda',  # 训练设备: 'cuda'（GPU）或 'cpu'
-            epochs=10,  # 最大训练轮数，默认 10
-            early_stopping=True,  # 是否启用早停机制
-            patience=5,  # 早停容忍度: 连续 patience 轮指标未提升则停止训练
-            save_path="best_model.pth",  # 最优模型权重保存路径
-            early_stop_mode="loss",  # 早停监控指标: "loss"（损失越小越好）或 "acc"（准确率）
-            maximize_acc=True,  # early_stop_mode="acc" 时: True=准确率越大越好, False=越小越好
-            use_tensorboard=False,  # 是否启用 TensorBoard 可视化日志
-            log_dir='tensorboard_logs'  # TensorBoard 日志存放目录
-    ):
-        """初始化训练器，保存所有配置并创建 TensorBoard 写入器"""
-        self.model = model  # 保存模型实例
-        self.trainloader = trainloader  # 保存训练集加载器
-        self.valloader = valloader  # 保存验证集加载器
-        self.criterion = criterion  # 保存损失函数
-        self.optimizer = optimizer  # 保存优化器
-        self.device = device  # 保存训练设备
-        self.epochs = epochs  # 保存最大训练轮数
-
-        # 训练历史记录列表（用于绘图）
-        self.train_losses = []  # 每轮训练集平均损失
-        self.val_losses = []  # 每轮验证集平均损失
-        self.train_accuracies = []  # 每轮训练集准确率（%）
-        self.val_accuracies = []  # 每轮验证集准确率（%）
-
-        # 早停相关配置
-        self.early_stopping = early_stopping  # 是否启用早停
-        self.patience = patience  # 早停容忍度
-        self.save_path = save_path  # 最优模型保存路径
-        self.early_stop_mode = early_stop_mode  # 早停监控模式: "loss" 或 "acc"
-        self.maximize_acc = maximize_acc  # acc 模式下: True=越大越好
-
-        # 早停运行状态变量
-        self.best_metric = None  # 历史最优度量值（初始为 None）
-        self.early_stop_counter = 0  # 连续未提升的轮数计数器
-        self.best_epoch = 0  # 取得最优度量值时的 epoch 编号
-
-        # TensorBoard 日志配置
-        self.use_tensorboard = use_tensorboard  # 是否使用 TensorBoard
-        self._writer = None  # TensorBoard SummaryWriter 句柄，初始为 None
-        if self.use_tensorboard:  # 如果启用了 TensorBoard
-            if not os.path.exists(log_dir):  # 检查日志目录是否存在
-                os.makedirs(log_dir)  # 不存在则递归创建
-            self._writer = SummaryWriter(log_dir)  # 创建 SummaryWriter 实例
-
-    def evaluating(self, dataloader):
-        """
-        分类任务评估函数
-
-        参数:
-            dataloader: 待评估的数据加载器（验证集或测试集）
-        返回:
-            avg_loss: 平均损失
-            acc:      准确率（%）
-        """
-        self.model.eval()  # 切换到评估模式: 关闭 Dropout、冻结 BatchNorm 统计量
-        correct = 0  # 累计预测正确的样本数
-        total = 0  # 累计总样本数
-        running_loss = 0.0  # 累计总损失
-
-        with torch.no_grad():  # 禁用梯度计算，大幅节省显存和计算量
-            for images, labels in dataloader:  # 逐 batch 遍历
-                images = images.to(self.device)  # 将图片数据移至 GPU/CPU
-                labels = labels.to(self.device)  # 将标签数据移至 GPU/CPU
-                outputs = self.model(images)  # 前向传播得到 logits
-                loss = self.criterion(outputs, labels)  # 计算当前 batch 的损失
-                running_loss += loss.item()  # 累加损失（.item() 将标量张量转 Python float）
-                # torch.argmax(outputs, dim=1): 沿类别维度取最大值的索引作为预测类别
-                predicted = torch.argmax(outputs, dim=1)  # 获取每个样本的预测类别 (0~9)
-                total += labels.size(0)  # 累加当前 batch 的样本数
-                correct += (predicted == labels).sum().item()  # 累加预测正确的样本数
-
-        acc = 100 * correct / total if total > 0 else 0  # 准确率转为百分比（%）
-        avg_loss = running_loss / len(dataloader)  # 平均损失 = 总损失 / batch 数
-        return avg_loss, acc  # 返回 (平均损失, 准确率%)
-
-    def regression_evaluating(self, dataloader):
-        """
-        回归任务评估函数: 只返回平均损失
-
-        参数:
-            dataloader: 数据加载器
-        返回:
-            avg_loss: 平均损失
-        """
-        self.model.eval()  # 切换到评估模式
-        running_loss = 0.0  # 累计损失初始化为 0
-        with torch.no_grad():  # 禁用梯度计算
-            for data, target in dataloader:  # 遍历每个 batch
-                data = data.to(self.device)  # 输入数据移至设备
-                target = target.to(self.device)  # 目标值移至设备
-                output = self.model(data)  # 前向传播
-                loss = self.criterion(output, target)  # 计算损失
-                running_loss += loss.item()  # 累加损失
-        avg_loss = running_loss / len(dataloader)  # 计算平均损失
-        return avg_loss  # 返回平均损失
-
-    def regression_train(self):
-        """
-        回归任务训练循环: 仅记录损失，不计算准确率
-
-        与 train() 的区别: 评估时不计算准确率，只使用验证损失作为早停指标
-        """
-        self.model.to(self.device)  # 将模型移至目标设备
-        for epoch in range(self.epochs):  # 逐轮训练
-            self.model.train()  # 切换到训练模式: 启用 Dropout 等
-            running_loss = 0.0  # 本轮损失累加器清零
-
-            for batch_idx, (inputs, targets) in enumerate(self.trainloader):  # 遍历训练集
-                inputs = inputs.to(self.device)  # 输入移至设备
-                targets = targets.to(self.device)  # 目标移至设备
-                self.optimizer.zero_grad()  # 清空上一轮梯度
-                outputs = self.model(inputs)  # 前向传播
-                loss = self.criterion(outputs, targets)  # 计算损失
-                loss.backward()  # 反向传播求梯度
-                self.optimizer.step()  # 优化器更新参数
-                running_loss += loss.item()  # 累加损失
-
-                if (batch_idx + 1) % 100 == 0:  # 每 100 个 batch 打印一次当前损失
-                    print(f"[Regression] Epoch [{epoch + 1}/{self.epochs}], "
-                          f"Step [{batch_idx + 1}/{len(self.trainloader)}], Loss: {loss.item():.4f}")
-
-            avg_train_loss = running_loss / len(self.trainloader)  # 本轮平均训练损失
-            train_loss = self.regression_evaluating(self.trainloader)  # 评估训练集损失
-            val_loss = self.regression_evaluating(self.valloader)  # 评估验证集损失
-            self.train_losses.append(train_loss)  # 记录训练损失
-            self.val_losses.append(val_loss)  # 记录验证损失
-            print(f"[Regression] Epoch [{epoch + 1}/{self.epochs}], "
-                  f"Loss: {avg_train_loss:.4f}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
-
-            # ---- TensorBoard 日志记录 ----
-            if self.use_tensorboard and self._writer is not None:
-                self._writer.add_scalar('Train/Loss', train_loss, epoch + 1)  # 记录训练损失曲线
-                self._writer.add_scalar('Val/Loss', val_loss, epoch + 1)  # 记录验证损失曲线
-                for i, param_group in enumerate(self.optimizer.param_groups):  # 遍历所有参数组
-                    self._writer.add_scalar(f'LR/group_{i}', param_group['lr'], epoch + 1)  # 记录学习率
-
-            # ---- 早停与模型保存 ----
-            metric = val_loss  # 回归任务只用验证损失作为评估指标
-            if self.early_stopping:  # 如果开启早停
-                if self.best_metric is None or metric < self.best_metric:  # 首次记录或损失下降
-                    self.best_metric = metric  # 更新最优损失值
-                    self.early_stop_counter = 0  # 重置早停计数器
-                    self.best_epoch = epoch + 1  # 记录最优 epoch
-                    torch.save(self.model.state_dict(), self.save_path)  # 保存最优模型权重
-                    print(f"[Info][Regression] Model improved at epoch {epoch + 1}, saving to {self.save_path}")
-                else:  # 损失未下降
-                    self.early_stop_counter += 1  # 早停计数器 +1
-                    print(f"[Info][Regression] Early stop counter: {self.early_stop_counter}/{self.patience}")
-                    if self.early_stop_counter >= self.patience:  # 超过容忍度
-                        print(f"[Regression] Early stopping triggered at epoch {epoch + 1}. "
-                              f"Best epoch: {self.best_epoch}, Best Loss: {self.best_metric:.4f}")
-                        if os.path.isfile(self.save_path):  # 如果最优权重文件存在
-                            self.model.load_state_dict(torch.load(self.save_path, map_location=self.device))  # 恢复最优权重
-                        if self.use_tensorboard and self._writer is not None:
-                            self._writer.close()  # 关闭 TensorBoard 写入器
-                        return  # 结束训练
-
-        # 全部 epoch 跑完且未触发早停: 加载训练过程中保存的最优权重
-        if self.early_stopping and self.best_metric is not None:
-            print(f"[Regression] Training finished. Loading best model from {self.save_path}")
-            if os.path.isfile(self.save_path):  # 检查权重文件是否存在
-                self.model.load_state_dict(torch.load(self.save_path, map_location=self.device))  # 恢复最优权重
-        if self.use_tensorboard and self._writer is not None:
-            self._writer.close()  # 关闭 TensorBoard 写入器
-
-    def _is_improvement(self, metric):
-        """
-        根据早停模式判断当前度量值是否优于历史最优
-
-        参数:
-            metric: 当前 epoch 的度量值（损失或准确率）
-        返回:
-            True=有提升, False=未提升
-        """
-        if self.best_metric is None:  # 尚无历史最优记录（第一个 epoch）
-            return True  # 视为提升
-        if self.early_stop_mode == "loss":  # 损失模式: 越小越好
-            return metric < self.best_metric  # 当前损失 < 历史最优损失 → 提升
-        elif self.early_stop_mode == "acc":  # 准确率模式
-            if self.maximize_acc:  # 准确率越大越好
-                return metric > self.best_metric  # 当前准确率 > 历史最优准确率 → 提升
-            else:  # 准确率越小越好（不常见）
-                return metric < self.best_metric
-        else:
-            raise ValueError("Unknown early_stop_mode: {}".format(self.early_stop_mode))  # 未知模式报错
-
-    def _get_val_metric(self, val_loss, val_acc):
-        """
-        根据早停模式返回用于比较的度量值
-
-        参数:
-            val_loss: 当前验证集平均损失
-            val_acc:  当前验证集准确率（%）
-        返回:
-            用于早停判断的度量值（损失或准确率）
-        """
-        if self.early_stop_mode == "loss":  # 以损失为早停依据
-            return val_loss
-        elif self.early_stop_mode == "acc":  # 以准确率为早停依据
-            return val_acc
-        else:
-            raise ValueError("Unknown early_stop_mode: {}".format(self.early_stop_mode))
-
-    def train(self):
-        """
-        分类任务训练主循环
-
-        每个 epoch 的流程:
-          1. 遍历训练集 batch，前向 → 损失 → 反向 → 更新
-          2. 在训练集和验证集上评估损失与准确率
-          3. 记录训练历史数据
-          4. 早停判断与最优模型保存
-        """
-        self.model.to(self.device)  # 将模型参数迁移到目标设备 (GPU/CPU)
-
-        for epoch in range(self.epochs):  # 逐轮训练，共 epochs 轮
-            self.model.train()  # 切换到训练模式: 启用 Dropout、BatchNorm 更新等
-            running_loss = 0.0  # 当前 epoch 的损失累加器（用于显示）
-
-            for batch_idx, (images, labels) in enumerate(self.trainloader):  # 遍历训练集每个 batch
-                images = images.to(self.device)  # 图片数据移到设备
-                labels = labels.to(self.device)  # 标签数据移到设备
-
-                # ---- 核心训练五步 ----
-                self.optimizer.zero_grad()  # 1. 清空上一轮的梯度（PyTorch 默认累加梯度）
-                outputs = self.model(images)  # 2. 前向传播，得到预测 logits
-                loss = self.criterion(outputs, labels)  # 3. 计算损失
-                loss.backward()  # 4. 反向传播，计算梯度
-                self.optimizer.step()  # 5. 更新参数: θ = θ - lr × ∇loss
-
-                running_loss += loss.item()  # 累加损失值（.item() 提取 Python float）
-
-                if (batch_idx + 1) % 100 == 0:  # 每 100 个 batch 打印一次进度
-                    print(f'Epoch [{epoch + 1}/{self.epochs}], '
-                          f'Step [{batch_idx + 1}/{len(self.trainloader)}], Loss: {loss.item():.4f}')
-
-            # ---- epoch 结束后的评估 ----
-            avg_train_loss = running_loss / len(self.trainloader)  # 本轮平均训练损失（batch 级）
-            train_loss, train_acc = self.evaluating(self.trainloader)  # 训练集评估: 获得平均损失与准确率
-            val_loss, val_acc = self.evaluating(self.valloader)  # 验证集评估: 获得平均损失与准确率
-
-            # 记录历史数据（用于绘图）
-            self.train_losses.append(train_loss)  # 保存训练损失
-            self.val_losses.append(val_loss)  # 保存验证损失
-            self.train_accuracies.append(train_acc)  # 保存训练准确率
-            self.val_accuracies.append(val_acc)  # 保存验证准确率
-
-            print(f'Epoch [{epoch + 1}/{self.epochs}], '
-                  f'Loss: {avg_train_loss:.4f}, '
-                  f'Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, '
-                  f'Train Acc: {train_acc:.2f}%, Val Acc: {val_acc:.2f}%')
-
-            # ---- TensorBoard 日志记录 ----
-            if self.use_tensorboard and self._writer is not None:
-                self._writer.add_scalar('Train/Loss', train_loss, epoch + 1)  # 训练损失曲线
-                self._writer.add_scalar('Train/Accuracy', train_acc, epoch + 1)  # 训练准确率曲线
-                self._writer.add_scalar('Val/Loss', val_loss, epoch + 1)  # 验证损失曲线
-                self._writer.add_scalar('Val/Accuracy', val_acc, epoch + 1)  # 验证准确率曲线
-                for i, param_group in enumerate(self.optimizer.param_groups):  # 遍历优化器中的参数组
-                    self._writer.add_scalar(f'LR/group_{i}', param_group['lr'], epoch + 1)  # 记录学习率
-
-            # ---- 早停判断与最优模型保存 ----
-            metric = self._get_val_metric(val_loss, val_acc)  # 根据模式获取用于比较的度量值
-            if self.early_stopping:  # 如果启用了早停机制
-                if self._is_improvement(metric):  # 当前度量优于历史最优 → 提升
-                    self.best_metric = metric  # 更新历史最优度量值
-                    self.early_stop_counter = 0  # 重置早停计数器
-                    self.best_epoch = epoch + 1  # 记录最优 epoch 编号
-                    torch.save(self.model.state_dict(), self.save_path)  # 保存最优模型权重到文件
-                    print(f"[Info] Model improved at epoch {epoch + 1}, saving to {self.save_path}")
-                else:  # 未提升
-                    self.early_stop_counter += 1  # 早停计数器 +1
-                    print(f"[Info] Early stop counter: {self.early_stop_counter}/{self.patience}")
-                    if self.early_stop_counter >= self.patience:  # 连续 patience 轮未提升
-                        print(f"Early stopping triggered at epoch {epoch + 1}. "
-                              f"Best epoch: {self.best_epoch}, Best metric: {self.best_metric:.4f}")
-                        if os.path.isfile(self.save_path):  # 如果之前保存过最优权重
-                            # 加载最优模型权重以恢复到最佳状态
-                            self.model.load_state_dict(torch.load(self.save_path, map_location=self.device))
-                        if self.use_tensorboard and self._writer is not None:
-                            self._writer.close()  # 关闭 TensorBoard 写入器
-                        return  # 结束训练
-
-        # 所有 epoch 完成且未触发早停: 加载训练过程中保存的最优模型
-        if self.early_stopping and self.best_metric is not None:
-            print(f"Training finished. Loading best model from {self.save_path}")
-            if os.path.isfile(self.save_path):  # 验证权重文件存在
-                self.model.load_state_dict(torch.load(self.save_path, map_location=self.device))  # 恢复最优权重
-        if self.use_tensorboard and self._writer is not None:
-            self._writer.close()  # 关闭 TensorBoard 写入器
-
-    def plot(self, acc=True):
-        """
-        可视化训练过程中的损失与准确率曲线
-
-        参数:
-            acc: True=绘制损失+准确率双图（分类），False=仅绘制损失曲线（回归）
-        """
-        epochs_range = range(1, len(self.train_losses) + 1)  # 横轴: epoch 编号（从 1 开始）
-
-        if acc:  # 分类任务: 绘制损失和准确率两张子图
-            plt.figure(figsize=(14, 5))  # 创建宽 14、高 5 英寸的画布
-
-            # 子图 1: 训练/验证损失曲线
-            plt.subplot(1, 2, 1)  # 1 行 2 列的第 1 个
-            plt.plot(epochs_range, self.train_losses, label='Train Loss')  # 训练损失折线
-            plt.plot(epochs_range, self.val_losses, label='Validation Loss')  # 验证损失折线
-            plt.xlabel('Epoch')  # 横轴标签
-            plt.ylabel('Loss')  # 纵轴标签
-            plt.title('Training and Validation Loss')  # 子图标题
-            plt.legend()  # 显示图例
-            plt.grid(True)  # 显示网格线
-
-            # 子图 2: 训练/验证准确率曲线
-            plt.subplot(1, 2, 2)  # 1 行 2 列的第 2 个
-            plt.plot(epochs_range, self.train_accuracies, label='Train Accuracy')  # 训练准确率折线
-            plt.plot(epochs_range, self.val_accuracies, label='Validation Accuracy')  # 验证准确率折线
-            plt.xlabel('Epoch')  # 横轴标签
-            plt.ylabel('Accuracy (%)')  # 纵轴标签（百分比）
-            plt.title('Training and Validation Accuracy')  # 子图标题
-            plt.legend()  # 显示图例
-            plt.grid(True)  # 显示网格线
-
-            plt.tight_layout()  # 自动调整子图间距，防止重叠
-            plt.show()  # 显示图像
-
-        else:  # 回归任务: 只绘制损失曲线
-            plt.figure(figsize=(7, 5))  # 创建 7×5 英寸的画布
-            plt.plot(epochs_range, self.train_losses, label='Train Loss')  # 训练损失
-            plt.plot(epochs_range, self.val_losses, label='Validation Loss')  # 验证损失
-            plt.xlabel('Epoch')  # 横轴标签
-            plt.ylabel('Loss')  # 纵轴标签
-            plt.title('Training and Validation Loss')  # 标题
-            plt.legend()  # 显示图例
-            plt.grid(True)  # 显示网格线
-            plt.tight_layout()  # 自动调整间距
-            plt.show()  # 显示图像
-
-
-# ============================================================
-# 5. 模型一: VGG11 —— 经典卷积神经网络
-# ============================================================
-# VGG11 结构:
-#   - 8 个卷积层（3×3 kernel）+ 5 个 MaxPool 层
-#   - 特征提取部分分为 5 个 Block，每 Block 包含 1~2 个 Conv+ReLU 和一个 MaxPool
-#   - 分类器部分: Flatten → FC(512→128)→ReLU → FC(128→10)
-# 输入: (batch, 3, 32, 32) 彩色图片
-# 输出: (batch, 10) 类别 logits
-#
-# Block 结构:
-#   Block1: Conv(3→64)→ReLU→MaxPool          (32×32 → 16×16)
-#   Block2: Conv(64→128)→ReLU→MaxPool         (16×16 → 8×8)
-#   Block3: Conv(128→256)→ReLU→Conv(256→256)→ReLU→MaxPool    (8×8 → 4×4)
-#   Block4: Conv(256→512)→ReLU→Conv(512→512)→ReLU→MaxPool    (4×4 → 2×2)
-#   Block5: Conv(512→512)→ReLU→Conv(512→512)→ReLU→MaxPool    (2×2 → 1×1)
-# 5 次 MaxPool 后特征图变为 1×1，展平后得到 512 维向量
-
-
-class VGG11(nn.Module):
-    """
-    VGG11 卷积神经网络 —— 用于 CIFAR-10 分类（彩色 32×32 输入）
-
-    参数量: 约 9,287,434（全部可训练）
-    """
-
-    def __init__(self, num_classes=10):
-        """
-        初始化 VGG11
-
-        参数:
-            num_classes: 输出类别数，默认 10
-        """
-        super().__init__()  # 调用父类 nn.Module 的构造函数
-
-        # ---- 特征提取层: Sequential 堆叠所有卷积和池化 ----
-        self.features = nn.Sequential(
-            # Block 1: 输入 3 通道 → 输出 64 通道，尺寸 32→16
-            nn.Conv2d(3, 64, kernel_size=3, padding=1),  # (3,32,32) → (64,32,32)，padding=1 保持尺寸
-            nn.ReLU(inplace=True),  # ReLU 激活函数，inplace=True 直接修改原张量节省内存
-            nn.MaxPool2d(kernel_size=2, stride=2),  # (64,32,32) → (64,16,16)，尺寸减半
-
-            # Block 2: 64 通道 → 128 通道，尺寸 16→8
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),  # (64,16,16) → (128,16,16)
-            nn.ReLU(inplace=True),  # ReLU 激活
-            nn.MaxPool2d(kernel_size=2, stride=2),  # (128,16,16) → (128,8,8)
-
-            # Block 3: 128 通道 → 256 通道，尺寸 8→4（双卷积 + 单池化）
-            nn.Conv2d(128, 256, kernel_size=3, padding=1),  # (128,8,8) → (256,8,8)
-            nn.ReLU(inplace=True),  # ReLU 激活
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),  # (256,8,8) → (256,8,8)
-            nn.ReLU(inplace=True),  # ReLU 激活
-            nn.MaxPool2d(kernel_size=2, stride=2),  # (256,8,8) → (256,4,4)
-
-            # Block 4: 256 通道 → 512 通道，尺寸 4→2（双卷积 + 单池化）
-            nn.Conv2d(256, 512, kernel_size=3, padding=1),  # (256,4,4) → (512,4,4)
-            nn.ReLU(inplace=True),  # ReLU 激活
-            nn.Conv2d(512, 512, kernel_size=3, padding=1),  # (512,4,4) → (512,4,4)
-            nn.ReLU(inplace=True),  # ReLU 激活
-            nn.MaxPool2d(kernel_size=2, stride=2),  # (512,4,4) → (512,2,2)
-
-            # Block 5: 512 通道 → 512 通道，尺寸 2→1（双卷积 + 单池化）
-            nn.Conv2d(512, 512, kernel_size=3, padding=1),  # (512,2,2) → (512,2,2)
-            nn.ReLU(inplace=True),  # ReLU 激活
-            nn.Conv2d(512, 512, kernel_size=3, padding=1),  # (512,2,2) → (512,2,2)
-            nn.ReLU(inplace=True),  # ReLU 激活
-            nn.MaxPool2d(kernel_size=2, stride=2),  # (512,2,2) → (512,1,1)，最终特征图尺寸 1×1
+        super().__init__()
+        
+        # 分支1: 1×1 卷积（最简单，不做降维）
+        self.branch1 = nn.Sequential(
+            nn.Conv2d(in_channels, out_1x1, kernel_size=1),
+            nn.BatchNorm2d(out_1x1),
+            nn.ReLU(inplace=True),
         )
-
-        # ---- 分类器层: 全连接网络 ----
-        self.classifier = nn.Sequential(
-            nn.Linear(512, 128),  # 全连接层: 512 维 → 128 维
-            nn.ReLU(inplace=True),  # ReLU 激活
-            nn.Linear(128, num_classes),  # 输出层: 128 维 → 10 维（logits，不加 Softmax）
+        
+        # 分支2: 1×1 降维 → 3×3 卷积
+        self.branch2 = nn.Sequential(
+            nn.Conv2d(in_channels, reduce_3x3, kernel_size=1),   # 先压缩
+            nn.BatchNorm2d(reduce_3x3),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(reduce_3x3, out_3x3, kernel_size=3, padding=1),  # 小通道做大核卷积
+            nn.BatchNorm2d(out_3x3),
+            nn.ReLU(inplace=True),
         )
-
+        
+        # 分支3: 1×1 降维 → 5×5 卷积
+        self.branch3 = nn.Sequential(
+            nn.Conv2d(in_channels, reduce_5x5, kernel_size=1),
+            nn.BatchNorm2d(reduce_5x5),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(reduce_5x5, out_5x5, kernel_size=5, padding=2),
+            nn.BatchNorm2d(out_5x5),
+            nn.ReLU(inplace=True),
+        )
+        
+        # 分支4: 3×3 最大池化 → 1×1 卷积（池化后不改尺寸）
+        self.branch4 = nn.Sequential(
+            nn.MaxPool2d(kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels, out_pool, kernel_size=1),
+            nn.BatchNorm2d(out_pool),
+            nn.ReLU(inplace=True),
+        )
+    
     def forward(self, x):
-        """
-        前向传播
-
-        参数:
-            x: 输入张量，形状 (batch_size, 3, 32, 32)
-        返回:
-            logits: 形状 (batch_size, 10)
-        """
-        x = self.features(x)  # 通过卷积+池化层提取特征: (batch,3,32,32)→(batch,512,1,1)
-        # 5 次 2×2 MaxPool 后，32×32 输入变为 1×1，展平后为 512 维向量
-        x = torch.flatten(x, 1)  # 展平: (batch,512,1,1) → (batch,512)
-        x = self.classifier(x)  # 全连接分类: (batch,512) → (batch,10)
-        return x  # 返回 10 个类别的原始分数
-
-
-# 实例化 VGG11 模型
-model_vgg = VGG11(num_classes=10)  # 创建 VGG11 模型实例，10 分类
-print(model_vgg)  # 打印模型结构概览
-
-# ============================================================
-# 6. VGG11 前向传播验证
-# ============================================================
-
-# 用随机生成的虚拟图片测试前向传播
-dummy_input = torch.randn(4, 3, 32, 32)  # batch_size=4, 3 通道, 32×32 的随机张量
-output_vgg = model_vgg(dummy_input)  # 前向传播
-print(f"VGG11 正向传播输出 shape: {output_vgg.shape}")  # 应为 torch.Size([4, 10])
-
-# ============================================================
-# 7. VGG11 参数统计
-# ============================================================
-
-print("\n========== VGG11 参数统计 ==========")  # 打印分隔标题
-
-# 统计模型的可训练参数量
-total_params_vgg = sum(p.numel() for p in model_vgg.parameters() if p.requires_grad)  # 可训练参数总数
-print(f"VGG11 模型可训练参数总数: {total_params_vgg:,}")  # 约 9,287,434
-
-# 打印各层参数量明细
-print("\n各层参数量明细:")  # 标题
-for name, param in model_vgg.named_parameters():  # 遍历所有命名参数
-    num_params = param.numel()  # .numel() 返回张量中元素个数
-    print(f"  {name}: {num_params:,}")  # 打印参数名和参数量
-
-
-# ============================================================
-# 8. 模型二: ResNet18 —— 残差卷积神经网络
-# ============================================================
-# ResNet18 结构:
-#   - 使用残差块（ResidualBlock）解决深层网络退化问题
-#   - 每个残差块: Conv→BN→ReLU→Conv→BN → +残差连接(x)→ReLU
-#   - 4 个 Layer，每个 Layer 包含 2 个 ResidualBlock
-#   - 通道数变化: 64 → 128 → 256 → 512
-#   - 使用 AdaptiveAvgPool2d 自适应池化，无需手动计算展平尺寸
-#
-# 残差连接的核心思想: 输出 = F(x) + x
-#   当网络学习不到有效特征时，至少可以学习恒等映射（F(x)→0）
-
-
-class ResidualBlock(nn.Module):
-    """
-    ResNet 基本残差块
-
-    结构: Conv3×3 → BN → ReLU → Conv3×3 → BN → +shortcut → ReLU
-    当输入输出通道不匹配时，通过 1×1 卷积进行下采样匹配
-
-    参数:
-        in_planes:   输入通道数
-        planes:      输出通道数
-        stride:      卷积步长，默认 1
-        downsample:  下采样模块（1×1 卷积 + BN），用于匹配 shortcut 的维度
-    """
-    expansion = 1  # BasicBlock 的输出通道膨胀系数为 1（Bottleneck 版本为 4）
-
-    def __init__(self, in_planes, planes, stride=1, downsample=None):
-        """初始化残差块"""
-        super().__init__()  # 调用父类构造函数
-        # 第一个 3×3 卷积: stride 可能不为 1（用于下采样）
-        self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)  # 卷积1
-        self.bn1 = nn.BatchNorm2d(planes)  # 批归一化1: 加速收敛，稳定训练
-        self.relu = nn.ReLU(inplace=True)  # ReLU 激活函数（inplace 节省内存）
-        # 第二个 3×3 卷积: stride 始终为 1
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)  # 卷积2
-        self.bn2 = nn.BatchNorm2d(planes)  # 批归一化2
-        self.downsample = downsample  # 下采样模块: 当输入输出维度不匹配时使用
-
-    def forward(self, x):
-        """
-        前向传播: 主干分支 + shortcut 分支 → 相加 → ReLU
-
-        参数:
-            x: 输入张量
-        返回:
-            残差块输出
-        """
-        identity = x  # 保存输入（shortcut/恒等映射分支）
-
-        out = self.conv1(x)  # 3×3 卷积（可能带 stride 下采样）
-        out = self.bn1(out)  # 批归一化
-        out = self.relu(out)  # ReLU 激活
-
-        out = self.conv2(out)  # 3×3 卷积（stride=1，尺寸不变）
-        out = self.bn2(out)  # 批归一化
-
-        if self.downsample is not None:  # 如果输入输出维度不匹配
-            identity = self.downsample(x)  # 通过 1×1 卷积 + BN 调整 shortcut 的尺寸和通道数
-
-        out += identity  # 残差连接: 主干输出 + shortcut 输出（逐元素相加）
-        out = self.relu(out)  # 最终的 ReLU 激活
-        return out  # 返回残差块输出
-
-
-class ResNet18(nn.Module):
-    """
-    ResNet18 残差网络 —— 用于 CIFAR-10 分类（彩色 32×32 输入）
-
-    结构概览:
-      输入 (3, 32, 32)
-      → Conv(3→64, 3×3, stride=1) + BN + ReLU （保持 32×32）
-      → Layer1: 2×ResidualBlock(64, 64, stride=1)   → (64, 32, 32)
-      → Layer2: 2×ResidualBlock(64, 128, stride=2)  → (128, 16, 16)
-      → Layer3: 2×ResidualBlock(128, 256, stride=2) → (256, 8, 8)
-      → Layer4: 2×ResidualBlock(256, 512, stride=2) → (512, 4, 4)
-      → AdaptiveAvgPool2d((1,1)) → (512, 1, 1)
-      → Flatten → FC(512, 10)
-
-    注意: CIFAR-10 图片较小（32×32），第一层卷积使用 stride=1 而非 2，
-    以避免过大的下采样导致信息丢失。
-    """
-
-    def __init__(self, num_classes=10):
-        """初始化 ResNet18"""
-        super().__init__()  # 调用父类构造函数
-        self.in_planes = 64  # 初始通道数: 从 64 开始随深度翻倍
-
-        # ---- 第一层卷积（CIFAR-10 适配: stride=1，不使用 MaxPool） ----
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)  # (3,32,32)→(64,32,32)
-        self.bn1 = nn.BatchNorm2d(64)  # 批归一化: 加速训练收敛
-        self.relu = nn.ReLU(inplace=True)  # ReLU 激活
-
-        # ---- 四个残差层 ----
-        # _make_layer(输出通道, block数, stride): 创建一个残差阶段
-        self.layer1 = self._make_layer(64, 2, stride=1)  # Layer1: 64 通道, 2 个 block, 尺寸 32×32
-        self.layer2 = self._make_layer(128, 2, stride=2)  # Layer2: 128 通道, 2 个 block, 尺寸 16×16
-        self.layer3 = self._make_layer(256, 2, stride=2)  # Layer3: 256 通道, 2 个 block, 尺寸 8×8
-        self.layer4 = self._make_layer(512, 2, stride=2)  # Layer4: 512 通道, 2 个 block, 尺寸 4×4
-
-        # ---- 自适应平均池化 + 全连接分类器 ----
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  # 自适应池化: 将任意尺寸特征图池化为 (1,1)
-        self.fc = nn.Linear(512 * ResidualBlock.expansion, num_classes)  # 全连接: 512 → 10
-
-    def _make_layer(self, planes, blocks, stride):
-        """
-        构建一个残差层（Layer），包含 blocks 个 ResidualBlock
-
-        参数:
-            planes: 该层输出的通道数
-            blocks: 该层包含的 ResidualBlock 数量（ResNet18 每层为 2）
-            stride: 第一个 block 的步长（用于下采样）
-        返回:
-            nn.Sequential: 该层的所有残差块
-        """
-        downsample = None  # 下采样模块，默认为 None
-        layers = []  # 保存该层所有子模块的列表
-
-        # 当输入通道 ≠ 输出通道，或 stride≠1 时，shortcut 需要下采样匹配维度
-        if stride != 1 or self.in_planes != planes * ResidualBlock.expansion:
-            downsample = nn.Sequential(
-                nn.Conv2d(self.in_planes, planes * ResidualBlock.expansion,  # 1×1 卷积调整通道数
-                          kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(planes * ResidualBlock.expansion),  # 批归一化
-            )
-
-        # 第一个 block 可能需要 downsample（处理通道/尺寸变化）
-        layers.append(ResidualBlock(self.in_planes, planes, stride, downsample))  # 第一个残差块
-        self.in_planes = planes * ResidualBlock.expansion  # 更新输入通道数为当前输出通道数
-        # 后续 block 的输入输出通道数相同，stride=1，尺寸不变
-        for _ in range(1, blocks):  # 遍历剩余 block（ResNet18 每层共 2 个 block，这里循环 1 次）
-            layers.append(ResidualBlock(self.in_planes, planes))  # stride 默认为 1
-        return nn.Sequential(*layers)  # 用 Sequential 包装所有 block
-
-    def forward(self, x):
-        """
-        前向传播
-
-        参数:
-            x: 输入张量，形状 (batch_size, 3, 32, 32)
-        返回:
-            logits: 形状 (batch_size, 10)
-        """
-        x = self.conv1(x)  # 初始卷积: (batch,3,32,32)→(batch,64,32,32)
-        x = self.bn1(x)  # 批归一化
-        x = self.relu(x)  # ReLU 激活
-
-        x = self.layer1(x)  # Layer1: (batch,64,32,32)→(batch,64,32,32)
-        x = self.layer2(x)  # Layer2: (batch,64,32,32)→(batch,128,16,16)
-        x = self.layer3(x)  # Layer3: (batch,128,16,16)→(batch,256,8,8)
-        x = self.layer4(x)  # Layer4: (batch,256,8,8)→(batch,512,4,4)
-
-        x = self.avgpool(x)  # 自适应平均池化: (batch,512,4,4)→(batch,512,1,1)
-        x = torch.flatten(x, 1)  # 展平: (batch,512,1,1)→(batch,512)
-        x = self.fc(x)  # 全连接输出: (batch,512)→(batch,10)
-        return x  # 返回 10 个类别的原始分数
-
-
-# 实例化 ResNet18 模型
-model_resnet = ResNet18(num_classes=10)  # 创建 ResNet18 模型实例
-print(model_resnet)  # 打印模型结构概览
-
-# ============================================================
-# 9. ResNet18 前向传播验证
-# ============================================================
-
-# 用随机生成的虚拟图片测试前向传播
-dummy_input = torch.randn(4, 3, 32, 32)  # batch_size=4, 3 通道, 32×32
-output_resnet = model_resnet(dummy_input)  # 前向传播
-print(f"ResNet18 正向传播输出 shape: {output_resnet.shape}")  # 应为 torch.Size([4, 10])
-
-# ============================================================
-# 10. ResNet18 参数统计
-# ============================================================
-
-print("\n========== ResNet18 参数统计 ==========")  # 打印分隔标题
-
-# 统计模型的可训练参数量
-total_params_resnet = sum(p.numel() for p in model_resnet.parameters() if p.requires_grad)  # 可训练参数总数
-print(f"ResNet18 模型可训练参数总数: {total_params_resnet:,}")  # 约 11,173,962
-
-# 打印各层参数量明细
-print("\n各层参数量明细:")  # 标题
-for name, param in model_resnet.named_parameters():  # 遍历所有命名参数
-    num_params = param.numel()  # 参数元素个数
-    print(f"  {name}: {num_params:,}")  # 打印参数名和参数量
-
-
-# ============================================================
-# 11. 训练准备 —— 设备、损失函数、优化器
-# ============================================================
-
-# 判断可用设备: 优先使用 GPU (CUDA)，不可用则回退到 CPU
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # 自动检测设备
-print(f"\n使用设备: {device}")  # 打印当前训练设备
-
-# 训练超参数
-epochs = 20  # 训练轮数: 20 轮在 CIFAR-10 上通常可较好收敛
-lr = 0.001  # 学习率: Adam 的推荐默认值
-
-# ---- 损失函数 ----
-# 交叉熵损失 CrossEntropyLoss: 内部自动完成 softmax + 负对数似然
-# 输入应为原始 logits（不需要预先做 softmax）
-criterion = nn.CrossEntropyLoss()  # 多分类交叉熵损失
-
-
-# ============================================================
-# 12. VGG11 训练
-# ============================================================
-
-print(f"\n{'='*60}")  # 打印分隔线
-print(f"========== 开始 VGG11 训练 (epochs={epochs}) ==========")  # 训练标题
-print(f"{'='*60}")  # 打印分隔线
-
-# 将 VGG11 模型移至设备
-model_vgg = model_vgg.to(device)  # VGG11 参数迁移到 GPU/CPU
-
-# 创建 VGG11 优化器: Adam
-optimizer_vgg = optim.Adam(model_vgg.parameters(), lr=lr)  # Adam 优化 VGG11 所有参数
-
-# 使用 Trainer 封装训练流程
-trainer_vgg = Trainer(
-    model=model_vgg,  # 待训练的 VGG11 模型
-    trainloader=train_loader,  # 训练集 DataLoader
-    valloader=val_loader,  # 验证集 DataLoader
-    criterion=criterion,  # 损失函数（交叉熵）
-    optimizer=optimizer_vgg,  # 优化器（Adam）
-    device=device,  # 训练设备
-    epochs=epochs,  # 训练轮数: 20
-    early_stopping=True,  # 启用早停: 验证集准确率不再提升时自动停止
-    patience=5,  # 早停容忍度: 连续 5 轮准确率未提升则停止
-    save_path="best_model_vgg11_cifar10.pth",  # 最优权重保存路径
-    early_stop_mode="acc",  # 早停依据: 以验证集准确率为监控指标
-    maximize_acc=True,  # 准确率越大越好
-    use_tensorboard=False  # 不使用 TensorBoard（若需要可视化可设为 True）
-)
-
-trainer_vgg.train()  # 开始训练 VGG11
-trainer_vgg.plot(acc=True)  # 绘制训练/验证损失和准确率曲线
-
-# ============================================================
-# 13. VGG11 验证集评估
-# ============================================================
-
-# 使用最终模型在验证集上评估
-test_loss_vgg, test_acc_vgg = trainer_vgg.evaluating(val_loader)  # 在验证集上评估 VGG11
-print(f"\n========== VGG11 验证集评估结果 ==========")  # 打印标题
-print(f"VGG11 - Val Loss: {test_loss_vgg:.4f}, Val Accuracy: {test_acc_vgg:.2f}%")  # 打印结果
-
-
-# ============================================================
-# 14. ResNet18 训练
-# ============================================================
-
-print(f"\n{'='*60}")  # 打印分隔线
-print(f"========== 开始 ResNet18 训练 (epochs={epochs}) ==========")  # 训练标题
-print(f"{'='*60}")  # 打印分隔线
-
-# 将 ResNet18 模型移至设备
-model_resnet = model_resnet.to(device)  # ResNet18 参数迁移到 GPU/CPU
-
-# 创建 ResNet18 优化器: Adam
-optimizer_resnet = optim.Adam(model_resnet.parameters(), lr=lr)  # Adam 优化 ResNet18 所有参数
-
-# 使用 Trainer 封装训练流程
-trainer_resnet = Trainer(
-    model=model_resnet,  # 待训练的 ResNet18 模型
-    trainloader=train_loader,  # 训练集 DataLoader
-    valloader=val_loader,  # 验证集 DataLoader
-    criterion=criterion,  # 损失函数（交叉熵）
-    optimizer=optimizer_resnet,  # 优化器（Adam）
-    device=device,  # 训练设备
-    epochs=epochs,  # 训练轮数: 20
-    early_stopping=True,  # 启用早停
-    patience=5,  # 早停容忍度
-    save_path="best_model_resnet18_cifar10.pth",  # 最优权重保存路径（resnet18 后缀区分）
-    early_stop_mode="acc",  # 早停依据: 验证集准确率
-    maximize_acc=True,  # 准确率越大越好
-    use_tensorboard=False  # 不使用 TensorBoard
-)
-
-trainer_resnet.train()  # 开始训练 ResNet18
-trainer_resnet.plot(acc=True)  # 绘制训练曲线
-
-# ============================================================
-# 15. ResNet18 验证集评估
-# ============================================================
-
-# 使用最终模型在验证集上评估
-test_loss_resnet, test_acc_resnet = trainer_resnet.evaluating(val_loader)  # 在验证集上评估 ResNet18
-print(f"\n========== ResNet18 验证集评估结果 ==========")  # 打印标题
-print(f"ResNet18 - Val Loss: {test_loss_resnet:.4f}, Val Accuracy: {test_acc_resnet:.2f}%")  # 打印结果
-
-
-# ============================================================
-# 16. 测试集预测与 Kaggle 提交文件生成
-# ============================================================
-# 使用验证集上表现更好的模型进行测试集预测
-# 此处以 ResNet18 为例（通常残差网络在 CIFAR-10 上效果更好）
-
-# 测试集图片目录路径
-test_dir = '../data/cifar-10/train/train'  # 测试图片所在目录
-sample_submission_path = '../data/cifar-10/trainLabels.csv'  # Kaggle 提交模板文件路径
-submission_path = 'submission.csv'  # 生成的提交文件保存路径
-
-# 读取 sampleSubmission.csv 按 id 顺序获取测试图片列表
-sample_df = pd.read_csv(sample_submission_path)  # 读取提交模板
-test_ids = sample_df['id'].tolist()  # 获取所有测试图片 id 列表
-
-
-class CIFAR10TestDataset(Dataset):
-    """
-    CIFAR-10 测试集 Dataset —— 只加载图片，不加载标签
-
-    与训练集的 Dataset 不同，测试集没有标签，只需返回 (image, id)
-    """
-
-    def __init__(self, img_dir, id_list, transform=None):
-        """
-        初始化测试集
-
-        参数:
-            img_dir:   测试图片目录
-            id_list:   图片 id 列表（按 sampleSubmission.csv 的顺序）
-            transform: 预处理变换（Compose 对象）
-        """
-        self.img_dir = img_dir  # 测试图片目录
-        self.id_list = id_list  # 图片 id 列表
-        self.transform = transform  # 预处理变换
-
-    def __len__(self):
-        """返回测试集样本总数"""
-        return len(self.id_list)  # id 列表长度即为样本数
-
-    def __getitem__(self, idx):
-        """
-        根据索引返回 (image, id)
-
-        参数:
-            idx: 样本索引
-        返回:
-            image: 预处理后的图片 Tensor
-            img_id: 图片 id（用于提交文件）
-        """
-        img_id = self.id_list[idx]  # 获取第 idx 张图片的 id
-        img_path = os.path.join(self.img_dir, f'{img_id}.png')  # 拼接完整图片路径: dir/1234.png
-        image = Image.open(img_path).convert('RGB')  # 打开图片并转为 RGB
-        if self.transform:  # 如果有预处理变换
-            image = self.transform(image)  # 应用变换
-        return image, img_id  # 返回 (图片 Tensor, 图片 id)
-
-
-# 构建测试集 DataLoader（不打乱顺序，保持与 sampleSubmission 一致）
-test_dataset = CIFAR10TestDataset(test_dir, test_ids, transform=val_transform)  # 使用验证集的预处理
-test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False, pin_memory=True)  # 测试 DataLoader
-
-# 类别索引 → 类别名称的反向映射（用于将模型输出索引转为可提交的类别名）
-idx_to_class = {idx: cls_name for cls_name, idx in class_to_idx.items()}  # {0:'airplane', 1:'automobile', ...}
-
-# ---- 加载最优模型权重进行推理 ----
-# 选择 ResNet18 的最优模型进行预测（可根据验证集准确率手动切换为 VGG11）
-best_model_path = 'best_model_resnet18_cifar10.pth'  # 最优模型权重文件路径
-model_resnet.load_state_dict(torch.load(best_model_path, map_location=device))  # 加载保存的最优权重
-model_resnet.eval()  # 切换到评估模式
-
-all_ids = []  # 保存所有测试图片的 id
-all_labels = []  # 保存所有预测的类别名称
-
-with torch.no_grad():  # 禁用梯度计算，加快推理速度并节省显存
-    for images, ids in test_loader:  # 逐批次遍历测试集 DataLoader
-        images = images.to(device)  # 将图像数据移动到指定设备（如 GPU）
-        outputs = model_resnet(images)  # 前向推理，获取各类别的输出分数（logits）
-        predicted = torch.argmax(outputs, dim=1)  # 取分数最大的类别索引作为预测结果（0~9）
-        all_ids.extend(ids.tolist())  # 将当前批次的图片 id 追加到总列表
-        # 将预测的类别索引转换为类别名称（如 0 → 'airplane'）并追加到标签列表
-        all_labels.extend([idx_to_class[p.item()] for p in predicted])
-
-# ---- 按 sampleSubmission.csv 格式写入提交文件 ----
-submission_df = pd.DataFrame({'id': all_ids, 'label': all_labels})  # 构建 DataFrame: id 列 + label 列
-submission_df.to_csv(submission_path, index=False)  # 写入 CSV 文件（不含行索引）
-
-print(f'\n提交文件已保存: {submission_path}')  # 打印保存路径
-print(f'预测样本数: {len(submission_df)}')  # 打印预测总数
-print("\n提交文件预览（前 10 行）:")  # 预览标题
-print(submission_df.head(10))  # 打印前 10 行预览
-
-
-# ============================================================
-# 17. VGG11 vs ResNet18 对比总结
-# ============================================================
-
-print("\n" + "=" * 65)  # 打印分隔线
-print("========== VGG11 vs ResNet18 对比总结 ==========")  # 对比标题
-print("=" * 65)  # 打印分隔线
-
-# 构建对比表格
-print(f"{'模型':<15} {'可训练参数':<18} {'验证准确率':<12}")  # 表头
-print("-" * 45)  # 分隔线
-print(f"{'VGG11':<15} {total_params_vgg:<18,} {test_acc_vgg:<12.2f}%")  # VGG11 行
-print(f"{'ResNet18':<15} {total_params_resnet:<18,} {test_acc_resnet:<12.2f}%")  # ResNet18 行
-print("-" * 45)  # 分隔线
-
-# 打印详细分析
-print("\n结论分析:")  # 分析标题
-print(f"  1. 参数量对比:")  # 参数量子标题
-print(f"     VGG11 可训练参数:     {total_params_vgg:>10,} （约 9.29M）")  # VGG11 参数
-print(f"     ResNet18 可训练参数:  {total_params_resnet:>10,} （约 11.17M）")  # ResNet18 参数
-print(f"  2. 模型结构对比:")  # 结构子标题
-print(f"     VGG11:    8 层卷积 + 3 层全连接，纯串联结构，无残差连接")
-print(f"     ResNet18: 17 层卷积 + 1 层全连接，含 8 个残差块，使用跳跃连接缓解梯度消失")
-print(f"  3. 训练特性:")  # 训练子标题
-print(f"     VGG11:    纯前馈结构，深层时容易出现梯度消失/爆炸")
-print(f"     ResNet18: 残差连接使梯度可直接流过 shortcut，支持更深的网络训练")
-print(f"  4. 适用场景:")  # 场景子标题
-print(f"     VGG11:    结构简单直观，适合学习和理解 CNN 基础架构")
-print(f"     ResNet18: 残差结构性能更优，适合作为实际项目的基线模型")
+        b1 = self.branch1(x)
+        b2 = self.branch2(x)
+        b3 = self.branch3(x)
+        b4 = self.branch4(x)
+        # 在通道维度（dim=1）上拼接四个分支的输出
+        return torch.cat([b1, b2, b3, b4], dim=1)
+
+
+# ---- 测试 Inception 模块 ----
+module = InceptionModule(in_channels=192, out_1x1=64, reduce_3x3=96,
+                         out_3x3=128, reduce_5x5=16, out_5x5=32, out_pool=32)
+x = torch.randn(2, 192, 28, 28)
+y = module(x)
+print(f"Inception 模块: {x.shape} → {y.shape}")  # [2,192,28,28] → [2,256,28,28]
+print(f"输出通道 = 64 + 128 + 32 + 32 = {64+128+32+32}")
+
+# ---- 计算量对比: 有 vs 没有 1×1 降维 ----
+# 以分支2 (3×3卷积) 为例，输入 192 通道，输出 128 通道，特征图 28×28
+# 无降维: 3×3 Conv(192→128)
+ops_no_reduce = 3 * 3 * 192 * 128 * 28 * 28
+# 有降维: 1×1 Conv(192→96) + 3×3 Conv(96→128)
+ops_with_reduce = (1 * 1 * 192 * 96 * 28 * 28) + (3 * 3 * 96 * 128 * 28 * 28)
+print(f"\n分支2 计算量对比:")
+print(f"  无 1×1 降维: {ops_no_reduce/1e6:.1f}M")
+print(f"  有 1×1 降维: {ops_with_reduce/1e6:.1f}M")
+print(f"  节省: {(1 - ops_with_reduce/ops_no_reduce) * 100:.0f}%")
 ```
 
+> **关键洞察**：如果没有 1×1 降维（Naive Inception），3×3 和 5×5 卷积直接在 192 通道的输入上做——计算量巨大！加上 1×1 bottleneck 后，先把通道"拧窄"，在窄通道上做昂贵的空间卷积，最后再把各分支拼回来。这就是 "bottleneck" 的精髓。
 
+### 为什么要同时用多种卷积核？
 
+不同大小的卷积核相当于在不同尺度上"看"图像：
+- **1×1**：像素级通道融合，关注"点"信息
+- **3×3**：小范围局部纹理、边缘
+- **5×5**：更大范围的区域特征
+- **池化分支**：提供全局的统计信息
 
+一层内同时用多种核，等于在同一层上并行提取不同粒度的特征，然后拼接——网络不需要"选择"用哪种核，而是每种都用，让后续层自行决定哪些特征更重要。这就是"让网络自己学，而不是手工设计"思想的体现。
 
+### Inception 版本演进路线
 
+```
+Inception V1 (GoogLeNet, 2014)
+  │  核心: Naive Inception → 加 1×1 bottleneck → 9 个堆叠的 Inception 模块
+  │  创新: 用全局平均池化替代最后的全连接层，大幅减少参数
+  │
+  ├─→ Inception V2 (2015, 与 V3 同期)
+  │    核心: 加入 Batch Normalization
+  │    创新: 用两个 3×3 替代 5×5（和 VGG 的思路一致）
+  │
+  ├─→ Inception V3 (2015)
+  │    核心: 卷积核因式分解 (Factorization)
+  │    创新: 把大卷积核拆成小卷积核的序列
+  │          • n×n → 1×n 接 n×1（空间分解，如 3×3 = 1×3→3×1，节省 33% 计算量）
+  │          • 把卷积沿深度或宽度方向拆分
+  │          • 标签平滑 (Label Smoothing): 防止模型"过度自信"
+  │
+  └─→ Inception V4 + Inception-ResNet (2016)
+       核心: 引入残差连接 (Residual Connection)
+       创新: Inception 模块 + 跳跃连接，训练更深更快
+             统一的网格化模块设计（Inception-A/B/C + Reduction Block）
+```
 
+**Inception V3 卷积因式分解的代码验证：**
 
+```python
+import torch
+import torch.nn as nn
 
+# 验证: 1×3 + 3×1 的参数量比 3×3 少，感受野却相同
+x = torch.randn(2, 64, 8, 8)
 
+# 方案A: 单个 3×3 卷积
+conv_3x3 = nn.Conv2d(64, 64, kernel_size=3, padding=1, bias=False)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
- 
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 方案B: 1×3 接 3×1 (因式分解)
+conv_1x3 = nn.Conv2d(64, 64, kernel_size=(1, 3), padding=(0, 1), bias=False)
+conv_3x1 = nn.Conv2d(64, 64, kernel_size=(3, 1), padding=(1, 0), bias=False)
+
+params_3x3 = sum(p.numel() for p in conv_3x3.parameters())  # 3×3×64×64 = 36,864
+params_factor = (sum(p.numel() for p in conv_1x3.parameters()) +
+                 sum(p.numel() for p in conv_3x1.parameters()))  # 1×3×64² + 3×1×64²
+print(f"3×3 卷积参数量:       {params_3x3:,}")
+print(f"1×3+3×1 参数量:       {params_factor:,}")
+print(f"节省:                 {(1-params_factor/params_3x3)*100:.0f}%")
+
+# 验证感受野一致: 都输出 8×8 (padding 一致时)
+out_3x3 = conv_3x3(x)
+out_factor = conv_3x1(conv_1x3(x))
+print(f"3×3 输出 shape:       {out_3x3.shape}")
+print(f"1×3+3×1 输出 shape:   {out_factor.shape}")  # 相同！
+```
+
+##### 标签平滑技术
+
+在传统的分类任务中，模型的训练目标是最小化预测结果与真实标签之间的交叉熵损失（Cross-Entropy Loss）。真实标签通常是one-hot编码的，即对于每个样本，只有一个类别被标记为1，其他类别都被标记为0。这种方法虽然直观，但在某些情况下可能导致模型对训练数据过拟合，尤其是在标签噪声较大或类别不平衡的情况下。
+
+标签平滑通过在one-hot编码的基础上，对标签进行轻微的修改，使得模型不再完全依赖于某个特定的类别，而是对所有类别都有一个较小的置信度。这种方法可以防止模型过于自信地预测某个类别，从而提高泛化能力。
+
+假设我们有一个三分类任务，真实标签是[1, 0, 0]，类别数K=3，$\epsilon=0.1$，则标签平滑后的标签计算公式为：
+$$
+y^{'}=(1-\epsilon) \times y + \frac{\epsilon}{K}
+$$
+
+- 第一类：$(1-0.1) \times 1 + 0.1/3=0.9+0.0333=0.9333$
+- 第二类：$(1-0.1) \times 0 + 0.1/3=0+0.0333=0.0333$
+- 第三类：$(1-0.1) \times 0 + 0.1/3=0+0.0333=0.0333$
+
+ 所以，标签平滑后的标签为[0.9333, 0.0333, 0.0333]。
+
+这样，模型在训练过程中不仅会关注真实类别，还会关注其他类别，从而提高泛化能力。
+
+#### V4结构
+
+InceptionNet V4是由Google Brain团队在2016年提出的一种深度卷积神经网络结构，是 InceptionNet系列中的第四个版本。它采用了比InceptionNet V3更加复杂的网络结构和更多的技术创新，如引入残差连接（Residual Connection）与 Inception 模块结合、统一的网格化模块设计（Inception-A/B/C）、更高效的下采样模块（Reduction Block）等，进一步提高了网络的性能和泛化能力。
+
+##### 残差连接在 Inception V4 中的应用
+
+> **核心概念已在 ResNet 章节详细讲解**（数学推导、梯度流分析、退化问题的本质等），这里只聚焦于残差连接**如何与 Inception 模块结合**，以及它给 Inception 系列带来的变化。
+
+**为什么 Inception 需要残差连接？**
+
+Inception V3 虽然已经很高效，但当堆叠更多 Inception 模块时，仍然会遇到深层网络的**优化困难**——梯度经过多个分支的 concat 和卷积操作后逐渐衰减。残差连接给 Inception 模块加了一条"直通高速公路"，让梯度可以绕过多分支的复杂计算直接回传。
+
+**Inception V4 的两种"口味"：**
+
+Inception V4 论文实际上提出了两个网络：
+
+| 网络 | 关系 |
+|------|------|
+| **Inception V4（纯版）** | 统一网格化 Inception 模块，不依赖残差连接 |
+| **Inception-ResNet V1 / V2** | Inception 模块 + 残差连接的混合体 |
+
+> Inception-ResNet V1 的计算量和 Inception V3 相近；Inception-ResNet V2 的计算量和 Inception V4 相近。两个版本的核心区别是是否使用残差连接，方便做消融对比实验。
+
+**残差连接如何"嫁接"到 Inception 模块上？**
+
+传统的 Inception 模块是"多分支 → concat → 输出"，没有跳跃连接。Inception-ResNet 的做法是：**在多分支 concat 之后，加上原始输入 x（通过一条 1×1 卷积对齐维度），再做 ReLU。**
+
+```
+传统 Inception 模块:                     Inception-ResNet 模块:
+                                       
+输入 x                                   输入 x
+  │                                        ├──────────────────┐
+  ├── 1×1 ──────────────────┐              ├── 1×1 ───────────┐
+  ├── 1×1 → 3×3 ────────────┤              ├── 1×1 → 3×3 ─────┤
+  ├── 1×1 → 5×5 ────────────┤              ├── 1×1 → 3×3 → 3×3┤
+  ├── MaxPool → 1×1 ────────┘              └── 1×1 (投影) ────┘
+  │       ↓ concat                         │       ↓ concat
+  │       输出                                      ↓ + x  ← ★ 残差连接
+                                                   ↓ ReLU
+                                                   输出
+```
+
+**关键差异**：
+
+- 传统 Inception：多分支 concat 后**直接输出**，没有跳跃连接
+- Inception-ResNet：多分支 concat 后，**加上原始输入**（经 1×1 对齐维度），再过 ReLU
+
+```python
+import torch
+import torch.nn as nn
+
+
+class InceptionResNetBlock(nn.Module):
+    """
+    Inception-ResNet-A 模块（简化版）
+    
+    结构: 输入 x
+            ├─ 分支1: 1×1 Conv ──────────────┐
+            ├─ 分支2: 1×1→3×3 Conv ───────────┤ concat
+            ├─ 分支3: 1×1→3×3→3×3 Conv ───────┘
+            └─ 跳跃连接: 1×1 Conv（维度对齐）──→ + → ReLU → 输出
+    
+    这是 Inception-ResNet 的标准模式:
+      out = ReLU( concat([branch1, branch2, branch3]) + projection(x) )
+    """
+    
+    def __init__(self, in_channels, scale=0.1):
+        """
+        scale: 残差缩放因子，是 Inception-ResNet 的特殊技巧
+               将残差分支的输出乘以一个小于 1 的系数（如 0.1），
+               防止残差信号过强导致训练不稳定
+        """
+        super().__init__()
+        self.scale = scale
+        
+        # 分支1: 纯 1×1，输出 32 通道（不改变感受野，只做通道融合）
+        self.branch1 = nn.Sequential(
+            nn.Conv2d(in_channels, 32, kernel_size=1), nn.ReLU(inplace=True))
+        
+        # 分支2: 1×1 降维 → 3×3，输出 32 通道
+        self.branch2 = nn.Sequential(
+            nn.Conv2d(in_channels, 32, kernel_size=1), nn.ReLU(inplace=True),
+            nn.Conv2d(32, 32, kernel_size=3, padding=1), nn.ReLU(inplace=True))
+        
+        # 分支3: 1×1 降维 → 3×3 → 3×3，输出 32 通道（感受野 = 5×5）
+        self.branch3 = nn.Sequential(
+            nn.Conv2d(in_channels, 32, kernel_size=1), nn.ReLU(inplace=True),
+            nn.Conv2d(32, 32, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(32, 32, kernel_size=3, padding=1))
+        
+        # 拼接后（32+32+32=96 通道）→ 用 1×1 映射回原输入通道数，方便做 +x
+        self.expand = nn.Conv2d(96, in_channels, kernel_size=1, bias=False)
+        
+        # 投影层: 如果输入输出维度不匹配，用 1×1 对齐
+        #         这里输入输出通道数相同，所以用恒等映射
+        self.projection = nn.Identity()  # 输入输出同维度，不需要 1×1
+    
+    def forward(self, x):
+        # 三个分支并行计算
+        b1 = self.branch1(x)
+        b2 = self.branch2(x)
+        b3 = self.branch3(x)
+        print(f"  分支输出: b1={b1.shape[1]}ch, b2={b2.shape[1]}ch, b3={b3.shape[1]}ch")
+        
+        # 拼接后做 1×1 融合，映射回输入通道数
+        residual = self.expand(torch.cat([b1, b2, b3], dim=1))
+        print(f"  拼接→1×1映射: {b1.shape[1]+b2.shape[1]+b3.shape[1]}ch → {residual.shape[1]}ch")
+        
+        # ★ 残差连接: 输出 = 恒等映射 + 缩放后的残差（Inception-ResNet 特有技巧）
+        out = self.projection(x) + self.scale * residual
+        out = torch.relu(out)
+        print(f"  +x(残差) + ReLU → 输出: {out.shape[1]}ch")
+        return out
+
+
+# ---- 测试 Inception-ResNet 模块 ----
+print("=== Inception-ResNet-A 模块数据流 ===")
+block = InceptionResNetBlock(in_channels=64, scale=0.1)
+x = torch.randn(2, 64, 16, 16)
+y = block(x)
+print(f"输入: {x.shape} → 输出: {y.shape} (空间尺寸不变)")
+
+# 验证残差连接的存在: 输出应该反映输入 + 残差的特征
+print(f"\n总参数量: {sum(p.numel() for p in block.parameters()):,}")
+```
+
+> **Inception-ResNet 的独门技巧——残差缩放 (Residual Scaling)**：
+>
+> 上面代码中的 `scale=0.1` 不是随意写的。Inception-ResNet 论文发现：当 Inception 模块的残差分支输出太大时，梯度会爆炸，导致网络在训练初期"死掉"（激活值全部变成 0）。解决方案很巧妙——给残差分支的输出乘上一个小于 1 的系数（如 0.1），让残差信号"温柔"地加入主路径。这是 Inception-ResNet 独有的技巧，普通 ResNet 不需要这样做，因为 ResNet 的残差分支更"克制"（只有 2~3 层卷积）。
+
+**和普通 ResNet 残差连接的区别：**
+
+| | ResNet 残差块 | Inception-ResNet 模块 |
+|------|------|------|
+| **主路径** | 2~3 个**串联**卷积 | 3~4 个**并行**分支 → concat |
+| **跳跃连接加在哪** | 最后一个卷积的输出上 | 所有分支 concat + 1×1 融合**之后** |
+| **残差缩放** | 不需要（直接用 `x + F(x)`） | 需要（`x + 0.1×F(x)`），防止训练爆炸 |
+| **梯度路径** | 1 条直通路径 | 多分支梯度汇聚后 + 1 条直通路径 |
+
+### 示例--InceptionNet训练CIFAR-10

@@ -102,9 +102,9 @@ plt.ylabel('Frequency')
 plt.savefig('Normal Distribution')
 ```
 
-![Uniform Distribution](assets/Uniform_Distribution.png)
+![Uniform Distribution](assets/Uniform Distribution.png)
 
-![Normal Distribution](assets/Normal_Distribution.png)
+![Normal Distribution](assets/Normal Distribution.png)
 
 ### 创建线性张量
 
@@ -276,7 +276,7 @@ print(x)
 
 ## 张量的运算函数
 
-- `sum()`求和
+- `sum()`求和 
 - `mean()`求均值
 - `max()`求最大值
 - ` min()`求最小值

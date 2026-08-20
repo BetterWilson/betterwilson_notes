@@ -18,3 +18,5 @@ description: "深度学习学习笔记，基于 PyTorch 讲解神经网络基础
 [卷积神经网络CNN2](cnn2)
 
 [卷积神经网络CNN3](cnn3)
+
+[循环神经网络RNN](rnn)
