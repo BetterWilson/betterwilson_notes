@@ -137,7 +137,7 @@ export default defineConfig({
 			link: '/en/',
 			description: 'Notes from BetterWilson',
 			themeConfig: {
-				// 英文导航列出已翻译的主题（deep_learning 暂未翻译，不列出）
+				// 英文导航列出已翻译的主题
 				nav: [
 					{
 						text: 'Python', items: [
@@ -153,6 +153,7 @@ export default defineConfig({
 					{text: 'Redis', link: '/en/redis/'},
 					{text: 'Linux', link: '/en/linux/'},
 					{text: 'Machine Learning', link: '/en/machine_learning/'},
+					{text: 'Deep Learning', link: '/en/deep_learning/'},
 				],
 
 				sidebar: sidebarOf(SIDEBAR_EN),

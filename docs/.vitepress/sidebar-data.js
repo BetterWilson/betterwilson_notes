@@ -241,4 +241,18 @@ export const SIDEBAR_EN = {
             {text: 'Ensemble Learning', link: '/en/machine_learning/ensemble_learning'},
         ]
     },
+    '/en/deep_learning': {
+        text: 'Deep learning',
+        items: [
+            {text: 'Dependency Installation', link: '/en/deep_learning/dependencies'},
+            {text: 'PyTorch', link: '/en/deep_learning/Pytorch'},
+            {text: 'PyTorch Classification & Regression', link: '/en/deep_learning/PytorchCR'},
+            {text: 'Neural Network Concepts', link: '/en/deep_learning/neural_network'},
+            {text: 'Custom Loss / FC Layers / Differentiation & Backprop', link: '/en/deep_learning/custom'},
+            {text: 'Convolutional Neural Network CNN1', link: '/en/deep_learning/cnn1'},
+            {text: 'Convolutional Neural Network CNN2', link: '/en/deep_learning/cnn2'},
+            {text: 'Convolutional Neural Network CNN3', link: '/en/deep_learning/cnn3'},
+            {text: 'Recurrent Neural Network RNN', link: '/en/deep_learning/rnn'},
+        ]
+    },
 }
