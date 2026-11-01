@@ -3,17 +3,17 @@
 ## 1 Disable the Firewall and Download Dependencies
 
 ```bash
-# 查看防火墙状态
+# Check firewall status
 systemctl status firewalld.service
-# 关闭防火墙
+# Disable firewall
 systemctl stop firewalld.service
-# 禁止开机启动防火墙
+# Disable firewall on boot
 systemctl disable firewalld.service
-# 启动防火墙
+# Start firewall
 systemctl start firewalld.service
-# 防火墙随系统开启启动
+# Enable firewall to start on system boot
 systemctl enable firewalld.service
-# 关闭selinux,提高了系统的安全性，但关闭它可以释放系统资源，提高服务器的性能，避免一些程序的兼容性问题等等
+# Disable SELinux: it improves system security, but disabling it frees system resources, improves server performance, and avoids program compatibility issues, etc.
 [root@r ~]# sed -i.ori 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/selinux/config
 
 systemctl stop firewalld.service
@@ -30,10 +30,10 @@ yum -y install wget
 ## 2 Plan the Directories in Advance
 
 ```bash
-/data/redis6379/					# 数据存放目录
-/opt/redis-5.0.7/					# 安装目录
-/opt/								# 下载并解压目录
-/opt/redis6379/{conf,logs,pid}   	# 配置目录，日志目录，pid目录
+/data/redis6379/					# Data directory
+/opt/redis-5.0.7/					# Installation directory
+/opt/								# Download and extraction directory
+/opt/redis6379/{conf,logs,pid}   	# Config directory, logs directory, pid directory
 ```
 
 ## 3 Download and Install
@@ -63,7 +63,7 @@ Redis server v=5.0.7 sha=00000000:0 malloc=jemalloc-5.1.0 bits=64 build=a67ef2d8
 mkdir -p /opt/redis6379/{conf,logs,pid}
 cat >/opt/redis6379/conf/redis6379.conf<<EOF
 daemonize yes
-# 注意，生产中， 千万不要bind 0.0.0.0，不要将Redis暴露到外网环境，防止被人攻击
+# Note: in production, NEVER bind 0.0.0.0 or expose Redis to the public internet, to prevent attacks
 bind 0.0.0.0
 port 6379
 pidfile /opt/redis6379/pid/redis6379.pid
@@ -82,8 +82,8 @@ ps -ef|grep redis
 ```
 
 ```bash
-# -a 后面跟你的密码
-# -p 后面是6379端口，其实这个-p参数可以不带，不带默认就是访问的6379端口的Redis
+# -a is followed by your password
+# -p is followed by port 6379; the -p parameter can actually be omitted, as the default is to access Redis on port 6379
 
 [root@cs opt]# redis-cli -a 1234 -p 6379
 127.0.0.1:6379> ping
@@ -94,31 +94,31 @@ PONG
 Or connect first and then authenticate:
 
 ```bash
-[root@cs opt]# redis-cli						# 连接肯定是没问题，但由于设置了密码，你未通过认证之前，你啥也做不了
+[root@cs opt]# redis-cli						# Connecting works fine, but since a password is set, you can't do anything before authenticating
 127.0.0.1:6379> ping
 (error) NOAUTH Authentication required.
-127.0.0.1:6379> auth 1234					# 认证，auth命令后面跟你的密码
+127.0.0.1:6379> auth 1234					# Authenticate; the auth command is followed by your password
 OK
-127.0.0.1:6379> ping						# 认证通过，你想干啥干啥
+127.0.0.1:6379> ping						# Authenticated; now you can do whatever you want
 PONG
-127.0.0.1:6379> quit						# 常见的退出客户端命令有： quit/exit/ctrl+c   注意，退出客户端只是表示关闭客户端和服务端的连接，而不是停止服务端，这点要区分开
+127.0.0.1:6379> quit						# Common client exit commands: quit/exit/ctrl+c. Note that exiting the client only closes the client-server connection; it does NOT stop the server - an important distinction
 [root@cs opt]# 
 ```
 
 ## 6 Configure `systemctl` to Manage `Redis`
 
 ```bash
-# 先把之前可能运行的Redis停止
-# 创建redis用户和组，以及给相关目录权限
-# 创建systemctl管理redis的文件
-# 就可以通过systemctl管理redis了
+# First stop any previously running Redis
+# Create the redis user and group, and grant permissions on the relevant directories
+# Create the systemctl file to manage redis
+# Now redis can be managed via systemctl
 
 redis-cli shutdown
 
-# -u和-g选项表示同时添加具有特定UID和GID的用户
-# -M创建一个没有主目录的用户
-# -s表示当前创建的当前用户无法用来登录系统
-# chown -R redis:redis表示指定目录以及内部的文件所有用户属组归于redis:redis
+# The -u and -g options add a user with specific UID and GID at the same time
+# -M creates a user without a home directory
+# -s means the created user cannot be used to log in to the system
+# chown -R redis:redis assigns ownership of the specified directory and its internal files to redis:redis
 # groupdel redis
 # cat /etc/group |grep redis
 groupadd redis -g 1000
@@ -146,11 +146,11 @@ RuntimeDirectoryMode=0755
 WantedBy=multi-user.target
 EOF
 
-systemctl daemon-reload   # 当添加或者修改了某个服务的配置文件，就要执行daemon-reload命令重新加载下
+systemctl daemon-reload   # After adding or modifying a service's config file, run daemon-reload to reload it
 systemctl start redis
 
 
-# 启动/停止/重启/查看状态/设置redis开机自启
+# Start/stop/restart/check status/enable redis on boot
 systemctl start/stop/restart/status/enable redis
 ```
 
@@ -210,13 +210,13 @@ Related to virtual memory; overcommit_memory is the memory allocation policy, wi
 Solution:
 
 ```bash
-# 临时解决
+# Temporary fix
 sysctl vm.overcommit_memory=1
 
-# 永久解决 vim /etc/sysctl.conf  追加：
+# Permanent fix: vim /etc/sysctl.conf, append:
 vm.overcommit_memory=1
 
-# 生效配置
+# Apply the configuration
 sysctl -p
 ```
 
@@ -235,11 +235,11 @@ Redis recommends disabling THP and gives the specific steps; note you must run t
 Solution: the following commands must be run as root:
 
 ```bash
-# 临时解决
+# Temporary fix
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 
-# 永久解决 vim /etc/rc.local  追加：
+# Permanent fix: vim /etc/rc.local, append:
 
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ```
@@ -255,19 +255,19 @@ This means the value of /proc/sys/net/core/somaxconn is 128, but redis.conf is c
 Solution:
 
 ```bash
-# 永久解决 vim /etc/sysctl.conf  追加：
+# Permanent fix: vim /etc/sysctl.conf, append:
 net.core.somaxconn= 4096
 
-# 生效配置
+# Apply the configuration
 sysctl -p
 ```
 
 Then restart Redis and observe the logs:
 
 ```bash
-# 先清空原有的日志内容
-# 然后重启redis
-# 观察日志输出
+# First clear the existing log content
+# Then restart redis
+# Observe the log output
 echo "">/opt/redis6379/logs/redis6379.log
 cat /opt/redis6379/logs/redis6379.log
 systemctl daemon-reload
@@ -277,7 +277,7 @@ systemctl start redis
 systemctl status redis
 cat /opt/redis6379/logs/redis6379.log
 
-# 这输出就很干净了啊
+# The output is now clean
 [root@cs opt]# cat /opt/redis6379/logs/redis6379.log
 
 79069:C 01 Aug 2023 12:05:05.217 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo

@@ -186,34 +186,34 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 
-# 生成模拟数据
-# n_samples: 样本数量
-# n_features: 特征数量
-# centers: 聚类中心数量
-# cluster_std: 簇内标准差
+# Generate simulated data
+# n_samples: number of samples
+# n_features: number of features
+# centers: number of cluster centers
+# cluster_std: standard deviation within clusters
 X, _ = make_blobs(n_samples=300, n_features=2, centers=3, cluster_std=1.0, random_state=42)
 
-# 3. 中文字体设置（matplotlib）
+# 3. Chinese font settings (matplotlib)
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS']
 plt.rcParams['axes.unicode_minus'] = False
 
-# 数据标准化
+# Data standardization
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# 先用 k=3 做一次聚类，并计算 SSE、SC
+# First cluster with k=3 and compute SSE and SC
 k = 3
 kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
 labels = kmeans.fit_predict(X_scaled)
 
-sse = kmeans.inertia_  # SSE（簇内平方和）
-sc = silhouette_score(X_scaled, labels)  # SC（轮廓系数）
+sse = kmeans.inertia_  # SSE (sum of squared errors within clusters)
+sc = silhouette_score(X_scaled, labels)  # SC (silhouette coefficient)
 
-print(f'当 k={k} 时：')
+print(f'When k={k}:')
 print(f'SSE: {sse:.4f}')
 print(f'SC : {sc:.4f}')
 
-# 肘部法：不同 k 的 SSE
+# Elbow method: SSE for different k values
 k_values = range(1, 11)
 sse_list = []
 sc_list = []
@@ -223,28 +223,28 @@ for kk in k_values:
     y_pred = km.fit_predict(X_scaled)
     sse_list.append(km.inertia_)
 
-    # SC 需要至少 2 个簇
+    # SC requires at least 2 clusters
     if kk >= 2:
         sc_list.append(silhouette_score(X_scaled, y_pred))
     else:
         sc_list.append(None)
 
-# 绘图：肘部法（SSE） + SC 曲线
+# Plot: Elbow method (SSE) + SC curve
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
-# 肘部法图
+# Elbow method chart
 axes[0].plot(list(k_values), sse_list, marker='o')
-axes[0].set_title('肘部法（SSE-k 曲线）')
-axes[0].set_xlabel('聚类数 k')
+axes[0].set_title('Elbow Method (SSE-k Curve)')
+axes[0].set_xlabel('Number of clusters k')
 axes[0].set_ylabel('SSE')
 axes[0].grid(True, alpha=0.3)
 
-# SC 曲线
-valid_k = list(k_values)[1:]  # 从 k=2 开始
+# SC Curve
+valid_k = list(k_values)[1:]  # Starting from k=2
 valid_sc = sc_list[1:]
 axes[1].plot(valid_k, valid_sc, marker='s', color='orange')
-axes[1].set_title('SC-k 曲线（轮廓系数）')
-axes[1].set_xlabel('聚类数 k')
+axes[1].set_title('SC-k Curve (Silhouette Coefficient)')
+axes[1].set_xlabel('Number of clusters k')
 axes[1].set_ylabel('SC')
 axes[1].grid(True, alpha=0.3)
 

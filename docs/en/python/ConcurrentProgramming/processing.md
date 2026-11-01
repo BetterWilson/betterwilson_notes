@@ -81,7 +81,7 @@ Common methods of a process:
   
   def task(arg):
       time.sleep(2)
-      print("执行中...")
+      print("Executing...")
   
   
   if __name__ == '__main__':
@@ -90,10 +90,10 @@ Common methods of a process:
       p.start()
       p.join()
   
-      print("继续执行...")
+      print("Continuing execution...")
   ```
 
-- `p.daemon = 布尔值`, daemon process (must be placed before start)
+- `p.daemon = boolean`, daemon process (must be placed before start)
 
   - `p.daemon =True`, set as a daemon process; after the main process finishes, the child process also closes automatically.
   - `p.daemon =False`, set as a non-daemon process; the main process waits for the child process, and only after the child process finishes does the main process end.
@@ -106,7 +106,7 @@ Common methods of a process:
   
   def task(arg):
       time.sleep(2)
-      print("执行中...")
+      print("Executing...")
   
   
   if __name__ == '__main__':
@@ -115,7 +115,7 @@ Common methods of a process:
       p.daemon = True
       p.start()
   
-      print("继续执行...")
+      print("Continuing execution...")
   ```
 
 - Setting and getting a process's name
@@ -135,20 +135,20 @@ Common methods of a process:
       for i in range(10):
           t = threading.Thread(target=func)
           t.start()
-      print(os.getpid(), os.getppid())	# getpid()获取子进程自己的进程id，getppid()获取父进程的进程id
-      print("线程个数", len(threading.enumerate()))	# threading.enumerate()里面放所有的进程
+      print(os.getpid(), os.getppid())	# getpid() gets the child process's own PID, getppid() gets the parent process's PID
+      print("Thread count", len(threading.enumerate()))	# threading.enumerate() contains all threads
       time.sleep(2)
-      print("当前进程的名称：", multiprocessing.current_process().name)
+      print("Current process name: ", multiprocessing.current_process().name)
   
   
   if __name__ == '__main__':
       print(os.getpid())
       multiprocessing.set_start_method("spawn")
       p = multiprocessing.Process(target=task, args=('xxx',))
-      p.name = "哈哈哈哈"
+      p.name = "hahaha"
       p.start()
   
-      print("继续执行...")
+      print("Continuing execution...")
   ```
   
 - Custom process class: write what the process needs to do directly into the run method.
@@ -159,14 +159,14 @@ Common methods of a process:
   
   class MyProcess(multiprocessing.Process):
       def run(self):
-          print('执行此进程', self._args)
+          print('Executing this process', self._args)
   
   
   if __name__ == '__main__':
       multiprocessing.set_start_method("spawn")
       p = MyProcess(args=('xxx',))
       p.start()
-      print("继续执行...")
+      print("Continuing execution...")
   ```
   
 - CPU count: how many processes should a program generally create? (to leverage the CPU's multi-core advantage).
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     p.start()
     p.join()
 
-    print("主进程：", data_list) # []
+    print("Main process:", data_list) # []
 ```
 
 If you want them to share data, you can achieve this with the help of some special mechanisms.
@@ -223,7 +223,7 @@ Data can be stored in a shared memory map using [`Value`](https://docs.python.or
     'c': ctypes.c_char,  'u': ctypes.c_wchar,
     'b': ctypes.c_byte,  'B': ctypes.c_ubyte, 
     'h': ctypes.c_short, 'H': ctypes.c_ushort,
-    'i': ctypes.c_int,   'I': ctypes.c_uint,  （其u表示无符号）
+    'i': ctypes.c_int,   'I': ctypes.c_uint,  (u means unsigned)
     'l': ctypes.c_long,  'L': ctypes.c_ulong, 
     'f': ctypes.c_float, 'd': ctypes.c_double
 ```
@@ -235,7 +235,7 @@ from multiprocessing import Process, Value, Array
 def func(n, m1, m2):
     n.value = 888
     m1.value = 'a'.encode('utf-8')
-    m2.value = "张"
+    m2.value = "Zhang"
 
 
 if __name__ == '__main__':
@@ -249,7 +249,7 @@ if __name__ == '__main__':
 
     print(num.value)  # 888
     print(v1.value)  # a
-    print(v2.value)  # 张
+    print(v2.value)  # Zhang
 ```
 
 ```python
@@ -261,7 +261,7 @@ def f(data_array):
 
 
 if __name__ == '__main__':
-    arr = Array('i', [11, 22, 33, 44]) # 数组：元素类型必须是int; 只能是这么几个数据。
+    arr = Array('i', [11, 22, 33, 44]) # Array: element type must be int; limited to these types only.
 
     p = Process(target=f, args=(arr,))
     p.start()
@@ -324,7 +324,7 @@ if __name__ == '__main__':
     p.start()
     p.join()
 
-    print("主进程")
+    print("Main process")
     print(queue.get())
     print(queue.get())
     print(queue.get())
@@ -346,8 +346,8 @@ import multiprocessing
 def task(conn):
     time.sleep(1)
     conn.send([111, 22, 33, 44])
-    data = conn.recv() # 阻塞
-    print("子进程接收:", data)
+    data = conn.recv() # blocking
+    print("Child process received:", data)
     time.sleep(2)
 
 
@@ -357,8 +357,8 @@ if __name__ == '__main__':
     p = multiprocessing.Process(target=task, args=(child_conn,))
     p.start()
 
-    info = parent_conn.recv() # 阻塞，等待子进程发送值
-    print("主进程接收：", info)
+    info = parent_conn.recv() # blocking, waiting for child process to send value
+    print("Main process received:", info)
     parent_conn.send(666)
 ```
 
@@ -420,13 +420,13 @@ import multiprocessing
 
 
 def task(lock):
-    print("开始")
+    print("Starting")
     lock.acquire()
-    # 假设文件中保存的内容就是一个值：10
+    # Assume the content saved in the file is a value: 10
     with open('f1.txt', mode='r', encoding='utf-8') as f:
         current_num = int(f.read())
 
-    print("排队抢票了")
+    print("Queuing to grab tickets")
     time.sleep(0.5)
     current_num -= 1
 
@@ -438,13 +438,13 @@ def task(lock):
 if __name__ == '__main__':
     multiprocessing.set_start_method("spawn")
     
-    lock = multiprocessing.RLock() # 进程锁
+    lock = multiprocessing.RLock() # process lock
     
     for i in range(10):
         p = multiprocessing.Process(target=task, args=(lock,))
         p.start()
 
-    # spawn模式，需要特殊处理。(主进程等子进程执行完)
+    # spawn mode requires special handling (main process waits for child processes to finish)
     time.sleep(7)
 ```
 
@@ -457,13 +457,13 @@ import os
 
 
 def task(lock):
-    print("开始")
+    print("Starting")
     lock.acquire()
-    # 假设文件中保存的内容就是一个值：10
+    # Assume the content saved in the file is a value: 10
     with open('f1.txt', mode='r', encoding='utf-8') as f:
         current_num = int(f.read())
 
-    print(os.getpid(), "排队抢票了")
+    print(os.getpid(), "Queuing to grab tickets")
     time.sleep(0.5)
     current_num -= 1
 
@@ -482,9 +482,9 @@ if __name__ == '__main__':
         p.start()
         process_list.append(p)
 
-    # spawn模式，需要特殊处理。
+    # spawn mode requires special handling.
     for item in process_list:
-        item.join()		# 让每一个子进程都执行完
+        item.join()		# wait for each child process to finish
 ```
 
 
@@ -498,14 +498,14 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 
 
 def task(num):
-    print("执行", num)
+    print("Executing", num)
     time.sleep(2)
 
 
 if __name__ == '__main__':
-    pool = ProcessPoolExecutor(4)		# 进程池中最多维护4个进程
+    pool = ProcessPoolExecutor(4)		# The process pool maintains at most 4 processes
     for i in range(10):
-        pool.submit(task, i)			# 这里不会等待，是全部执行；具体等待是在进程池内部执行的
+        pool.submit(task, i)			# This does not wait here; all are submitted; the actual waiting happens inside the process pool
     print(1)
     print(2)
 ```
@@ -516,7 +516,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 
 def task(num):
-    print("执行", num)
+    print("Executing", num)
     time.sleep(2)
 
 
@@ -525,7 +525,7 @@ if __name__ == '__main__':
     pool = ProcessPoolExecutor(4)
     for i in range(10):
         pool.submit(task, i)
-    pool.shutdown(True)		# 等待进程池中的任务都执行完毕后，再继续往后执行。
+    pool.shutdown(True)		# Wait for all tasks in the process pool to finish before continuing.
     print(1)
 ```
 
@@ -535,13 +535,13 @@ from concurrent.futures import ProcessPoolExecutor
 import multiprocessing
 
 def task(num):
-    print("执行", num)
+    print("Executing", num)
     time.sleep(2)
     return num
 
 
 def done(res):
-    print(multiprocessing.current_process())	# 查看具体是由哪个进程操作的
+    print(multiprocessing.current_process())	# See which process is performing the operation
     time.sleep(1)
     print(res.result())
     time.sleep(1)
@@ -552,7 +552,7 @@ if __name__ == '__main__':
     pool = ProcessPoolExecutor(4)
     for i in range(10):
         fur = pool.submit(task, i)
-        fur.add_done_callback(done) # done的调用由主进程处理（与线程池不同）
+        fur.add_done_callback(done) # The done callback is handled by the main process (different from thread pools)
         
     print(multiprocessing.current_process())
     pool.shutdown(True)
@@ -569,15 +569,15 @@ from concurrent.futures.process import ProcessPoolExecutor
 
 
 def task(lock):
-    print("开始")
+    print("Start")
     # lock.acquire()
     # lock.relase()
     with lock:
-        # 假设文件中保存的内容就是一个值：10
+        # Assume the file content is just one value: 10
         with open('f1.txt', mode='r', encoding='utf-8') as f:
             current_num = int(f.read())
 
-        print("排队抢票了")
+        print("Queuing for tickets")
         time.sleep(1)
         current_num -= 1
 
@@ -587,7 +587,7 @@ def task(lock):
 
 if __name__ == '__main__':
     pool = ProcessPoolExecutor()
-    # lock_object = multiprocessing.RLock() # 不能使用
+    # lock_object = multiprocessing.RLock() # Cannot be used
     manager = multiprocessing.Manager()
     lock_object = manager.RLock() # Lock
     for i in range(10):
@@ -603,8 +603,8 @@ Computers provide threads and processes for implementing concurrent programming 
 A coroutine (Coroutine) is something created by programmers through code (it does not truly exist).
 
 ```
-协程也可以被称为微线程，是一种用户态内的上下文切换技术。
-简而言之，其实就是通过一个线程实现代码块相互切换执行（来回跳着执行）。
+A coroutine can also be called a micro-thread; it is a user-space context switching technique.
+In short, it uses a single thread to switch execution between code blocks (jumping back and forth).
 ```
 
 For example:
@@ -640,20 +640,20 @@ There are several ways to implement coroutines in Python, for example:
   from greenlet import greenlet
   
   def func1():
-      print(1)        # 第1步：输出 1
-      gr2.switch()    # 第3步：切换到 func2 函数
-      print(2)        # 第6步：输出 2
-      gr2.switch()    # 第7步：切换到 func2 函数，从上一次执行的位置继续向后执行
+      print(1)        # Step 1: print 1
+      gr2.switch()    # Step 3: switch to func2
+      print(2)        # Step 6: print 2
+      gr2.switch()    # Step 7: switch to func2, continuing from where it last stopped
       
   def func2():
-      print(3)        # 第4步：输出 3
-      gr1.switch()    # 第5步：切换到 func1 函数，从上一次执行的位置继续向后执行
-      print(4)        # 第8步：输出 4
+      print(3)        # Step 4: print 3
+      gr1.switch()    # Step 5: switch to func1, continuing from where it last stopped
+      print(4)        # Step 8: print 4
       
   gr1 = greenlet(func1)
   gr2 = greenlet(func2)
   
-  gr1.switch() # 第1步：去执行 func1 函数
+  gr1.switch() # Step 1: go execute func1
   ```
 
 - yield
@@ -712,14 +712,14 @@ Example:
 
 ```python
 """
-需要先安装：pip3 install aiohttp
+First install it: pip3 install aiohttp
 """
 
 import aiohttp
 import asyncio
 
 async def fetch(session, url):
-    print("发送请求：", url)
+    print("Sending request:", url)
     async with session.get(url, verify_ssl=False) as response:
         content = await response.content.read()
         file_name = url.rsplit('_')[-1]
@@ -746,17 +746,17 @@ From the above, it is clear that when handling I/O requests, coroutines can achi
 **What is the difference between coroutines, threads, and processes?**
 
 ```python
-线程，是计算机中可以被cpu调度的最小单元。
-进程，是计算机资源分配的最小单元（进程为线程提供资源）。
-一个进程中可以有多个线程,同一个进程中的线程可以共享此进程中的资源。
+A thread is the smallest unit in a computer that can be scheduled by the CPU.
+A process is the smallest unit of resource allocation in a computer (processes provide resources for threads).
+A process can contain multiple threads; threads in the same process can share the process's resources.
 
-由于CPython中GIL的存在：
-	- 线程，适用于IO密集型操作。
-    - 进程，适用于计算密集型操作。
+Due to the existence of the GIL in CPython:
+	- Threads are suitable for IO-intensive operations.
+    - Processes are suitable for computation-intensive operations.
 
-协程，协程也可以被称为微线程，是一种用户态内的上下文切换技术，在开发中结合遇到IO自动切换，就可以通过一个线程实现并发操作。
+A coroutine, also called a micro-thread, is a user-space context switching technique. In development, combined with automatic switching on IO, concurrency can be achieved through a single thread.
 
-所以，在处理IO操作时，协程比线程更加节省开销（协程的开发难度大一些）。
+Therefore, when handling IO operations, coroutines are more overhead-efficient than threads (though coroutines are somewhat harder to develop).
 ```
 
 

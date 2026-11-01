@@ -4,7 +4,7 @@
 
 ```python
 import sys
-print(sys.path)	# 输出模块的所有路径列表
+print(sys.path)	# Output the list of all module search paths
 ```
 
 

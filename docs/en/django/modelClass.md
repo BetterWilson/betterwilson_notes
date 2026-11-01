@@ -9,7 +9,7 @@ from django.db import models
 
 
 class Info(models.Model):
-    title = models.CharField(verbose_name="标题", max_length=32)
+    title = models.CharField(verbose_name="Title", max_length=32)
 
     class Meta:
         abstract = True

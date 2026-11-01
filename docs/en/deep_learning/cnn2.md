@@ -327,8 +327,8 @@ Once model depth reaches a certain point, continuing to deepen it actually cause
 **What traditional networks do:**
 
 ```
-输入 x → 权重层 → ReLU → 权重层 → ReLU → 输出 H(x)
-目标：直接学习从 x 到正确输出 H(x) 的映射
+Input x → Weight layer → ReLU → Weight layer → ReLU → Output H(x)
+Goal: directly learn the mapping from x to the correct output H(x)
 ```
 
 **What residual networks do:**
@@ -370,7 +370,7 @@ Degradation is not caused by overfitting (training set error is also high) but b
 A **residual block** is the smallest repeatable building unit in ResNet. A residual block consists of two parts:
 
 ```
-残差块 = 主路径（权重层）+ 捷径（shortcut / skip connection）
+Residual block = Main path (weight layers) + Shortcut (shortcut / skip connection)
 ```
 
 **Mathematical definition:**
@@ -400,31 +400,31 @@ If the **residual block** is ResNet's "building brick", then the **residual laye
 In the ResNet paper and code, residual layers are usually named `conv2_x`, `conv3_x`, `conv4_x`, and `conv5_x`, making **4 residual layers** in total, corresponding to 4 different spatial resolution stages:
 
 ```
-输入图片
+Input image
   │
-  ├── conv1 (初始卷积 + 池化)        空间: 224×224 → 56×56
+  ├── conv1 (Initial conv + pooling)       Spatial: 224×224 → 56×56
   │
-  ├── conv2_x (残差层1)             空间: 56×56  (保持不变)
-  │     ├── 残差块 2-1              通道: 64 (或 256 for Bottleneck)
-  │     ├── 残差块 2-2
+  ├── conv2_x (Residual layer 1)          Spatial: 56×56  (unchanged)
+  │     ├── Residual block 2-1            Channels: 64 (or 256 for Bottleneck)
+  │     ├── Residual block 2-2
   │     └── ...
   │
-  ├── conv3_x (残差层2)             空间: 56×56 → 28×28 (第一个块 stride=2)
-  │     ├── 残差块 3-1              通道: 128 (或 512 for Bottleneck)
-  │     ├── 残差块 3-2
+  ├── conv3_x (Residual layer 2)          Spatial: 56×56 → 28×28 (first block stride=2)
+  │     ├── Residual block 3-1            Channels: 128 (or 512 for Bottleneck)
+  │     ├── Residual block 3-2
   │     └── ...
   │
-  ├── conv4_x (残差层3)             空间: 28×28 → 14×14
-  │     ├── 残差块 4-1              通道: 256 (或 1024 for Bottleneck)
-  │     ├── 残差块 4-2
+  ├── conv4_x (Residual layer 3)          Spatial: 28×28 → 14×14
+  │     ├── Residual block 4-1            Channels: 256 (or 1024 for Bottleneck)
+  │     ├── Residual block 4-2
   │     └── ...
   │
-  ├── conv5_x (残差层4)             空间: 14×14 → 7×7
-  │     ├── 残差块 5-1              通道: 512 (或 2048 for Bottleneck)
-  │     ├── 残差块 5-2
+  ├── conv5_x (Residual layer 4)          Spatial: 14×14 → 7×7
+  │     ├── Residual block 5-1            Channels: 512 (or 2048 for Bottleneck)
+  │     ├── Residual block 5-2
   │     └── ...
   │
-  └── 全局平均池化 → 全连接 → 输出
+  └── Global average pooling → Fully connected → Output
 ```
 
 **Design regularities of residual layers:**
@@ -723,9 +723,9 @@ In ResNet, a Bottleneck layer is a specific kind of convolutional layer, usually
 This figure (Table 1 of the original ResNet paper) compares the **number of residual blocks** and the **kernel configurations** of the five ResNet versions. Below it is organized into a textual table:
 
 ```
-层名      输出尺寸    ResNet-18     ResNet-34     ResNet-50      ResNet-101     ResNet-152
+Layer     Output size  ResNet-18     ResNet-34     ResNet-50      ResNet-101     ResNet-152
 ─────────────────────────────────────────────────────────────────────────────────────────
-conv1     112×112    7×7, 64, stride 2  (所有版本相同)
+conv1     112×112    7×7, 64, stride 2  (same for all versions)
 ─────────────────────────────────────────────────────────────────────────────────────────
 conv2_x   56×56     [3×3,64] ×2   [3×3,64] ×3   [1×1, 64] ×3  [1×1, 64] ×3  [1×1, 64] ×3
                     [3×3,64]       [3×3,64]       [3×3, 64]      [3×3, 64]      [3×3, 64]
@@ -743,9 +743,9 @@ conv5_x   7×7      [3×3,512]×2   [3×3,512]×3   [1×1,512] ×3  [1×1,512] �
                     [3×3,512]      [3×3,512]      [3×3,512]      [3×3,512]      [3×3,512]
                                                    [1×1,2048]     [1×1,2048]     [1×1,2048]
 ─────────────────────────────────────────────────────────────────────────────────────────
-分类器    1×1       AdaptiveAvgPool → FC(1000) → Softmax
+Classifier 1×1       AdaptiveAvgPool → FC(1000) → Softmax
 ─────────────────────────────────────────────────────────────────────────────────────────
-总参数量            11.7M          21.8M          25.6M          44.5M          60.2M
+Total params        11.7M          21.8M          25.6M          44.5M          60.2M
 FLOPs               1.8G           3.6G           3.8G           7.6G           11.3G
 ```
 
@@ -808,10 +808,10 @@ print(f"Adaptive pooling: {x.shape} → {out_adapt.shape}")  # [1,64,56,56] → 
 **Left: VGG-19 (2014)**
 
 ```
-输入 (224×224×3)
+Input (224×224×3)
     │
     ├── conv3-64  ─┐
-    ├── conv3-64   ├─ 空间 224×224 → 112×112 (MaxPool)
+    ├── conv3-64   ├─ Spatial 224×224 → 112×112 (MaxPool)
     │
     ├── conv3-128 ─┐
     ├── conv3-128  ├─ 112×112 → 56×56 (MaxPool)
@@ -835,39 +835,39 @@ print(f"Adaptive pooling: {x.shape} → {out_adapt.shape}")  # [1,64,56,56] → 
     ├── FC-4096
     └── FC-1000 (Softmax)
 
-特点：19 层，纯串联结构，无跳跃连接，3个巨大的全连接层
-参数量：约 144M（主要集中在那两个 4096 的 FC 层！）
+Characteristics: 19 layers, purely serial structure, no skip connections, 3 huge fully connected layers
+Parameter count: ~144M (mainly concentrated in those two 4096 FC layers!)
 ```
 
 **Middle: Plain-34 (a 34-layer network with the residual connections removed)**
 
 ```
-与 ResNet-34 结构完全相同，但把所有的跳跃连接（+x 的虚线/实线）全部去掉。
-纯粹一层接一层的卷积 → ReLU → 卷积 → ReLU ...
+Identical structure to ResNet-34, but with all skip connections (the +x dashed/solid lines) completely removed.
+Purely convolution → ReLU → convolution → ReLU layer by layer ...
 
-输入→conv1(7×7,/2)→pool(/2)
-    → [conv3-64  ×6层]  → pool(/2)    ← ResNet-18/34 的 BasicBlock 去掉 +x
-    → [conv3-128 ×8层]  → pool(/2)
-    → [conv3-256 ×12层] → pool(/2)
-    → [conv3-512 ×6层]  → pool(/2)
+Input→conv1(7×7,/2)→pool(/2)
+    → [conv3-64  ×6 layers]  → pool(/2)    ← ResNet-18/34 BasicBlock with +x removed
+    → [conv3-128 ×8 layers]  → pool(/2)
+    → [conv3-256 ×12 layers] → pool(/2)
+    → [conv3-512 ×6 layers]  → pool(/2)
     → AvgPool → FC-1000
 
-34 层，无跳跃连接
-实验结论: 训练误差和测试误差都比 18 层的 Plain-18 高 → 退化！
+34 layers, no skip connections
+Experimental conclusion: both training and test error are higher than Plain-18 with 18 layers → degradation!
 ```
 
 **Right: ResNet-34 (a 34-layer network with residual connections)**
 
 ```
-输入→conv1(7×7,/2)→pool(/2)        ←─┐
-    → [残差块 ×3]  → pool(/2)        │
-    → [残差块 ×4]  → pool(/2)        │ 每个残差块内部有 +x 的跳跃连接
-    → [残差块 ×6]  → pool(/2)        │ (图中用弯曲箭头表示)
-    → [残差块 ×3]  → pool(/2)      ←─┘
+Input→conv1(7×7,/2)→pool(/2)        ←─┐
+    → [Residual block ×3]  → pool(/2)        │
+    → [Residual block ×4]  → pool(/2)        │ Each residual block has +x skip connections inside
+    → [Residual block ×6]  → pool(/2)        │ (represented by curved arrows in the diagram)
+    → [Residual block ×3]  → pool(/2)      ←─┘
     → AvgPool → FC-1000
 
-34 层，有跳跃连接
-实验结论: 不仅没有退化，反而比 18 层的 ResNet-18 更好！
+34 layers, with skip connections
+Experimental conclusion: not only is there no degradation, but it is even better than ResNet-18 with 18 layers!
 ```
 
 **The meaning of the three kinds of connection lines in the figure:**
@@ -881,18 +881,18 @@ print(f"Adaptive pooling: {x.shape} → {out_adapt.shape}")  # [1,64,56,56] → 
 **How a dashed skip connection works concretely (when the dimensions do not match):**
 
 ```
-输入: (56, 56, 64)   ← 来自上一阶段
-目标输出: (28, 28, 128)  ← 新阶段：空间减半 + 通道翻倍
+Input: (56, 56, 64)   ← From the previous stage
+Target output: (28, 28, 128)  ← New stage: spatial halved + channels doubled
 
-主路径 F(x):
+Main path F(x):
   Conv3×3(64→128, stride=2) → BN → ReLU → Conv3×3(128→128, stride=1) → BN
-  输出: (28, 28, 128)
+  Output: (28, 28, 128)
 
-跳跃连接（虚线）:
-  Conv1×1(64→128, stride=2) → BN    ← 用 1×1 卷积把 64 通道变成 128，同时 stride=2 匹配空间尺寸
-  输出: (28, 28, 128)
+Skip connection (dashed line):
+  Conv1×1(64→128, stride=2) → BN    ← Use 1×1 convolution to change 64 channels to 128, with stride=2 to match spatial size
+  Output: (28, 28, 128)
 
-最终: F(x) + 投影后的 x → 维度匹配，可以相加！
+Final: F(x) + projected x → dimensions match, can be added!
 ```
 
 ---
@@ -968,18 +968,18 @@ class InceptionModule(nn.Module):
     
     Structure (bottom-up, four parallel branches):
       ┌──────────────────────────────────────────────────────┐
-      │                    输入 (in_channels)                 │
+      │                    Input (in_channels)                │
       ├──────────┬──────────────┬──────────────┬─────────────┤
       │ 1×1 Conv │ 1×1 Conv     │ 1×1 Conv     │ 3×3 MaxPool │
-      │          │ (降维)        │ (降维)        │ (stride=1)  │
+      │          │ (reduce)      │ (reduce)      │ (stride=1)  │
       │          │   ↓          │   ↓          │   ↓         │
       │          │ 3×3 Conv     │ 5×5 Conv     │ 1×1 Conv    │
-      │          │              │              │ (升维/降维)   │
+      │          │              │              │ (expand/reduce)│
       ├──────────┼──────────────┼──────────────┼─────────────┤
       │   out1   │    out2      │    out3      │    out4     │
       └──────────┴──────────────┴──────────────┴─────────────┘
-                            ↓ 拼接 (concat)
-                        最终输出
+                            ↓ Concatenate
+                        Final output
     """
     
     def __init__(self, in_channels, out_1x1, reduce_3x3, out_3x3, reduce_5x5, out_5x5, out_pool):
@@ -1076,24 +1076,24 @@ Using multiple kinds of kernels at once within one layer amounts to extracting f
 
 ```
 Inception V1 (GoogLeNet, 2014)
-  │  核心: Naive Inception → 加 1×1 bottleneck → 9 个堆叠的 Inception 模块
-  │  创新: 用全局平均池化替代最后的全连接层，大幅减少参数
+  │  Core: Naive Inception → add 1×1 bottleneck → 9 stacked Inception modules
+  │  Innovation: replace the final fully connected layer with global average pooling, greatly reducing parameters
   │
-  ├─→ Inception V2 (2015, 与 V3 同期)
-  │    核心: 加入 Batch Normalization
-  │    创新: 用两个 3×3 替代 5×5（和 VGG 的思路一致）
+  ├─→ Inception V2 (2015, concurrent with V3)
+  │    Core: add Batch Normalization
+  │    Innovation: replace 5×5 with two 3×3 (consistent with VGG's approach)
   │
   ├─→ Inception V3 (2015)
-  │    核心: 卷积核因式分解 (Factorization)
-  │    创新: 把大卷积核拆成小卷积核的序列
-  │          • n×n → 1×n 接 n×1（空间分解，如 3×3 = 1×3→3×1，节省 33% 计算量）
-  │          • 把卷积沿深度或宽度方向拆分
-  │          • 标签平滑 (Label Smoothing): 防止模型"过度自信"
+  │    Core: convolution kernel factorization (Factorization)
+  │    Innovation: decompose large convolution kernels into sequences of small kernels
+  │          • n×n → 1×n followed by n×1 (spatial factorization, e.g. 3×3 = 1×3→3×1, saving 33% computation)
+  │          • Factorize convolutions along depth or width
+  │          • Label Smoothing: prevent the model from being "overconfident"
   │
   └─→ Inception V4 + Inception-ResNet (2016)
-       核心: 引入残差连接 (Residual Connection)
-       创新: Inception 模块 + 跳跃连接，训练更深更快
-             统一的网格化模块设计（Inception-A/B/C + Reduction Block）
+       Core: introduce residual connections (Residual Connection)
+       Innovation: Inception modules + skip connections, training deeper and faster
+                 Unified gridded module design (Inception-A/B/C + Reduction Block)
 ```
 
 **Code verification of Inception V3's convolution factorization:**
@@ -1173,18 +1173,18 @@ The Inception V4 paper actually proposed two networks:
 A traditional Inception module is "multiple branches → concat → output", with no skip connection. What Inception-ResNet does is: **after the multi-branch concat, add the original input x (with dimensions aligned via a 1×1 convolution), then apply ReLU.**
 
 ```
-传统 Inception 模块:                     Inception-ResNet 模块:
+Traditional Inception module:              Inception-ResNet module:
                                        
-输入 x                                   输入 x
+Input x                                  Input x
   │                                        ├──────────────────┐
   ├── 1×1 ──────────────────┐              ├── 1×1 ───────────┐
   ├── 1×1 → 3×3 ────────────┤              ├── 1×1 → 3×3 ─────┤
   ├── 1×1 → 5×5 ────────────┤              ├── 1×1 → 3×3 → 3×3┤
-  ├── MaxPool → 1×1 ────────┘              └── 1×1 (投影) ────┘
+  ├── MaxPool → 1×1 ────────┘              └── 1×1 (projection) ──┘
   │       ↓ concat                         │       ↓ concat
-  │       输出                                      ↓ + x  ← ★ 残差连接
+  │       Output                                   ↓ + x  ← ★ Residual connection
                                                    ↓ ReLU
-                                                   输出
+                                                   Output
 ```
 
 **The key differences**:

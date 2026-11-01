@@ -124,21 +124,21 @@ Solve linear regression problems by solving a mathematical formula.
 > **Summary of the execution flow (5 steps)**:
 >
 > ```
-> 原始数据 X (n×d)          目标值 y (n×1)
->      │                         │
->      ▼                         │
-> ① 加一列全 1 → X_b (n×(d+1))	 │
->      │                         │
->      ▼                         ▼
-> ② 计算 XᵀX  (d+1)×(d+1)    ③ 计算 Xᵀy  (d+1)×1
->      │                         │
->      ▼                         │
-> ④ 求逆 (XᵀX)⁻¹                  │
->      │                         │
->      └─────────┬───────────────┘
->                ▼
+> Raw data X (n×d)              Target y (n×1)
+>      │                              │
+>      ▼                              │
+> ① Add column of 1s → X_b (n×(d+1)) │
+>      │                              │
+>      ▼                              ▼
+> ② Compute XᵀX  (d+1)×(d+1)    ③ Compute Xᵀy  (d+1)×1
+>      │                              │
+>      ▼                              │
+> ④ Invert (XᵀX)⁻¹                     │
+>      │                              │
+>      └──────────┬───────────────────┘
+>                 ▼
 >       ⑤ θ = (XᵀX)⁻¹ Xᵀy
->          得到所有参数！
+>          All parameters found!
 > ```
 >
 > ---
@@ -200,57 +200,57 @@ Solve linear regression problems by solving a mathematical formula.
 ```python
 from sklearn.datasets import fetch_california_housing
 
-# 使用sklearn自带的fetch接口加载加利福尼亚房价数据
+# Load California housing data using sklearn's built-in fetch interface
 data = fetch_california_housing(data_home='./data')
 
-# 查看数据的基本信息
-print("数据类型:", type(data))
-print("属性列表:", data.__dir__())
+# View basic data info
+print("Data type:", type(data))
+print("Attribute list:", data.__dir__())
 
-# 特征名称
-print("\n特征名称:")
+# Feature names
+print("\nFeature names:")
 print(data.feature_names)
 
-# 前5行特征数据
-print("\n前5行特征数据:")
+# First 5 rows of feature data
+print("\nFirst 5 rows of feature data:")
 print(data.data[:5])
 
-# 前5个房价目标值
-print("\n前5个房价目标值:")
+# First 5 target values (house prices)
+print("\nFirst 5 target values:")
 print(data.target[:5])
 
-# 数据总体形状
-print("\n特征数据形状:", data.data.shape)
-print("目标数据形状:", data.target.shape)
+# Overall data shape
+print("\nFeature data shape:", data.data.shape)
+print("Target data shape:", data.target.shape)
 
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 
-# 划分训练集和测试集
+# Split into training and test sets
 X = data.data
 y = data.target
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 标准化特征
+# Standardize features
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# 创建并训练线性回归模型
+# Create and train linear regression model
 lr = LinearRegression()
 lr.fit(X_train_scaled, y_train)
-print(f'回归系数{lr.coef_}')	# 回归系数就是损失函数中的w1 w2 w3 ...
-# 回归系数越大，对最终的影响结果就越大
+print(f'Regression coefficients {lr.coef_}')	# Regression coefficients are w1, w2, w3 ... in the loss function
+# The larger the regression coefficient, the greater its impact on the final result
 
-# 在训练集和测试集上预测
+# Predict on training and test sets
 y_train_pred_sklearn = lr.predict(X_train_scaled)
 y_test_pred_sklearn = lr.predict(X_test_scaled)
 
-# 评估模型
-print("sklearn线性回归训练集均方误差: {:.4f}".format(mean_squared_error(y_train, y_train_pred_sklearn)))
-print("sklearn线性回归测试集均方误差: {:.4f}".format(mean_squared_error(y_test, y_test_pred_sklearn)))
+# Evaluate model
+print("sklearn linear regression training set MSE: {:.4f}".format(mean_squared_error(y_train, y_train_pred_sklearn)))
+print("sklearn linear regression test set MSE: {:.4f}".format(mean_squared_error(y_test, y_test_pred_sklearn)))
 ```
 
 ### Gradient Descent
@@ -437,40 +437,40 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import SGDRegressor
 from sklearn.preprocessing import StandardScaler
 
-# 使用sklearn接口加载加利福尼亚房价数据（全部样本）
+# Load California housing data using sklearn interface (all samples)
 california = fetch_california_housing(data_home='./data')
 X = california['data']
 y = california['target']
 
-# 划分训练集和测试集
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# 特征归一化（建议对特征做归一化，有利于收敛）
+# Feature normalization (recommended for better convergence)
 scaler_X = StandardScaler()
 X_train_scaled = scaler_X.fit_transform(X_train)
 X_test_scaled = scaler_X.transform(X_test)
 
-# 使用sklearn自带的SGDRegressor（默认是梯度下降优化，solver='sgd'）
+# Use sklearn's built-in SGDRegressor (default gradient descent optimization, solver='sgd')
 sgd_reg = SGDRegressor(
-    max_iter=2000,  # 训练迭代轮数
-    eta0=0.01,  # 初始学习率
-    learning_rate="invscaling",  # 表示学习率以倒数缩减方式递减，计算公式为：
+    max_iter=2000,  # Number of training iterations
+    eta0=0.01,  # Initial learning rate
+    learning_rate="invscaling",  # Learning rate decreases by inverse scaling, formula:
     # eta = eta0 / pow(t, power_t)
-    # 其中eta0为初始学习率, t为迭代次数, power_t默认为0.25
+    # where eta0 is the initial learning rate, t is the iteration count, power_t defaults to 0.25
     random_state=42
 )
 sgd_reg.fit(X_train_scaled, y_train)
 
 from sklearn.metrics import mean_squared_error
 
-# 在测试集上预测
+# Predict on test set
 y_pred = sgd_reg.predict(X_test_scaled)
 
-# 计算均方误差
+# Compute mean squared error
 mse = mean_squared_error(y_test, y_pred)
-print('测试集均方误差(MSE):', mse)
+print('Test set MSE:', mse)
 ```
 
 ### Regression Model Evaluation Methods
@@ -512,39 +512,39 @@ from matplotlib import pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-# 定义模型欠拟合函数
+# Define underfitting model function
 def under_fitting():
-    # 随机种子
+    # Random seed
     np.random.seed(22)
-    # 准备数据X,y 增加噪声
-    # 创建100个数据,在[-3,3]中取值,值是均匀分布的
+    # Prepare data X, y with added noise
+    # Create 100 data points uniformly distributed in [-3, 3]
     X = np.random.uniform(-3, 3, size=100)
 
     # y = 0.5x^2 + x + 2
-    # np.random.normal(0,1,size=100): 增加噪声,噪声值为均值为0,方差为1的正态分布数据
+    # np.random.normal(0,1,size=100): add noise with mean 0 and variance 1
     y = 0.5 * X ** 2 + X + 2 + np.random.normal(0, 1, size=100)
 
-    # 训练模型
+    # Train model
     model = LinearRegression()
 
     print(X.shape)
     print(type(X))
 
-    # 模型训练
-    # 训练数据是二维的,所以X需要reshape成二维的
-    # -1的作用是告诉numpy,根据y的维度自动确定X的维度
-    # 1 是列数
+    # Model training
+    # Training data must be 2D, so reshape X to 2D
+    # -1 tells numpy to infer the dimension automatically based on y
+    # 1 is the number of columns
     X = X.reshape(-1, 1)
     model.fit(X, y)
 
-    # 模型预测
+    # Model prediction
     y_predict = model.predict(X)
 
-    # 模型评估
+    # Model evaluation
     mse = mean_squared_error(y, y_predict)
-    print("欠拟合模型MSE:", mse)
-    print(f'回归系数{model.coef_}')
-    # 6. 绘制图像
+    print("Underfitting model MSE:", mse)
+    print(f'Regression coefficients {model.coef_}')
+    # 6. Plot
     plt.scatter(X, y)
     plt.plot(X, y_predict)
     plt.show()
@@ -563,44 +563,44 @@ from matplotlib import pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-# 模型正好拟合
+# Just right fitting
 def fitting():
-    # 随机种子
+    # Random seed
     np.random.seed(22)
-    # 准备数据X,y 增加噪声
-    # 创建100个数据,在[-3,3]中取值,值是均匀分布的
+    # Prepare data X, y with added noise
+    # Create 100 data points uniformly distributed in [-3, 3]
     x = np.random.uniform(-3, 3, size=100)
 
     # y = 0.5x^2 + x + 2
-    # np.random.normal(0,1,size=100): 增加噪声,噪声值为均值为0,方差为1的正态分布数据
+    # np.random.normal(0,1,size=100): add noise with mean 0 and variance 1
     y = 0.5 * x ** 2 + x + 2 + np.random.normal(0,1,size=100)
 
-    # 训练模型
+    # Train model
     model = LinearRegression()
 
-    # 模型训练
-    # 训练数据是二维的,所以X需要reshape成二维的
-    # -1的作用是告诉numpy,根据y的维度自动确定X的维度
-    # 1 是列数
+    # Model training
+    # Training data must be 2D, so reshape X to 2D
+    # -1 tells numpy to infer the dimension automatically based on y
+    # 1 is the number of columns
     X = x.reshape(-1,1)
     print(X.shape)
 
-    # 堆叠，增加二次项
+    # Stack and add quadratic term
     X2 = np.hstack([X,X ** 2])
     print(X2.shape)
 
     model.fit(X2,y)
 
-    # 模型预测
+    # Model prediction
     y_predict = model.predict(X2)
 
-    # 模型评估
+    # Model evaluation
     mse = mean_squared_error(y,y_predict)
-    print("正好拟合MSE:",mse)
+    print("Just-right fitting MSE:",mse)
 
-    # 绘制图像
+    # Plot
     plt.scatter(x,y)
-    # 画图plot折线图时 需要对x进行排序, 取x排序后对应的y值
+    # When plotting a line chart, sort x and take the corresponding y values
     plt.plot(np.sort(x), y_predict[np.argsort(x)], color='r')
     plt.show()
 
@@ -618,44 +618,44 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
 
-# 模型过拟合
+# Overfitting
 def over_fitting():
-    # 随机种子
+    # Random seed
     np.random.seed(22)
-    # 准备数据X,y 增加噪声
-    # 创建100个数据,在[-3,3]中取值,值是均匀分布的
+    # Prepare data X, y with added noise
+    # Create 100 data points uniformly distributed in [-3, 3]
     x = np.random.uniform(-3, 3, size=100)
 
     # y = 0.5x^2 + x + 2
-    # np.random.normal(0,1,size=100): 增加噪声,噪声值为均值为0,方差为1的正态分布数据
+    # np.random.normal(0,1,size=100): add noise with mean 0 and variance 1
     y = 0.5 * x ** 2 + x + 2 + np.random.normal(0, 1, size=100)
 
-    # 训练模型
+    # Train model
     model = LinearRegression()
 
-    # 模型训练
-    # 训练数据是二维的,所以X需要reshape成二维的
-    # -1的作用是告诉numpy,根据y的维度自动确定X的维度
-    # 1 是列数
+    # Model training
+    # Training data must be 2D, so reshape X to 2D
+    # -1 tells numpy to infer the dimension automatically based on y
+    # 1 is the number of columns
     X = x.reshape(-1, 1)
     print(X.shape)
 
-    # 堆叠，增加多次项
+    # Stack and add higher-order terms
     X2 = np.hstack([X, X ** 2, X ** 3, X ** 4, X ** 5, X ** 6, X ** 7, X ** 8, X ** 9, X ** 10])
     print(X2.shape)
 
     model.fit(X2, y)
 
-    # 模型预测
+    # Model prediction
     y_predict = model.predict(X2)
 
-    # 模型评估
+    # Model evaluation
     mse = mean_squared_error(y, y_predict)
-    print("正好拟合MSE:", mse)
-    print(f'回归系数{model.coef_}')
-    # 绘制图像
+    print("Overfitting model MSE:", mse)
+    print(f'Regression coefficients {model.coef_}')
+    # Plot
     plt.scatter(x, y)
-    # 画图plot折线图时 需要对x进行排序, 取x排序后对应的y值
+    # When plotting a line chart, sort x and take the corresponding y values
     plt.plot(np.sort(x), y_predict[np.argsort(x)], color='r')
     plt.show()
 
@@ -715,35 +715,35 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-# 使用sklearn接口加载加利福尼亚房价数据（全部样本）
+# Load California housing data using sklearn interface (all samples)
 california = fetch_california_housing(data_home='./data')
 X = california['data']
 y = california['target']
 
-# 划分训练集和测试集
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# 特征归一化（建议对特征做归一化，有利于收敛）
+# Feature normalization (recommended for better convergence)
 scaler_X = StandardScaler()
 X_train_scaled = scaler_X.fit_transform(X_train)
 X_test_scaled = scaler_X.transform(X_test)
 
 from sklearn.linear_model import Lasso
 
-# 创建并训练线性回归模型
+# Create and train linear regression model
 lr = Lasso(alpha=0.01)
 lr.fit(X_train_scaled, y_train)
-print(f'回归系数{lr.coef_}')
+print(f'Regression coefficients {lr.coef_}')
 
-# 在训练集和测试集上预测
+# Predict on training and test sets
 y_train_pred_sklearn = lr.predict(X_train_scaled)
 y_test_pred_sklearn = lr.predict(X_test_scaled)
 
-# 评估模型
-print("sklearn线性回归训练集均方误差: {:.4f}".format(mean_squared_error(y_train, y_train_pred_sklearn)))
-print("sklearn线性回归测试集均方误差: {:.4f}".format(mean_squared_error(y_test, y_test_pred_sklearn)))
+# Evaluate model
+print("sklearn linear regression training set MSE: {:.4f}".format(mean_squared_error(y_train, y_train_pred_sklearn)))
+print("sklearn linear regression test set MSE: {:.4f}".format(mean_squared_error(y_test, y_test_pred_sklearn)))
 ```
 
 #### L2 Regularization
@@ -772,27 +772,27 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-# 使用sklearn接口加载加利福尼亚房价数据（全部样本）
+# Load California housing data using sklearn interface (all samples)
 california = fetch_california_housing(data_home='./data')
 X = california['data']
 y = california['target']
 
-# 划分训练集和测试集
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# 特征归一化（建议对特征做归一化，有利于收敛）
+# Feature normalization (recommended for better convergence)
 scaler_X = StandardScaler()
 X_train_scaled = scaler_X.fit_transform(X_train)
 X_test_scaled = scaler_X.transform(X_test)
 
 from sklearn.linear_model import Ridge
 
-# 使用交叉验证(网格搜索)选择最佳alpha
+# Use cross-validation (grid search) to select best alpha
 from sklearn.model_selection import GridSearchCV
 
-# np.logspace用于生成等比（对数）间隔的数值序列，用于alpha的取值范围，例如：np.logspace(-3, 3, 30)表示在10的-3次方到10的3次方之间生成30个数
+# np.logspace generates a sequence of numbers spaced evenly on a log scale, used for alpha range, e.g., np.logspace(-3, 3, 30) generates 30 numbers between 10^-3 and 10^3
 alphas = np.logspace(-3, 3, 30)
 ridge = Ridge()
 param_grid = {'alpha': alphas}
@@ -800,20 +800,20 @@ grid = GridSearchCV(ridge, param_grid, scoring='neg_mean_squared_error', cv=5)
 grid.fit(X_train_scaled, y_train)
 
 best_alpha = grid.best_params_['alpha']
-print(f'最优alpha: {best_alpha}')
+print(f'Best alpha: {best_alpha}')
 
-# 用最优alpha重新训练模型
+# Retrain model with best alpha
 lr = Ridge(alpha=best_alpha)
 lr.fit(X_train_scaled, y_train)
-print(f'回归系数{lr.coef_}')
+print(f'Regression coefficients {lr.coef_}')
 
-# 在训练集和测试集上预测
+# Predict on training and test sets
 y_train_pred_sklearn = lr.predict(X_train_scaled)
 y_test_pred_sklearn = lr.predict(X_test_scaled)
 
-# 评估模型
-print("sklearn线性回归训练集均方误差: {:.4f}".format(mean_squared_error(y_train, y_train_pred_sklearn)))
-print("sklearn线性回归测试集均方误差: {:.4f}".format(mean_squared_error(y_test, y_test_pred_sklearn)))
+# Evaluate model
+print("sklearn linear regression training set MSE: {:.4f}".format(mean_squared_error(y_train, y_train_pred_sklearn)))
+print("sklearn linear regression test set MSE: {:.4f}".format(mean_squared_error(y_test, y_test_pred_sklearn)))
 ```
 
 
@@ -952,14 +952,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
-# 读取 csv，替换问号为 np.nan
+# Read CSV, replacing '?' with np.nan
 df = pd.read_csv('data/breast-cancer-wisconsin.csv', na_values=["?"], header=None)
 
-# 删除包含空值的样本
+# Drop samples containing missing values
 df_clean = df.dropna()
 
-# 选定特征和标签
-# 假设最后一列为标签
+# Select features and labels
+# Assume the last column is the label
 X = df_clean.iloc[:, 1:-1]
 y = df_clean.iloc[:, -1]
 
@@ -970,15 +970,15 @@ print(X.dtypes)
 print("y dtype:")
 print(y.dtype)
 
-# 分割数据集
+# Split dataset
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y)
 
-# 逻辑回归模型
+# Logistic regression model
 model = LogisticRegression(max_iter=1000)
 model.fit(X_train, y_train)
 
-# 预测与评估
+# Predict and evaluate
 y_pred = model.predict(X_test)
 print("Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
@@ -986,11 +986,11 @@ print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
 print("Accuracy: %.4f" % accuracy_score(y_test, y_pred))
 
-# 打印回归系数
-print("回归系数：", model.coef_)
-# 输出各测试样本属于每个类别的概率值
+# Print regression coefficients
+print("Regression coefficients:", model.coef_)
+# Output the probability of each test sample belonging to each class
 y_proba = model.predict_proba(X_test)
-print("预测为每一类别的概率（前10个样本）：")
+print("Predicted probabilities for each class (first 10 samples):")
 print(y_proba[:10])
 print(y_test[:10])
 ```

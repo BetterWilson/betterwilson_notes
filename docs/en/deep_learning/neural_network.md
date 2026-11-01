@@ -37,14 +37,14 @@ What a single neuron can do is very limited (it is essentially just a linear cla
 Organizing a large number of neurons into **layers**, forming a layered structure, greatly increases the network's expressive power:
 
 ```
-输入层          隐藏层 1        隐藏层 2        输出层
-(第0层)         (第1层)         (第2层)         (第3层)
+Input Layer     Hidden Layer 1  Hidden Layer 2  Output Layer
+(Layer 0)       (Layer 1)       (Layer 2)       (Layer 3)
 
-  x₁ ───→ 神经元₁⁽¹⁾ ───→ 神经元₁⁽²⁾ ───→
+  x₁ ───→ Neuron₁⁽¹⁾ ───→ Neuron₁⁽²⁾ ───→
     ↘        ↗              ↗
-  x₂ ───→ 神经元₂⁽¹⁾ ───→ 神经元₂⁽²⁾ ───→ 输出 ŷ
+  x₂ ───→ Neuron₂⁽¹⁾ ───→ Neuron₂⁽²⁾ ───→ Output ŷ
     ↗        ↗              ↗
-  x₃ ───→ 神经元₃⁽¹⁾ ───→
+  x₃ ───→ Neuron₃⁽¹⁾ ───→
 ```
 
 | Layer                       | Position          | Role                                                         |
@@ -122,16 +122,16 @@ When you write `model(x)`, what is triggered is Python's `__call__` magic method
 ```
 model(x)
   ↓
-MyModel 类没有 __call__ → 查父类 nn.Module
+MyModel has no __call__ → check parent class nn.Module
   ↓
-nn.Module.__call__(self, x)           # Python 魔法方法，让实例"可调用"
-  ↓ 实际调用 _call_impl，内部做了四件事：
-  ① 执行 forward_pre_hook（用户注册的前置钩子）
-  ② 如有注册的 backward_hook，在此处注册到 autograd 计算图（供后续 .backward() 触发）
-  ③ 调用 self.forward(x)              # ← 这才是你写的 forward 方法！
-  ④ 执行 forward_hook（用户注册的后置钩子）
+nn.Module.__call__(self, x)           # Python magic method, makes instance "callable"
+  ↓ actually calls _call_impl, internally does four things:
+  ① Execute forward_pre_hook (pre-hook registered by user)
+  ② If backward_hook is registered, register it with autograd here (to be triggered by subsequent .backward())
+  ③ Call self.forward(x)              # ← This is the forward method you wrote!
+  ④ Execute forward_hook (post-hook registered by user)
   ↓
-返回 forward 的输出
+Return forward's output
 ```
 
 > **Additional note**: step ② above (backward hook registration) includes registration on the input side (before `forward`) and on the output side (after `forward`, once the return value is obtained), but overall the "preparation work" for backward hooks is handled uniformly by `_call_impl`, and the user need not be aware of it. The `_backward_hooks` dictionary holds both `register_backward_hook` and `register_full_backward_hook` kinds of hooks and processes them uniformly.
@@ -188,13 +188,13 @@ return x @ W.T + b                    # Matrix multiplication + bias (i.e. z = W
 The forward propagation of the entire network is a nested call chain of `__call__` → `forward`, layer by layer:
 
 ```
-model(x)                              # 你的模型
+model(x)                              # Your model
   → __call__ → forward:
-    → self.fc1(x)                     # 第1个线性层
+    → self.fc1(x)                     # 1st linear layer
       → __call__ → forward: x @ W₁.T + b₁
-    → self.relu(x)                    # ReLU 激活
+    → self.relu(x)                    # ReLU activation
       → __call__ → forward: max(0, x)
-    → self.fc2(x)                     # 第2个线性层
+    → self.fc2(x)                     # 2nd linear layer
       → __call__ → forward: x @ W₂.T + b₂
 ```
 
@@ -318,15 +318,15 @@ $$
 **A textual description of the computation graph** (to be read together with the figure above):
 
 ```
-前向传播（左→右）：              反向传播（右→左）：
-                                
+Forward Propagation (left→right):   Backpropagation (right→left):
+                                 
   a ──────→┐                          a ←── ∂J/∂a = 3
-           │                          ↑
-           u ──→ J        对应         u ──→ ∂J/∂u = 3
-           ↑                          ↑
-  b ──→ v ─┘                          b ←── ∂J/∂b = 3c
-           ↑                          ↑
-  c ──────→┘                          c ←── ∂J/∂c = 3b
+            │                          ↑
+            u ──→ J        corresponds  u ──→ ∂J/∂u = 3
+            ↑                          ↑
+   b ──→ v ─┘                          b ←── ∂J/∂b = 3c
+            ↑                          ↑
+   c ──────→┘                          c ←── ∂J/∂c = 3b
 ```
 
 **During forward propagation** (the left figure):
@@ -355,8 +355,8 @@ $$
 A neural network is like a multi-stage information processing factory:
 
 ```
-输入 → [第1层：加工] → [第2层：加工] → [第3层：加工] → 输出（预测值）
-  x         z¹             z²           z³             ŷ
+Input → [Layer 1: Process] → [Layer 2: Process] → [Layer 3: Process] → Output (prediction)
+  x         z¹                  z²                 z³                   ŷ
 ```
 
 Each layer does two things:
@@ -409,12 +409,12 @@ If all the ReLUs in the network are removed:
 Suppose we have an ultra-small network used to predict house prices from 2 features:
 
 ```
-输入：x₁ = 1（面积=100㎡）, x₂ = 2（卧室数=3）
-真实房价：y = 50（万元）
+Input: x₁ = 1 (area=100㎡), x₂ = 2 (bedrooms=3)
+True house price: y = 50 (10k CNY)
 
-第1层（2个神经元, 输入维度=2）：
-  权重矩阵 W₁ = [[w₁₁, w₁₂],     ← 输入x₁对神经元1、2的权重
-               [w₂₁, w₂₂]]     ← 输入x₂对神经元1、2的权重
+Layer 1 (2 neurons, input dim=2):
+  Weight matrix W₁ = [[w₁₁, w₁₂],     ← weights from input x₁ to neurons 1, 2
+                    [w₂₁, w₂₂]]     ← weights from input x₂ to neurons 1, 2
 ```
 
 > ⚠️ **Note**: here the rows of $W_1$ are the **inputs** and the columns are the **neurons** (not the common "rows = neurons" convention).
@@ -425,13 +425,13 @@ Suppose we have an ultra-small network used to predict house prices from 2 featu
 > **Why not use the common $z=Wx$?** The two conventions are essentially the same — all that matters is that the matrix multiplication dimensions match. This article consistently uses $W^T x$ so that in the later expansions (such as $z_1^{(1)} = x_1 w_{11} + x_2 w_{21} + ...$) the subscript meanings stay consistent: $w_{ij}$ = the weight from input $i$ to neuron $j$.
 
 ```
-具体数值：W₁ = [[0.5, 0.3],
-              [0.1, 0.8]]
-偏置：b₁ = [0.1, 0.2]
+Concrete values: W₁ = [[0.5, 0.3],
+                     [0.1, 0.8]]
+Bias: b₁ = [0.1, 0.2]
 
-第2层（输出层，1个神经元）：
-  权重：W₂ = [0.4, 0.6]
-  偏置：b₂ = [0.3]
+Layer 2 (output layer, 1 neuron):
+  Weights: W₂ = [0.4, 0.6]
+  Bias: b₂ = [0.3]
 ```
 
 **Forward propagation (computing the prediction):**
@@ -572,8 +572,8 @@ ReLU (Rectified Linear Unit) is the most commonly used activation function:
 $$\text{ReLU}(z) = \max(0, z)$$
 
 ```
-如果 z > 0：输出 = z（直接通过，导数 = 1）
-如果 z ≤ 0：输出 = 0（关断，导数 = 0）
+If z > 0: output = z (pass through directly, derivative = 1)
+If z ≤ 0: output = 0 (shut off, derivative = 0)
 ```
 
 An intuitive way to see it: **ReLU is a "one-way valve"** — positive numbers can pass through, while negatives or zero are blocked.
@@ -593,7 +593,7 @@ ReLU's derivative is the indicator function $I = \mathbf{1}(z > 0)$: when $z>0$,
   > ```
   > (ŷ - y) · I₃ · (w₁⁽³⁾·I₂₁·w₁₁⁽²⁾ + w₂⁽³⁾·I₂₂·w₁₂⁽²⁾) · I₁₁ · x₁
   >           ↑           ↑                 ↑             ↑
-  >        第3层开关     第2层两个神经元的开关             第1层开关
+  >       Layer 3 switch  Layer 2 two neurons' switch    Layer 1 switch
   > ```
   >
   > If some neuron's output is ≤ 0, then $I = 0$ for that path and the gradient along that route is "cut off", so gradients do not propagate through it. This is one form of **vanishing gradient**.
@@ -640,15 +640,15 @@ Here:
 > **The network topology**:
 >
 > ```
-> 输入层        隐藏层a       隐藏层b       输出层
-> (2个)        (2个神经元)    (2个神经元)   (1个输出)
+> Input Layer   Hidden Layer a  Hidden Layer b  Output Layer
+> (2 inputs)    (2 neurons)     (2 neurons)     (1 output)
 > 
 > x₁ ────┬──→ a₁ ────┬──→ b₁ ──→ out
 >        │           │         ↗
 >        ├──→ a₂ ────┼──→ b₂ ──┘
 > x₂ ────┘           │
->                    └── 红线路径: a₂→b₁→out
->                    └── 蓝线路径: a₂→b₂→out
+>                    └── Red path: a₂→b₁→out
+>                    └── Blue path: a₂→b₂→out
 > ```
 >
 > $W_1[1,2]$ is the weight from $x_1 \rightarrow a_2$. There are two routes for the gradient from out back to it: the route through $b_1$ (the red line) + the route through $b_2$ (the blue line).
@@ -833,15 +833,15 @@ $$
 ### A Summary of the Complete Backpropagation Process
 
 ```
-1. 前向传播：输入 → 逐层计算 z = Wx + b → 经激活函数 a = f(z) → 得到预测值 ŷ
-2. 计算损失：L = loss(ŷ, y)，衡量预测和真实值的差距
-3. 反向传播（从后往前）：
-   ① 公式1：算出输出层的误差 δᴸ = (∂L/∂aᴸ) ⊙ f'(zᴸ)
-   ② 公式2：逐层往前传误差 δᴸ → δᴸ⁻¹ → ... → δ¹
-      （每层：δˡ = (Wˡ⁺¹)ᵀ δˡ⁺¹ ⊙ f'(zˡ)）
-   ③ 公式3：用每层的 δˡ × aˡ⁻¹ 算出该层的权重梯度 ∂L/∂Wˡ
-4. 更新参数：W_new = W_old - η · ∂L/∂W（梯度下降）
-5. 重复 1-4，直到损失足够小（网络收敛）
+1. Forward propagation: Input → compute layer by layer z = Wx + b → through activation a = f(z) → get prediction ŷ
+2. Compute loss: L = loss(ŷ, y), measuring the gap between prediction and true value
+3. Backpropagation (from back to front):
+   ① Formula 1: compute output layer error δᴸ = (∂L/∂aᴸ) ⊙ f'(zᴸ)
+   ② Formula 2: propagate error forward layer by layer δᴸ → δᴸ⁻¹ → ... → δ¹
+      (each layer: δˡ = (Wˡ⁺¹)ᵀ δˡ⁺¹ ⊙ f'(zˡ))
+   ③ Formula 3: use each layer's δˡ × aˡ⁻¹ to compute that layer's weight gradient ∂L/∂Wˡ
+4. Update parameters: W_new = W_old - η · ∂L/∂W (gradient descent)
+5. Repeat 1-4 until loss is small enough (network converges)
 ```
 
 > **Why is it called "back" propagation?** Forward propagation goes from input to output (left→right), whereas backpropagation goes from the loss to the weights (right→left), propagating the error signal back in the reverse direction through the network.
@@ -1040,9 +1040,9 @@ The activation input $x$ of intermediate-layer neurons is pulled back by the BN 
 > Suppose some layer has 4 neurons, and within one mini-batch their raw output values (pre-activation) are:
 >
 > ```
-> 样本1: [ 2.5, -0.3, 15.0,  1.2 ]    ← 注意第3个神经元值超级大！
-> 样本2: [ 3.1,  0.8,  8.0, -0.5 ]    ← 分布很散，有的-0.5有的15.0
-> 样本3: [ 1.8, -0.1, 20.0,  0.9 ]    ← 下一层要处理这种"五花八门"的输入
+> Sample 1: [ 2.5, -0.3, 15.0,  1.2 ]    ← Note the 3rd neuron value is extremely large!
+> Sample 2: [ 3.1,  0.8,  8.0, -0.5 ]    ← Values are scattered, some -0.5 and some 15.0
+> Sample 3: [ 1.8, -0.1, 20.0,  0.9 ]    ← The next layer has to handle this "all over the place" input
 > ```
 >
 > Applying BN to each neuron (column by column):
@@ -1512,7 +1512,7 @@ The following are some reasons that may cause loss fluctuation, along with the c
 When training a neural network, GPU memory is mainly occupied by the following 5 parts:
 
 ```
-训练显存 = 模型参数 + 梯度 + 优化器状态 + 激活值(中间结果) + 计算图(可忽略)
+Training GPU memory = Model parameters + Gradients + Optimizer state + Activations (intermediate results) + Computation graph (negligible)
 ```
 
 | Component                 | Size occupied (estimation formula)                                         | Necessary?                                 |
@@ -1546,14 +1546,14 @@ $$\text{数值} = (-1)^{\text{sign}} \times 2^{\text{exponent}} \times (1.\text{
 > **A visual comparison of the three formats**:
 >
 > ```
-> FP32: [s][eeeeeeee][mmmmmmmmmmmmmmmmmmmmmmm]   ← 32位，精度最高，占4字节
->               ↑ 8位指数    ↑ 23位尾数（精度高）
+> FP32: [s][eeeeeeee][mmmmmmmmmmmmmmmmmmmmmmm]   ← 32 bits, highest precision, 4 bytes
+>               ↑ 8 exponent bits ↑ 23 mantissa bits (high precision)
 > 
-> FP16: [s][eeeee][mmmmmmmmmm]                    ← 16位，占2字节（省一半显存！）
->            ↑ 5位指数   ↑ 10位尾数（精度较低，范围小）
+> FP16: [s][eeeee][mmmmmmmmmm]                    ← 16 bits, 2 bytes (saves half GPU memory!)
+>            ↑ 5 exponent bits ↑ 10 mantissa bits (lower precision, smaller range)
 > 
-> BF16: [s][eeeeeeee][mmmmmmm]                    ← 16位，占2字节（省一半显存！）
->            ↑ 8位指数   ↑ 7位尾数（精度更低，但范围和FP32一样大）
+> BF16: [s][eeeeeeee][mmmmmmm]                    ← 16 bits, 2 bytes (saves half GPU memory!)
+>            ↑ 8 exponent bits ↑ 7 mantissa bits (lower precision, but same range as FP32)
 > ```
 >
 > **The core differences**:
@@ -1574,10 +1574,10 @@ $$\text{数值} = (-1)^{\text{sign}} \times 2^{\text{exponent}} \times (1.\text{
 In actual training, not all data is stored in FP16/BF16 — doing so would make training unstable due to insufficient precision. The approach of **mixed precision training** is:
 
 ```
-参数 master 副本： FP32（保持高精度，防止精度累积误差）
-前向传播激活值：   FP16/BF16（省显存，计算快）
-反向传播梯度：     FP16/BF16（省显存，计算快）
-优化器更新：       FP32（用低精度梯度更新高精度 master 参数）
+Parameter master copy: FP32 (maintain high precision, prevent precision accumulation error)
+Forward propagation activations: FP16/BF16 (save GPU memory, compute fast)
+Backward propagation gradients: FP16/BF16 (save GPU memory, compute fast)
+Optimizer update: FP32 (update high-precision master parameters with low-precision gradients)
 ```
 
 > **Usage in PyTorch**:
@@ -1644,8 +1644,8 @@ $$\text{参数量} = \text{输入维度} \times \text{输出维度} + \text{输�
 After calling `loss.backward()`, every parameter that requires gradients gets a `.grad` attribute with exactly the same shape as the parameter.
 
 ```
-参数本身：  weight     → 8 MB
-参数的梯度：weight.grad → 8 MB（形状完全一样）
+Parameters themselves:  weight     → 8 MB
+Parameter gradients: weight.grad → 8 MB (exactly the same shape)
 ```
 
 **Why must gradients have the same shape as the parameters?** Because the gradient descent update formula is $W_{new} = W_{old} - \eta \cdot \nabla_W L$, and every element of the parameter matrix needs a corresponding gradient value to be updated — one slot per item.
@@ -1681,12 +1681,12 @@ An optimizer needs to store extra state in order to update parameters better. Th
 **The complete Adam memory computation** (using the 8 MB of parameters of `nn.Linear(1024, 2048)` as an example):
 
 ```
-weight（参数）     →  8 MB
-weight.grad（梯度）→  8 MB
-m（一阶矩）        →  8 MB   ← 和参数形状完全相同
-v（二阶矩）        →  8 MB   ← 和参数形状完全相同
+weight (parameters)     →  8 MB
+weight.grad (gradients) →  8 MB
+m (1st moment)        →  8 MB   ← Same shape as parameters
+v (2nd moment)        →  8 MB   ← Same shape as parameters
 ────────────────────────────
-总计               → 32 MB   ← 4 倍参数量
+Total               → 32 MB   ← 4× parameter count
 ```
 
 > **Choose Adam or SGD?**
@@ -1750,8 +1750,8 @@ Many people think ReLU is a "parameter-free" function that need not store anythi
 **ReLU's forward and backward**:
 
 ```
-前向：y = max(0, x)          → 只需知道 x > 0 还是 x ≤ 0
-反向：dy/dx = 1 if x > 0 else 0 → 需要一个"开关"信息
+Forward: y = max(0, x)          → Only need to know if x > 0 or x ≤ 0
+Backward: dy/dx = 1 if x > 0 else 0 → Need a "switch" information
 ```
 
 There are two common storage strategies when implementing ReLU's backpropagation (controlled by `ctx.save_for_backward` in a custom operator):
@@ -1776,18 +1776,18 @@ PyTorch's built-in ReLU actually **stores the output `y`** (`ReluBackward0` stor
 Every forward pass has PyTorch building a directed acyclic graph (DAG) in the background, recording the type and connections of every operation.
 
 ```
-实际代码：
+Actual code:
 x = torch.randn(32, 1024)
-y = linear1(x)     # 乘法 + 加法
+y = linear1(x)     # multiplication + addition
 a = torch.relu(y)  # ReLU
-z = linear2(a)     # 乘法 + 加法
-loss = z.mean()    # 求均值
+z = linear2(a)     # multiplication + addition
+loss = z.mean()    # mean
 
-PyTorch 后台构建的计算图（简化）：
+PyTorch backend computation graph (simplified):
 x ──→ [MmBackward0] ──→ [AddBackward0] ──→ [ReluBackward0] ──→ [MmBackward0] ──→ [AddBackward0] ──→ 
-			(矩阵乘法)			(加法/偏置) 		  (ReLU) 			(矩阵乘法) 			(加法/偏置)
+			(matrix mult)			(addition/bias) 		  (ReLU) 			(matrix mult) 			(addition/bias)
 [MeanBackward0] ──→ loss
-    (均值)                                               
+    (mean)                                               
 ```
 
 Each node stores: the operation type (such as `MmBackward0`), a pointer to its parent node (knowing where it came from), and the corresponding backward function (knowing how to propagate gradients back).

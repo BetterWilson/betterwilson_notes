@@ -20,16 +20,16 @@ However it is triggered, the data is written to the same RDB file in an overwrit
 For manual triggering, you only need to configure it in the configuration file (note the read/write permissions):
 
 ```bash
-dir "/data/redis6379/"   # 持久化文件保存的目录，目录位置可以更改为其它目录
-dbfilename redis6379.rdb   	 # 持久化文件名，可以带端口号也可以不带，文件名也可以随意，只要是.rdb结尾就行
+dir "/data/redis6379/"   # Directory where persistence files are saved; can be changed to another directory
+dbfilename redis6379.rdb   	 # Persistence filename; can include the port number or not, filename is flexible as long as it ends with .rdb
 
 
-# 执行命令
+# Execute commands
 mkdir -p /data/redis6379/
 chmod 777 /data/redis6379
 vim /opt/redis6379/conf/redis6379.conf
 
-# 添加如下配置
+# Add the following configuration
 dir "/data/redis6379/"
 dbfilename redis6379.rdb
 ```
@@ -72,7 +72,7 @@ OK
 1) "k2"
 2) "k3"
 3) "k1"
-# 丢了两条数据
+# Two keys of data were lost
 ```
 
 Comparison of `save` and `bgsave`:
@@ -92,30 +92,30 @@ Comparison of `save` and `bgsave`:
 Automatic triggering requires configuring the relevant trigger rules in the configuration file.
 
 ```bash
-# RDB 自动持久化规则，当满足一下任意一个条件时，自动触发bgsave进行持久化
-# 当然，你也可以自定义其它规则，比如 save 30 100 
-# 当 900 秒内至少有 1 个key 被改动时，自动执行持久化操作
+# RDB automatic persistence rules: bgsave is triggered automatically when any one of the following conditions is met
+# You can also define custom rules, e.g. save 30 100
+# Automatically persist when at least 1 key has been modified within 900 seconds
 save 900 1
 
-# 当 300 秒内至少有 10 个key 被改动时，自动执行持久化操作
+# Automatically persist when at least 10 keys have been modified within 300 seconds
 save 300 10
 
-# 当 60 秒内至少有 10000 个key被改动时，自动执行持久化操作
+# Automatically persist when at least 10000 keys have been modified within 60 seconds
 save 60 10000
 
-# 数据持久化文件存储目录
+# Data persistence file storage directory
 dir "/data/redis6379/"
 
-# RDB持久化文件名
-dbfilename redis.rdb       # 持久化文件名，可以带端口号也可以不带，文件名也可以随意，只要是.rdb结尾就行
+# RDB persistence filename
+dbfilename redis.rdb       # Persistence filename; can include the port number or not, filename is flexible as long as it ends with .rdb
 
-# bgsave过程中发生错误时，是否停止写入，通常为 yes
+# Whether to stop writes on error during bgsave; usually yes
 rdbcompression yes
 
-# 是否对RDB文件进行校验，通常为 yes
+# Whether to checksum the RDB file; usually yes
 rdbchecksum yes
 
-# 最终拷贝这些命令到配置文件
+# Finally, copy these commands to the configuration file
 vim /opt/redis6379/conf/redis6379.conf
 
 dir "/data/redis6379/"
@@ -126,7 +126,7 @@ save 60 10000
 rdbcompression yes
 rdbchecksum yes
 
-# 重启redis
+# Restart redis
 systemctl restart redis
 ```
 
@@ -134,7 +134,7 @@ When you shut down the Redis service in any of the following three ways, it will
 
 ```bash
 SHUTDOWN
-kill 2490		# 2490是redis进程id
+kill 2490		# 2490 is the redis process ID
 pkill redis
 ```
 
@@ -161,10 +161,10 @@ The working mechanism of AOF persistence is that every time Redis executes a com
 Main parameters:
 
 ```bash
-# 是否开启aof，默认是no
+# Whether to enable AOF; default is no
 appendonly no
 
-# 触发持久化的条件
+# Condition that triggers persistence
 appendfsync always/everyesc/no
 ```
 
@@ -187,7 +187,7 @@ Characteristics of the AOF rewrite mechanism: it reduces the disk space occupied
 Example (pseudo-file):
 
 ```bash
-redis-cli	 	aof记录	 	   redis⾥的数据
+redis-cli	 	AOF entries	 	   Data in redis
 set k1 v1 		set k1 k1		k1/v1
 
 set k2 v2 		set k1 v1		k1/v1
@@ -208,7 +208,7 @@ del k2			set k1 v1		k3/v3
 				del k1
 				del k2
 
-# 问题来了，此时aof中，有意义的记录只有一条：
+# Now the question is: at this point, there is only one meaningful entry in the AOF:
 				set k3 v3
 ```
 
@@ -217,33 +217,33 @@ So, if the AOF file is very large, situations like this are numerous, and a rewr
 Other parameters:
 
 ```bash
-# 是否开启aof，默认是no
+# Whether to enable AOF; default is no
 appendonly no
 
-# 触发持久化的条件
+# Condition that triggers persistence
 appendfsync always/everyesc/no
 
-# 数据持久化文件存储目录，如果单独使用aof，那么配置项就需要加上dir，如果同时使用了rdb，有了dir参数，aof这里则直接指定文件名即可
+# Data persistence file storage directory. If using AOF alone, you need to set dir here. If RDB is also enabled (with its own dir), you can just specify the AOF filename directly
 dir "/data/redis_data/6379"
 
-# 是否在执行重写时不同步数据到AOF文件
-# 这里的 yes，就是执行重写时不同步数据到AOF文件
+# Whether to skip syncing data to the AOF file during a rewrite
+# Setting this to yes means data is not synced to the AOF file during a rewrite
 no-appendfsync-on-rewrite yes
 
-# 触发AOF文件执行重写的最小尺寸，如果将来真的用这个参数，且重度使用redis，则这个64兆就太小了，你可以调整以G为单位
+# Minimum size to trigger an AOF rewrite. If you actually use this parameter with heavy Redis usage, 64MB is too small — you can increase it to several GB
 auto-aof-rewrite-min-size 64mb
 
-# 触发AOF文件执行重写的增长率
+# Growth rate percentage to trigger an AOF rewrite
 auto-aof-rewrite-percentage 100
 
 
-# aof文件保存位置,
+# AOF file storage location
 # dir "/data/redis6379/"
 appendfilename "redis.aof"		
 
 
 
-# 最终拷贝这些命令到配置文件
+# Finally, copy these commands to the configuration file
 vim /opt/redis6379/conf/redis6379.conf
 
 appendonly yes
@@ -253,7 +253,7 @@ auto-aof-rewrite-percentage 100
 auto-aof-rewrite-min-size 64mb
 no-appendfsync-on-rewrite yes
 
-# 重启redis
+# Restart redis
 systemctl restart redis
 ```
 

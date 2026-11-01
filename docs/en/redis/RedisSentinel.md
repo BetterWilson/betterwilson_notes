@@ -28,8 +28,8 @@ Here I prepared 3 CentOS 7 servers with identical hardware, all running Redis 5.
 **Port planning**
 
 ```bash
-# redis数据节点，正常监听6379端口
-# 哨兵节点，监听26379节点
+# Redis data node, listening on port 6379 as usual
+# Sentinel node, listening on port 26379
 ```
 
 **Server planning**
@@ -49,14 +49,14 @@ Here I prepared 3 CentOS 7 servers with identical hardware, all running Redis 5.
 **Directory planning — the same on every server**
 
 ```bash
-# redis数据节点
-/opt/redis6379/{conf,logs,pid}   	# 配置目录，日志目录，pid目录
-/data/redis6379/					# 数据存放目录
-/opt/redis-5.0.7/					# 安装目录
+# Redis data node
+/opt/redis6379/{conf,logs,pid}   	# Config directory, log directory, pid directory
+/data/redis6379/					# Data storage directory
+/opt/redis-5.0.7/					# Installation directory
 
-# 哨兵节点
-/opt/redis26379/{conf,logs,pid}   	# 配置目录，日志目录，pid目录
-/data/redis26379/					# 数据存放目录
+# Sentinel node
+/opt/redis26379/{conf,logs,pid}   	# Config directory, log directory, pid directory
+/data/redis26379/					# Data storage directory
 ```
 
 ## Deploying Master-Slave Replication
@@ -74,9 +74,9 @@ yum update -y
 yum -y install gcc automake autoconf libtool make
 yum -y install net-tools vim wget lrzsz
 
-# 后面配置用到了一个小知识点
-# $(ifconfig ens33|awk 'NR==2{print $2}') 这条shell的意思是获取本机的IP地址
-# 有的服务器叫做ens33，也有的可能是eth0，可以通过ifconfig命令确认
+# A small tip used in the following configuration
+# $(ifconfig ens33|awk 'NR==2{print $2}') — this shell command gets the local machine's IP address
+# Some servers call it ens33, others may call it eth0; you can check with the ifconfig command
 [root@cs ~]# echo $(ifconfig ens33|awk 'NR==2{print $2}')
 192.168.10.150
 ```
@@ -109,11 +109,11 @@ redis-cli PING
 On db02 and db03, run the following commands respectively:
 
 ```bash
-# 先分别执行下面的命令，建立免密传输通道
+# First run the following commands to set up passwordless SSH access
 ssh-keygen
 ssh-copy-id 192.168.10.150
 
-# 如果你的db02和db03有Redis，可以先停掉
+# If you have Redis running on db02 and db03, you can stop it first
 # systemctl stop redis
 rm -rf /opt/redis*
 rsync -avz 192.168.10.150:/usr/local/bin/redis* /usr/local/bin
@@ -161,7 +161,7 @@ Operations on db01
 redis-cli -h 192.168.10.151 -p 6379 slaveof 192.168.10.150 6379
 redis-cli -h 192.168.10.152 -p 6379 slaveof 192.168.10.150 6379
 
-# 如果数据量较大，可以等一段时间再执行info replication命令
+# If the data volume is large, you may want to wait a while before running info replication
 redis-cli -h 192.168.10.150 -p 6379 info replication
 redis-cli -h 192.168.10.150 -p 6379 set k1 v111 
 redis-cli -h 192.168.10.150 -p 6379 get k1
@@ -210,7 +210,7 @@ port 26379
 daemonize yes
 logfile /opt/redis26379/logs/redis26379.log
 dir /data/redis26379
-# 注意修改主节点ip为你真实的主节点IP
+# Remember to change the master node IP to your actual master node IP
 sentinel monitor myredis 192.168.10.150 6379 2
 sentinel down-after-milliseconds myredis 3000
 sentinel parallel-syncs myredis 1
@@ -258,32 +258,32 @@ Explanation of key configuration:
 ### Common Commands
 
 ```bash
-# 获取主节点的IP和端口，你可以在任意节点执行这个命令
+# Get the master node's IP and port; you can run this command on any node
 redis-cli -h 192.168.10.150 -p 26379 SENTINEL get-master-addr-by-name myredis
 redis-cli -h 192.168.10.151 -p 26379 SENTINEL get-master-addr-by-name myredis
 redis-cli -h 192.168.10.152 -p 26379 SENTINEL get-master-addr-by-name myredis
 
-# 返回结果都是一样的
+# The returned results are all the same
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 26379 SENTINEL get-master-addr-by-name myredis
 1) "192.168.10.150"
 2) "6379
 
 
-# 查看主节点和从节点的sentinel信息
+# View Sentinel info for the master node and replica nodes
 redis-cli -h 192.168.10.150 -p 26379 SENTINEL master myredis
 redis-cli -h 192.168.10.150 -p 26379 SENTINEL slaves myredis
 redis-cli -h 192.168.10.150 -p 26379 SENTINEL sentinels myredis
 
 
-# 查看可用的sentinel节点数量
+# Check the number of available Sentinel nodes
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 26379 SENTINEL ckquorum myredis
 OK 3 usable Sentinels. Quorum and failover authorization can be reached
-3个可用哨兵节点，达到了仲裁和故障转移的条件了，也就是说能够进行自动故障转移
+3 usable Sentinel nodes — quorum and failover authorization can be reached, meaning automatic failover is possible
 
-# 查看可用的sentinel的基本信息
-# 总的信息
+# View general info of available Sentinels
+# Overall info
 redis-cli -h 192.168.10.150 -p 26379 INFO
-# 总的信息中某一项分类信息
+# A specific section from the overall info
 redis-cli -h 192.168.10.150 -p 26379 INFO Sentinel
 ```
 
@@ -367,25 +367,25 @@ A failover operation consists of the following steps:
 ```bash
 [root@cs ~]# redis-cli -h 192.168.10.151 -p 26379 SENTINEL slaves myredis
 1)  1) "name"
-    2) "192.168.10.152:6379"		# 152从节点
+    2) "192.168.10.152:6379"		# Replica node 152
     7) "runid"
     8) "f1618c045726b9d93f054badd3b00bfce98cd62e"
    21) "down-after-milliseconds"
    22) "3000"
-   37) "slave-priority"				# 权重100
+   37) "slave-priority"				# Priority 100
    38) "100"
-   39) "slave-repl-offset"			# 偏移量 3137535
+   39) "slave-repl-offset"			# Offset 3137535
    40) "3137535"
 
 2)  1) "name"
-    2) "192.168.10.151:6379"		# 151从节点
+    2) "192.168.10.151:6379"		# Replica node 151
     7) "runid"
     8) "62bb0e4e5c8b0112185f6c0b5a4123bd65e452c8"
    21) "down-after-milliseconds"
    22) "3000"
-   37) "slave-priority"				# 权重100
+   37) "slave-priority"				# Priority 100
    38) "100"
-   39) "slave-repl-offset"			# 偏移量 3137535
+   39) "slave-repl-offset"			# Offset 3137535
    40) "3137535"
 
 >>> min("f1618c045726b9d93f054badd3b00bfce98cd62e", "62bb0e4e5c8b0112185f6c0b5a4123bd65e452c8")
@@ -399,10 +399,10 @@ As you can see, the two replicas have the same priority and the same offset, so 
 Let's directly kill the redis process of the master node; perform the operation on the db01 master node.
 
 ```bash
-# 注意不是 pkill -9 redis，那样会sentinel也干掉了
+# Note: do NOT use pkill -9 redis, that would kill sentinel too
 pkill -9 redis-server
 
-# 然后可以看下此时的主节点是谁
+# Then check who the current master node is
 redis-cli -h 192.168.10.150 -p 26379 SENTINEL get-master-addr-by-name myredis
 redis-cli -h 192.168.10.150 -p 26379 SENTINEL master myredis
 
@@ -451,7 +451,7 @@ redis-cli -h 192.168.10.150 -p 26379 SENTINEL slaves myredis
     7) "runid"
     8) "182a0bb752ad543c8961d9a35ba52005d10f662b"
     9) "flags"
-   10) "slave"			# 如果提示s_down,slave,disconnected，就等会再重新执行命令，因为加入主从复制关系中毕竟需要耗费时间
+   10) "slave"			# If it shows s_down,slave,disconnected, wait a while and re-run the command — joining the replication relationship takes some time
 ```
 
 ## Manual Failover
@@ -479,11 +479,11 @@ redis-cli -h 192.168.10.152 -p 6379 CONFIG GET slave-priority
 Now, if we want to stop the server of the master node and want the 150 replica's server to become the master, we can lower the priority of the current master 151 and of the other replica 152, while keeping 150's priority unchanged. Then we proactively trigger the election.
 
 ```bash
-# 先给不让当主节点的其它节点将权重
+# First lower the priority of the other nodes that should not become master
 redis-cli -h 192.168.10.151 -p 6379 CONFIG set slave-priority 0
 redis-cli -h 192.168.10.152 -p 6379 CONFIG set slave-priority 0
 
-# 想让当主节点的从节点维持权重不变，等于变相的加了权重，这样从新选举时，就能按照我们想要的动作进行选举了
+# Keep the priority of the replica we want to become master unchanged — effectively increasing its relative priority, so the new election will proceed as we want
 redis-cli -h 192.168.10.150 -p 6379 CONFIG GET slave-priority
 redis-cli -h 192.168.10.151 -p 6379 CONFIG GET slave-priority
 redis-cli -h 192.168.10.152 -p 6379 CONFIG GET slave-priority
@@ -506,13 +506,13 @@ OK
 Then, proactively trigger the election.
 
 ```bash
-# 模拟故障转移命令，此命令将使我们的当前主节点不再可用，睡眠 30 秒。 它基本上模拟了由于某种原因而挂起的现象
+# Simulate a failover command — this command will make our current master node unavailable by sleeping for 30 seconds. It basically simulates a hang for some reason
 # redis-cli -h 192.168.10.151 -p 6379 DEBUG sleep 30
 
-# 你也可以指定给哨兵发个让指定主节点failover的命令，内部就会主动进行选举(推荐)
+# Alternatively, you can send a failover command to Sentinel for a specific master node, which will proactively trigger an election (recommended)
 redis-cli -h 192.168.10.150 -p 26379 sentinel failover myredis
 
-# 稍等会再执行，状态改变没那么快
+# Wait a moment before running this — state changes don't happen instantly
 redis-cli -h 192.168.10.150 -p 26379 SENTINEL get-master-addr-by-name myredis
 
 [root@cs ~]# redis-cli -h 192.168.10.151 -p 26379 sentinel failover myredis
@@ -564,7 +564,7 @@ systemctl stop redis-sentinel
 
 [root@cs ~]# systemctl stop redis
 [root@cs ~]# systemctl stop redis-sentinel
-# 此时150是主节点
+# At this point, 150 is the master node
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 26379 SENTINEL get-master-addr-by-name myredis
 1) "192.168.10.150"
 2) "6379"
@@ -586,14 +586,14 @@ master0:name=myredis,status=ok,address=192.168.10.150:6379,slaves=2,sentinels=3
 At this point, what we need to do is refresh the replica list of all nodes to flush away the node information of 152.
 
 ```bash
-# 此时，只剩一主(150)一从(151)了，所以，都刷新下
+# At this point, only one master (150) and one replica (151) remain, so refresh on both
 redis-cli -h 192.168.10.150 -p 26379 SENTINEL reset myredis
 redis-cli -h 192.168.10.151 -p 26379 SENTINEL reset myredis
 
-# 然后在查看sentinel状态的话，就剩一个从节点了
+# Then when checking Sentinel status, only one replica node remains
 redis-cli -h 192.168.10.150 -p 26379 INFO Sentinel
 
-# salves这里也就剩一个151了
+# slaves now shows only 151
 redis-cli -h 192.168.10.150 -p 26379 SENTINEL slaves myredis
 
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 26379 SENTINEL reset myredis

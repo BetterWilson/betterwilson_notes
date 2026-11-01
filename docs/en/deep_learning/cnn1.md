@@ -35,7 +35,7 @@ Flattening refers to the process of **stretching a multi-dimensional array (tens
 Taking a 3×3 grayscale image (simplified) as an example, flattening lines the values up row by row, from left to right and top to bottom:
 
 ```
-原始图像（2D 数组）:                 展平后（1D 向量）:
+Original image (2D array):            After flattening (1D vector):
 [[1, 2, 3],                       [1, 2, 3, 4, 5, 6, 7, 8, 9]
  [4, 5, 6],
  [7, 8, 9]]
@@ -221,11 +221,11 @@ If we increase the stride to 2, a feature map can still be extracted, as shown b
 > Putting it all together:
 >
 > ```
-> 输入：3 张图（红、绿、蓝）            in_channels = 3
->     ↓  同时用 8 个滤镜，各自扫一遍
-> 滤镜1 → 新图1  滤镜2 → 新图2  …  滤镜8 → 新图8
->     ↓  8 张新图叠在一起
-> 输出：8 张图                          out_channels = 8
+> Input: 3 images (red, green, blue)   in_channels = 3
+>     ↓  Apply 8 filters simultaneously, each scans once
+> Filter 1 → New image 1  Filter 2 → New image 2  …  Filter 8 → New image 8
+>     ↓  8 new images stacked together
+> Output: 8 images                     out_channels = 8
 > ```
 >
 > Remember it in one sentence: **`in_channels` is "how many images come in" (red, green, blue — 3, fixed and unchangeable), `out_channels` is "how many images I want to output" (chosen by you; 8 means using 8 filters to extract 8 kinds of features).**
@@ -293,13 +293,13 @@ The purpose is to reduce the dimensionality of the feature map, thereby shrinkin
 > What pooling does is exactly downsampling — it "merges" multiple points in each small window into 1 point:
 >
 > ```
-> 原始 4 个像素点          取最大值（Max Pooling）
+> Original 4 pixel points     Take maximum (Max Pooling)
 > ┌─────┬─────┐
 > │  1  │  9  │   ────▶     9
 > ├─────┼─────┤
 > │  5  │  3  │
 > └─────┴─────┘
->    4 个点                   1 个点
+>    4 points                  1 point
 > ```
 >
 > The window slides across the whole image, and at each window there is one "4 points → 1 point" merge, so the whole image shrinks: a 32×32 input with 2×2 pooling and stride 2 → becomes **16×16**, with data points dropping from 1024 to 256, exactly **4× downsampling**.
@@ -706,19 +706,19 @@ ResNet50 uses a **bottleneck** structure, where each residual block consists of 
 > The bottleneck's cost-saving logic breaks into three steps:
 >
 > ```
-> 输入 256 维
+> Input 256 dims
 >     │
->     ▼  ① 1×1 卷积：256 → 64     参数量 = 1×1×256×64 = 16K  ← 很便宜
->     │      "把 256 条信息压缩成 64 条"（瓶颈口变小）
+>     ▼  ① 1×1 Conv: 256 → 64     Params = 1×1×256×64 = 16K  ← very cheap
+>     │      "Compress 256 channels of info into 64" (bottleneck gets smaller)
 >     │
->     ▼  ② 3×3 卷积：64 → 64      参数量 = 3×3×64×64 = 37K   ← 也便宜！
->     │      "在 64 维的低维空间做空间特征提取"（因为通道少，3×3 也不贵）
+>     ▼  ② 3×3 Conv: 64 → 64      Params = 3×3×64×64 = 37K   ← also cheap!
+>     │      "Spatial feature extraction in 64-dim low-dim space" (few channels, so 3×3 is cheap too)
 >     │
->     ▼  ③ 1×1 卷积：64 → 256     参数量 = 1×1×64×256 = 16K  ← 很便宜
->     │      "把 64 条信息恢复回 256 条"（瓶颈口变大）
+>     ▼  ③ 1×1 Conv: 64 → 256     Params = 1×1×64×256 = 16K  ← very cheap
+>     │      "Restore 64 channels of info back to 256" (bottleneck gets bigger)
 >     │
 >     ▼
-> 输出 256 维
+> Output 256 dims
 > ```
 >
 > **The key trick**: step ② the 3×3 convolution is the bulk of the parameters — it carries the `3×3=9` factor. The bottleneck compresses its input and output channels from 256 to 64, causing its parameter count to plunge from `9×256×256=589K` to `9×64×64=37K`. Although the 1×1 convolutions on both sides add two more layers, because they lack the `3×3=9` spatial factor they total only 32K, which is nearly negligible.

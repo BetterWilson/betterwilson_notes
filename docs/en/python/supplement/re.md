@@ -19,12 +19,12 @@ Matches from any position in the string, stopping as soon as it finds the "first
 The difference from `match`: `match` only looks at the beginning, while `search` scans the entire string.
 
 ```python
-text = "我的手机号：13812345678，备用号：13987654321"
-pattern = r"1[34578]\d{9}"  # 不限制位置，只匹配手机号格式
+text = "My phone number: 13812345678, backup number: 13987654321"
+pattern = r"1[34578]\d{9}"  # No position restriction, just match phone number format
 result = re.search(pattern, text)
 if result:
-    print("第一个手机号：", result.group())  # 输出：第一个手机号：13812345678
-    print("位置：", result.span())  # 输出：位置：(6,17)（起始/结束索引）
+    print("First phone number:", result.group())  # Output: First phone number: 13812345678
+    print("Position:", result.span())  # Output: Position: (6,17) (start/end index)
 ```
 
 ## findall
@@ -36,10 +36,10 @@ Finds "all content that matches the rule" in the string.
 Returns a list (the elements are the matched strings; if there are groups, it returns the group contents).
 
 ```python
-text = "我的手机号：13812345678，备用号：13987654321"
+text = "My phone number: 13812345678, backup number: 13987654321"
 pattern = r"1[34578]\d{9}"
 phones = re.findall(pattern, text)
-print("所有手机号：", phones)  # 输出：所有手机号：['13812345678','13987654321']
+print("All phone numbers:", phones)  # Output: All phone numbers: ['13812345678','13987654321']
 ```
 
 ## sub
@@ -56,7 +56,7 @@ import re
 def double(num: re.Match) -> str:
     return str(int(num.group()) * 2)
 
-text = "视频播放量1000次"
+text = "Video play count: 1000 times"
 new_text = re.sub(r'\d+', double, text)
 print(new_text)
 ```
@@ -100,8 +100,8 @@ import re
 def find_second_match(pattern, text):
     matches = re.finditer(pattern, text)
     try:
-        next(matches)  # 跳过第一个匹配项
-        second_match = next(matches)  # 获取第二个匹配项
+        next(matches)  # Skip the first match
+        second_match = next(matches)  # Get the second match
         return second_match.group()
     except StopIteration:
         return None
@@ -123,68 +123,68 @@ When the pattern contains an escape character `\`, it can be matched literally w
 ### Ordinary character classes
 
 ```
-    \w				匹配字母数字及下划线
-    \W				匹配非字母数字及下划线
-    \s				匹配任意空白字符，等价于 [\t\n\r\f].
-    \S				匹配任意非空白字符
-    \d				匹配任意数字，等价于 [0-9]
-    \D				匹配任意非数字
-    \1...\9			匹配第n个分组的内容。
-    [a-zA-Z0-9]		匹配任何字母及数字
+    \w				Match letters, digits, and underscores
+    \W				Match anything except letters, digits, and underscores
+    \s				Match any whitespace character, equivalent to [\t\n\r\f].
+    \S				Match any non-whitespace character
+    \d				Match any digit, equivalent to [0-9]
+    \D				Match any non-digit
+    \1...\9			Match the content of the nth group.
+    [a-zA-Z0-9]		Match any letter or digit
 ```
 
 ### Quantifier character classes (greedy matching by default (match as much as possible); add `?` to suppress it)
 
 ```
-    .		匹配任意字符，除了换行符，当re.DOTALL标记被指定时，可以匹配包括换行符的任意字符
-    *       匹配前一个字符0次1次或多次
-    +       匹配前一个字符1次或多次
-    ?       匹配前一个字符0次或1次
-    {m}     匹配前一个字符m次
-    {m,n}   匹配前一个字符m到n次
-    {m,}    匹配前一个字符至少m次
-    {,n}    匹配前一个字符0到n次，最多n次
+    .		Match any character except newline; when re.DOTALL flag is set, can match any character including newline
+    *       Match the preceding character 0, 1, or more times
+    +       Match the preceding character 1 or more times
+    ?       Match the preceding character 0 or 1 time
+    {m}     Match the preceding character m times
+    {m,n}   Match the preceding character m to n times
+    {m,}    Match the preceding character at least m times
+    {,n}    Match the preceding character 0 to n times, at most n times
 ```
 
 ### Boundary matchers
 
 ```
-^			匹配字符串开头，如果是多行则匹配每一行的开头
-[^]			在[...]中，^表示否定，如非字母[^a-zA-Z]，非数字[^0-9]
-$			匹配字符串或一行的结尾，如果是多行匹配模式，则每一行的结尾
-\A 			仅匹配字符串的开始，同^
-\b 			匹配一个单词的边界，也就是指单词和空格间的位置
-\B			等价于[^\b]表示匹配非单词边界
-\Z			匹配字符串结束，如果是存在换行，只匹配到换行前的结束字符串。
-\z 			匹配字符串结束
+^			Match the start of the string; in multiline mode, matches the start of each line
+[^]			Inside [...], ^ denotes negation, e.g. non-letter [^a-zA-Z], non-digit [^0-9]
+$			Match the end of the string or a line; in multiline mode, matches the end of each line
+\A 			Match only the start of the string, same as ^
+\b 			Match a word boundary, i.e. the position between a word and a space
+\B			Equivalent to [^\b], matches a non-word boundary
+\Z			Match the end of the string; if a newline exists, only matches the end before the newline.
+\z 			Match the end of the string
 ```
 
 ### Logical matchers
 
 ```
-|（或）
-　　　　匹配 | 左右任意一种正则表达式，如果左边表达式匹配上，匹配结束，不再匹配右边的正则表达式，该符号一般放在()中使用，如果没在圆括号中则它的范围是整个正则表达式
-分组 (...)
-　　　　后向引用，用()括起来的正则表达式将被作为一个分组，从正则表达式的左边依次算起，有多少个左括号'('，就有 多少个分组，分组的编码从1依次加1，无论是括号中嵌套括号，并且分组表达式作为一个整体，后可接数量词。
+| (OR)
+　　　　Matches either regular expression on the left or right of |. If the left expression matches, matching ends and the right regular expression is not matched. This symbol is usually used inside (), but if it is not inside parentheses, its scope is the entire regular expression.
+Group (...)
+　　　　Backreference. Regular expressions enclosed in () are treated as a group. Counting from the left of the regular expression, each left parenthesis '(' starts a new group. Group numbers start at 1 and increment, including nested parentheses. The group expression is treated as a whole and can be followed by a quantifier.
 \<number>
-　　　　引用分组匹配到的分组编号为<number>的字符串 如：\1...\9
+　　　　References the string matched by the group numbered <number>. E.g.: \1...\9
 (?P<name>...)
-　　　　命名分组，除了默认的分组编号外再指定一个别名分组
-　　　　注意：P是大写
+　　　　Named group. In addition to the default group number, specifies an alias for the group.
+　　　　Note: P is uppercase
 (?P=name)
-　　　　引用别名为name的分组匹配，这个是在正则表达式中引用，表示匹配重复的字符串,也可以使用编号引用。
-　　　　注意：P是大写
+　　　　References the match of the group named "name". This is used within the regular expression to match repeated strings. You can also use numeric references.
+　　　　Note: P is uppercase
 ```
 
 ### Special matchers
 
 ```
-(?imx)				正则表达式包含三种可选标志：i, m, 或 x 。只影响括号中的区域。
-(?-imx)				正则表达式关闭 i, m, 或 x 可选标志。只影响括号中的区域。
-(?:...)				匹配到的括号内字符串不作为分组
-(?!pattern)			前向否定断言语法，表示否定开头, 只能用在正则表达式的开头，pattern是匹配模式，它后面的内容需要不							匹配 该正则表达式才匹配成功
-(?<!pattern)		后向否定断言语法，表示否定结尾,前面的内容需要不匹配该pattern模式才匹配成功
-(?=pattern)			前向肯定断言语法. 需要匹配pattren模式才能匹配成功，表示肯定前面的字符内容
-(?<=pattern)		后向肯定断言语法, 需要匹配pattern模式才能匹配成功，表示肯定后面的字符内容
-(?#...)				后面的内容将被作为注释而忽略
+(?imx)				The regular expression includes three optional flags: i, m, or x. Only affects the region within the parentheses.
+(?-imx)				The regular expression turns off the i, m, or x optional flags. Only affects the region within the parentheses.
+(?:...)				The matched string inside the parentheses is not treated as a group
+(?!pattern)			Negative lookahead assertion syntax, representing a negative start. Can only be used at the beginning of a regular expression. "pattern" is the match pattern; the content after it must NOT match for the regular expression to match successfully
+(?<!pattern)		Negative lookbehind assertion syntax, representing a negative end. The preceding content must NOT match the "pattern" for the match to succeed
+(?=pattern)			Positive lookahead assertion syntax. Requires matching the "pattern" for the match to succeed, asserting the preceding character content
+(?<=pattern)		Positive lookbehind assertion syntax. Requires matching the "pattern" for the match to succeed, asserting the following character content
+(?#...)				The following content is treated as a comment and ignored
 ```

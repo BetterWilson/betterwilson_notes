@@ -5,7 +5,7 @@
 ```python
 class Foo:
     def __init__(self):
-        self.name = "张三"
+        self.name = "Zhang San"
         
     def __new__(cls, *args, **kwargs):
         empty_object = super().__new__(cls)
@@ -20,7 +20,7 @@ When we instantiate an object, a space is allocated in memory.
 Python's execution order is:
 
 - Call the `__new__` method to create an empty object
-- Call the `__init__` method to assign `name="张三"` to the empty object
+- Call the `__init__` method to assign `name="Zhang San"` to the empty object
 - That is why `__new__` is called the constructor method and `__init__` is called the initializer method
 
 The purpose of the singleton pattern is to ensure that when we create class objects, we always reuse the object created the first time, rather than creating a new object on every use as shown above.
@@ -51,7 +51,7 @@ class Foo:
     instance = None
 
     def __init__(self):
-        self.name = "张三"
+        self.name = "Zhang San"
 
     def __new__(cls, *args, **kwargs):
         if cls.instance:
@@ -83,12 +83,12 @@ In Python, after we instantiate an object, we can access and modify the variable
 ```python
 class Info:
     def __init__(self):
-        self.name = "张三"
+        self.name = "Zhang San"
         self.age = 999
 
 obj = Info()
 print(obj.name)
-obj.name = "李四"
+obj.name = "Li Si"
 print(obj.name)
 ```
 
@@ -101,11 +101,11 @@ However, if we define a `__getattr__` method in the instantiated class, accessin
 ```python
 class Info:
     def __init__(self):
-        self.name = "张三"
+        self.name = "Zhang San"
         self.age = 999
 
     def __getattr__(self, item):
-        return "访问了不存在的类变量"
+        return "Accessed a non-existent class variable"
 
 
 obj = Info()

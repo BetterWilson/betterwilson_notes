@@ -76,7 +76,7 @@ ln -s /opt/mysql-8.0.33-linux-glibc2.12-x86_64 /usr/local/mysql
 ls -ltr /usr/local/mysql
 
 [root@cs opt]# ln -s /opt/mysql-8.0.33-linux-glibc2.12-x86_64 /usr/local/mysql
-[root@cs opt]# ls -ltr /usr/local/mysql   # 这里就能看到建立软链接之后的指向关系了
+[root@cs opt]# ls -ltr /usr/local/mysql   # Here you can see the symlink target after linking
 lrwxrwxrwx. 1 root root 40 Dec  3 21:38 /usr/local/mysql -> /opt/mysql-8.0.33-linux-glibc2.12-x86_64
 ```
 
@@ -109,13 +109,13 @@ basedir=/usr/local/mysql
 datadir=/data/mysql8/3306/data
 socket=/tmp/mysql.sock
 
-# 服务端字符集
+# Server-side character set
 character-set-server=utf8mb4
 collation-server=utf8mb4_unicode_ci
 init_connect='SET NAMES utf8mb4;'
 
 [mysql]
-# 客户端字符集
+# Client-side character set
 default-character-set=utf8mb4
 socket=/tmp/mysql.sock
 
@@ -199,7 +199,7 @@ systemctl restart mysql
 systemctl status mysql
 
 [root@cs opt]# cp /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld
-[root@cs opt]# 通过下面的命令基于原来service命令中的msyqld转换systemctl的启动MySQL的脚本文件
+[root@cs opt]# Convert the original service command's mysqld script to a systemctl startup script using the command below
 [root@cs opt]# systemctl enable mysql
 mysqld.service is not a native service, redirecting to /sbin/chkconfig.
 Executing /sbin/chkconfig mysqld on
@@ -243,11 +243,11 @@ owners.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
-mysql> -- 为root账号添加密码
+mysql> -- Set password for root account
 mysql> alter user root@"localhost" identified with mysql_native_password by "123";
 Query OK, 0 rows affected (0.01 sec)
 
-mysql> -- 创建一个普通用户
+mysql> -- Create a regular user
 mysql> create user liuzhuyi@'%' identified with mysql_native_password by "123";
 Query OK, 0 rows affected (0.01 sec)
 
@@ -263,7 +263,7 @@ mysql> select user,host,authentication_string,plugin from mysql.user;
 +------------------+-----------+------------------------------------------------------------------------+-----------------------+
 5 rows in set (0.00 sec)
 
-mysql> -- 默认的创建的普通用户没啥权限，我们要给这个用户授权，允许该用户可以本地和远程登录，并且能够操作所有数据库中的所有表，这个权限已经不小了
+mysql> -- By default, a newly created regular user has almost no permissions. We need to grant this user privileges to allow local and remote login, and to operate on all tables in all databases. This is already a fairly broad set of permissions.
 mysql> grant all on *.* to liuzhuyi@"%";
 Query OK, 0 rows affected (0.01 sec)
 

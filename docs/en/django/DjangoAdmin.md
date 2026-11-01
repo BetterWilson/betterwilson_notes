@@ -12,12 +12,12 @@ admin.site.register(models.Depart)
 ```
 
 ```python
-路由:
-    /admin/app名称/model名称/
-    /admin/app名称/model名称/add/
-    /admin/app名称/model名称/ID值/history/
-    /admin/app名称/model名称/ID值/change/
-    /admin/app名称/model名称/ID值/delete/
+Routes:
+    /admin/<app_name>/<model_name>/
+    /admin/<app_name>/<model_name>/add/
+    /admin/<app_name>/<model_name>/<id>/history/
+    /admin/<app_name>/<model_name>/<id>/change/
+    /admin/<app_name>/<model_name>/<id>/delete/
 ```
 
 ## 2 Basic usage
@@ -31,7 +31,7 @@ admin.site.register(models.Depart)
   ```python
   python manage.py createsuperuser
   
-  # 按提示数输入账号，邮箱，密码
+  # Enter username, email, and password as prompted
   ```
 
 - The created superuser data is stored in the database `user_auth` table
@@ -141,23 +141,23 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
 
 ## 4 Common configurations
 
-- `list_display`, when listing, customizes the columns displayed. `@admin.display(description="自定义")` modifies the column title shown on the page.
+- `list_display`, when listing, customizes the columns displayed. `@admin.display(description="Custom")` modifies the column title shown on the page.
 
   ```python
   class DepartAdmin(admin.ModelAdmin):
       list_display = ('id', 'title', 'mine1', 'mine2')
   
-      @admin.display(description="自定义列")
+      @admin.display(description="Custom column")
       def mine1(self, obj):
           return obj.title + "123"
       
-      @admin.display(description="自定义可跳转的列")
+      @admin.display(description="Clickable custom column")
       def mine2(self, obj):
           return mark_safe(f"<a href='https://www.google.com'>{obj.title}</a>")
       
   admin.site.register(models.Depart, DepartAdmin)    
   ---------------------------------------------------------------------------------------------------------
-  # 或者	mine.short_description = "自定义"	等同于使用装饰器	@admin.display(description="自定义")
+  # Or use mine.short_description = "Custom", which is equivalent to the decorator @admin.display(description="Custom")
   ```
 
   ![image-20240428165553633](assets/image-20240428165553633.png)
@@ -170,7 +170,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
       list_display = ('id', 'title', 'mine')
       list_display_links = ['title']
   
-      @admin.display(description="我的自定义")
+      @admin.display(description="My custom display")
       def mine(self, obj):
           return obj.title + "123"
   ```
@@ -190,7 +190,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
    
           def lookups(self, request, model_admin):
               """
-              显示筛选选项
+              Display filter options
               :param request:
               :param model_admin:
               :return:
@@ -199,7 +199,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
    
           def queryset(self, request, queryset):
               """
-              点击查询时，进行筛选
+              Filter when the query is submitted
               :param request:
               :param queryset:
               :return:
@@ -215,13 +215,13 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
 - Pagination related
 
   ```python
-  # 分页，每页显示条数
+  # Pagination: number of items per page
       list_per_page = 100
    
-  # 分页，显示全部（真实数据<该值时，才会有显示全部）
+  # Pagination: show all (only when actual data count is less than this value)
       list_max_show_all = 200
    
-  # 分页插件
+  # Pagination plugin
       paginator = Paginator
   ```
 
@@ -265,8 +265,8 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
   ```python
   save_as_continue = True
    
-  # 如果 save_as=True，save_as_continue = True， 点击Sava as new 按钮后继续编辑。
-  # 如果 save_as=True，save_as_continue = False，点击Sava as new 按钮后返回列表。
+  # If save_as=True and save_as_continue=True, clicking "Save as new" continues editing.
+  # If save_as=True and save_as_continue=False, clicking "Save as new" returns to the list.
   ```
 
 - `save_on_top = False`, on the detail page, whether to also show save/delete buttons at the top of the page.
@@ -290,20 +290,20 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
   @admin.register(models.Depart)
   class DepartAdmin(admin.ModelAdmin):
    
-      # 定制Action行为具体方法
+      # Customize the action behavior method
       def func(self, request, queryset):
           print(self, request, queryset)
           print(request.POST.getlist('_selected_action'))
    
-      func.short_description = "中文显示自定义Actions"
+      func.short_description = "Custom action display"
       actions = [func, ]
    
-      # Action选项都是在页面上方显示
+      # Action options are displayed at the top of the page
       actions_on_top = True
-      # Action选项都是在页面下方显示
+      # Action options are displayed at the bottom of the page
       actions_on_bottom = False
    
-      # 是否显示选择个数
+      # Whether to show the selection count
       actions_selection_counter = True
   ```
 
@@ -328,7 +328,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
   @admin.register(models.UserInfo)
   class UserAdmin(admin.ModelAdmin):
    
-      raw_id_fields = ('FK字段', 'M2M字段',)
+      raw_id_fields = ('FK_field', 'M2M_field',)
   ```
 
 - `fields`, on the detail page, the fields to display.
@@ -361,10 +361,10 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
   @admin.register(models.UserInfo)
   class UserAdmin(admin.ModelAdmin):
       fieldsets = (
-          ('基本数据', {
+          ('Basic data', {
               'fields': ('user', 'pwd', 'ctime',)
           }),
-          ('其他', {
+          ('Other', {
               'classes': ('collapse', 'wide', 'extrapretty'),  # 'collapse','wide', 'extrapretty'
               'fields': ('user', 'pwd'),
           }),
@@ -376,7 +376,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
   ```python
   @admin.register(models.UserInfo)
   class UserAdmin(admin.ModelAdmin):
-      filter_vertical = ("m2m字段",) # 或filter_horizontal = ("m2m字段",)
+      filter_vertical = ("m2m_field",) # or filter_horizontal = ("m2m_field",)
   ```
 
 - `ordering`, when listing, the data ordering rule.
@@ -385,7 +385,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
   @admin.register(models.UserInfo)
   class UserAdmin(admin.ModelAdmin):
       ordering = ('-id',)
-      或
+      or
       def get_ordering(self, request):
           return ['-id', ]
   ```
@@ -394,7 +394,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
 
   ```python
   view_on_site = False
-  或
+  # or
   def view_on_site(self, obj):
       return 'https://www.baidu.com'
   ```
@@ -402,7 +402,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
 - `radio_fields`, on the detail page, uses radio buttons to show options (FK uses a select by default).
 
   ```python
-  radio_fields = {"ug": admin.VERTICAL} # 或admin.HORIZONTAL
+  radio_fields = {"ug": admin.VERTICAL} # or admin.HORIZONTAL
   ```
 
 - `show_full_result_count = True`, when listing, the style of the result count shown after fuzzy search.
@@ -411,7 +411,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
   @admin.register(models.UserInfo)
   class UserAdmin(admin.ModelAdmin):
       # show_full_result_count = True # 1 result (12 total)
-      # show_full_result_count = False  # 1 result (Show all)
+      # show_full_result_count = False  # 1 result (show all)
       search_fields = ('user',)
   ```
 
@@ -454,7 +454,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
       prepopulated_fields = {"email": ("user","pwd",)}
   ```
 
-  >*DjangoAdmin中使用js实现功能，页面email字段的值会在输入：user、pwd时自动填充*
+  >*DjangoAdmin uses JavaScript to implement this: the email field value is automatically filled when user and pwd are entered*
 
 - `form = ModelForm`, used to customize the fields displayed during form validation for user requests.
 
@@ -478,18 +478,18 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
 
   ![image-20240428172602912](assets/image-20240428172602912.png)
 
-- `empty_value_display = "列数据为空时，显示默认值"`
+- `empty_value_display = "Default value when column data is empty"`
 
   ```python
   @admin.register(models.UserInfo)
   class UserAdmin(admin.ModelAdmin):
-      empty_value_display = "列数据为空时，默认显示"
+      empty_value_display = "Default display when column data is empty"
    
       list_display = ('user','pwd','up')
    
       def up(self,obj):
           return obj.user
-      up.empty_value_display = "指定列数据为空时，默认显示"
+      up.empty_value_display = "Default display when specified column data is empty"
   ```
 
 ## 5 Custom stark component

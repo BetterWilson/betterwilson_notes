@@ -25,21 +25,21 @@ make
 make test
 make install
 
-检查是否安装了 OpenSSL
+Check if OpenSSL is installed
 [root@iZgc7d0d1szot7fke40ez9Z ~]# openssl version
 OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)
 [root@iZgc7d0d1szot7fke40ez9Z ~]# which openssl
 /usr/bin/openssl
 
-# 移除openssl-devel
+# Remove openssl-devel
 yum remove openssl-devel2.0.
 
-# 重新编译python
+# Recompile Python
 cd /opt/Python-3.11.0/
 ./configure --enable-optimizations --with-openssl=/usr
 make altinstall
 
-检查Python 3.11是否已安装
+Check if Python 3.11 is installed
 [root@iZgc7d0d1szot7fke40ez9Z Python-3.11.0]# python3.11 -V
 Python 3.11.0
 [root@iZgc7d0d1szot7fke40ez9Z Python-3.11.0]# pip3 -V
@@ -61,5 +61,5 @@ Recompile the nginx configuration (this can be configured on the first download 
 cd /opt/nginx-1.24.0
 ./configure --prefix=/opt/my_nginx --with-http_stub_status_module --with-http_ssl_module
 
-make -j$(nproc) && make install -j$(nproc)	# 覆盖原文件
+make -j$(nproc) && make install -j$(nproc)	# Overwrite the original file
 ```

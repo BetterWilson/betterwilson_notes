@@ -6,10 +6,10 @@
 
 ```python
 class GenericAPIView(APIView):
-    pass # 10功能
+    pass # 10 features
 
-class GenericViewSet(xxxx.View-2个功能, GenericAPIView):
-    pass # 5功能能
+class GenericViewSet(xxxx.View-2 features, GenericAPIView):
+    pass # 5 features
 
 class UserView(GenericViewSet):
     def get(self,request):
@@ -38,34 +38,34 @@ from rest_framework.response import Response
 
 class UserView(APIView):
     
-    # 认证、权限、限流等
+    # Authentication, permissions, throttling, etc.
     
     def get(self, request):
-		# 业务逻辑：查看列表
+		# Business logic: view list
         return Response({"code": 0, 'data': "..."})
 
     def post(self, request):
-        # 业务逻辑：新建
+        # Business logic: create
         return Response({'code': 0, 'data': "..."})
     
 class UserDetailView(APIView):
     
-	# 认证、权限、限流等
+	# Authentication, permissions, throttling, etc.
         
     def get(self, request,pk):
-		# 业务逻辑：查看某个数据的详细
+		# Business logic: view details of a record
         return Response({"code": 0, 'data': "..."})
 
     def put(self, request,pk):
-        # 业务逻辑：全部修改
+        # Business logic: full update
         return Response({'code': 0, 'data': "..."})
     
     def patch(self, request,pk):
-        # 业务逻辑：局部修改
+        # Business logic: partial update
         return Response({'code': 0, 'data': "..."})
     
     def delete(self, request,pk):
-        # 业务逻辑：删除
+        # Business logic: delete
         return Response({'code': 0, 'data': "..."})
 ```
 
@@ -99,7 +99,7 @@ from rest_framework.response import Response
 
 class UserView(GenericAPIView):
     queryset = models.UserInfo.objects.filter(status=True)
-    serializer_class = 序列化类
+    serializer_class = SerializerClass
     
     def get(self, request):
         queryset = self.get_queryset()
@@ -146,35 +146,35 @@ from rest_framework.response import Response
     
 class UserView(GenericViewSet):
     
-	# 认证、权限、限流等
+	# Authentication, permissions, throttling, etc.
     queryset = models.UserInfo.objects.filter(status=True)
-    serializer_class = 序列化类
+    serializer_class = SerializerClass
     
     def list(self, request):
-		# 业务逻辑：查看列表
+		# Business logic: view list
         queryset = self.get_queryset()
         ser = self.get_serializer(intance=queryset,many=True)
         print(ser.data)
         return Response({"code": 0, 'data': "..."})
 
     def create(self, request):
-        # 业务逻辑：新建
+        # Business logic: create
         return Response({'code': 0, 'data': "..."})
     
     def retrieve(self, request,pk):
-		# 业务逻辑：查看某个数据的详细
+		# Business logic: view details of a record
         return Response({"code": 0, 'data': "..."})
 
     def update(self, request,pk):
-        # 业务逻辑：全部修改
+        # Business logic: full update
         return Response({'code': 0, 'data': "..."})
     
     def partial_update(self, request,pk):
-        # 业务逻辑：局部修改
+        # Business logic: partial update
         return Response({'code': 0, 'data': "..."})
     
     def destory(self, request,pk):
-        # 业务逻辑：删除
+        # Business logic: delete
         return Response({'code': 0, 'data': "..."})
 ```
 
@@ -211,9 +211,9 @@ from rest_framework.mixins import (
 
 class UserView(CreateModelMixin,RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,ListModelMixin,GenericViewSet):
     
-	# 认证、权限、限流等
+	# Authentication, permissions, throttling, etc.
     queryset = models.UserInfo.objects.filter(status=True)
-    serializer_class = 序列化类
+    serializer_class = SerializerClass
 ```
 
 
@@ -312,7 +312,7 @@ class UserView(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateMo
     serializer_class = UserModelSerializer
 
     def perform_create(self, serializer):
-        """ 序列化：对请求的数据校验成功后，执行保存。"""
+        """ Serialization: after request data validation succeeds, perform save. """
         serializer.save(depart_id=1, password="123")
 ```
 
@@ -372,7 +372,7 @@ class UserView(mixins.ListModelMixin,
     serializer_class = UserModelSerializer
 
     def perform_create(self, serializer):
-        """ 序列化：对请求的数据校验成功后，执行保存。"""
+        """ Serialization: after request data validation succeeds, perform save. """
         serializer.save(depart_id=1, password="123")
 	
 	def perform_update(self, serializer):
@@ -430,7 +430,7 @@ class UserView(ModelViewSet):
     serializer_class = UserModelSerializer
 
     def perform_create(self, serializer):
-        """ 序列化：对请求的数据校验成功后，执行保存。"""
+        """ Serialization: after request data validation succeeds, perform save. """
         serializer.save(depart_id=1, password="123")
 ```
 
@@ -447,8 +447,8 @@ Question: DRF provides so many views — which one will be used more often going
 - If the endpoint needs to operate on the database, generally use `ModelViewSet` or `CreateModelMixin`, `ListModelMixin`, etc.
 
   ```
-  - 利用钩子自定义功能。
-  - 重写某个写方法，实现更加完善的功能。
+  - Use hooks to customize functionality.
+  - Override certain write methods to achieve more complete functionality.
   ```
 
 - Depending on your company's conventions, customize based on `ModelViewSet` or `CreateModelMixin`, `ListModelMixin`, etc.
@@ -466,10 +466,10 @@ When defining a permission class earlier, the class can define two methods: `has
 
 ```python
 class PermissionA(BasePermission):
-    message = {"code": 1003, 'data': "无权访问"}
+    message = {"code": 1003, 'data': "Access denied"}
 
     def has_permission(self, request, view):
-        exists = request.user.roles.filter(title="员工").exists()
+        exists = request.user.roles.filter(title="Employee").exists()
         if exists:
             return True
         return False
@@ -525,11 +525,11 @@ In earlier DRF development, we generally used two ways to configure routing:
   from rest_framework import routers
   from app01 import views
   
-  router = routers.SimpleRouter()				# routers.urls 所有的路由信息
+  router = routers.SimpleRouter()				# routers.urls all routing info
   router.register(r'api/users', views.UserView)
   
   urlpatterns = [
-      # 其他URL
+      # Other URLs
       # path('xxxx/', xxxx.as_view()),
   ]
   
@@ -550,7 +550,7 @@ You can also use `include` to add a prefix to the URL:
   
   urlpatterns = [
       path('api/', include((router.urls, 'app_name'), namespace='instance_name')),
-      # 其他URL
+      # Other URLs
       # path('forgot-password/', ForgotPasswordFormView.as_view()),
   ]
   ```
@@ -574,7 +574,7 @@ class XXXView(ModelViewSet):
     queryset = models.UserInfo.objects.all()
     serializer_class = XXXModelSerializer
 	
-    # detail=False: 生成URL时后面不带id
+    # detail=False: generated URL does not include an id suffix
     # @action(detail=False, methods=['get'], url_path="yyy/(?P<xx>\d+)/xxx")
     # def get_password(self, request, xx, pk=None):
     #     print(xx)
@@ -669,7 +669,7 @@ class UserView(ModelViewSet):
     serializer_class = UserModelSerializer
 
     def perform_create(self, serializer):
-        """ 序列化：对请求的数据校验成功后，执行保存。"""
+        """ Serialization: after request data validation succeeds, perform save. """
         serializer.save(depart_id=1, password="123")
 ```
 
@@ -726,7 +726,7 @@ class UserView(ModelViewSet):
     serializer_class = UserModelSerializer
 
     def perform_create(self, serializer):
-        """ 序列化：对请求的数据校验成功后，执行保存。"""
+        """ Serialization: after request data validation succeeds, perform save. """
         serializer.save(depart_id=1, password="123")
 ```
 
@@ -778,7 +778,7 @@ class UserView(ModelViewSet):
     serializer_class = UserModelSerializer
 
     def perform_create(self, serializer):
-        """ 序列化：对请求的数据校验成功后，执行保存。"""
+        """ Serialization: after request data validation succeeds, perform save. """
         serializer.save(depart_id=1, password="123")
 
 ```
@@ -831,7 +831,7 @@ class MyFilterSet(FilterSet):
     # /api/users/?email=xx     -> email like xx%
     email = filters.CharFilter(field_name="email", lookup_expr="startswith")
 
-    # /api/users/?level=2&level=1   -> "level" = 1 OR "level" = 2（必须的是存在的数据，否则报错-->内部有校验机制）
+    # /api/users/?level=2&level=1   -> "level" = 1 OR "level" = 2 (must be existing data, otherwise error --> internal validation mechanism)
     # level = filters.AllValuesMultipleFilter(field_name="level", lookup_expr="exact")
     level = filters.MultipleChoiceFilter(field_name="level", lookup_expr="exact", choices=models.UserInfo.level_choices)
 
@@ -847,7 +847,7 @@ class MyFilterSet(FilterSet):
     # /api/users/?ordering=-age     -> order by age desc
     ordering = filters.OrderingFilter(fields=["id", "age"])
 
-    # /api/users/?size=1     -> limit 1（自定义搜索）
+    # /api/users/?size=1     -> limit 1 (custom search)
     size = filters.CharFilter(method='filter_size', distinct=False, required=False)
     
     class Meta:
@@ -867,7 +867,7 @@ class UserView(ModelViewSet):
     serializer_class = UserModelSerializer
 
     def perform_create(self, serializer):
-        """ 序列化：对请求的数据校验成功后，执行保存。"""
+        """ Serialization: after request data validation succeeds, perform save. """
         serializer.save(depart_id=1, password="123")
 
 ```
@@ -900,7 +900,7 @@ class UserView(ModelViewSet):
 Global configuration and usage:
 
 ```python
-# settings.py 全局配置
+# settings.py global configuration
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend',]
@@ -950,7 +950,7 @@ DRF's source code includes 2 built-in filters:
       serializer_class = UserModelSerializer
   
       def perform_create(self, serializer):
-          """ 序列化：对请求的数据校验成功后，执行保存。"""
+          """ Serialization: after request data validation succeeds, perform save. """
           serializer.save(depart_id=1, password="123")
   ```
 
@@ -983,7 +983,7 @@ DRF's source code includes 2 built-in filters:
   
   
   class UserView(ModelViewSet):
-      # ?search=张%三
+      # ?search=Zhang%San
       filter_backends = [SearchFilter, ]
       search_fields = ["id", "username", "age"]
   
@@ -991,15 +991,15 @@ DRF's source code includes 2 built-in filters:
       serializer_class = UserModelSerializer
   
       def perform_create(self, serializer):
-          """ 序列化：对请求的数据校验成功后，执行保存。"""
+          """ Serialization: after request data validation succeeds, perform save. """
           serializer.save(depart_id=1, password="123")
   
   ```
 
   ```python
-  "app01_userinfo"."id" LIKE %张三% ESCAPE '\' 
+  "app01_userinfo"."id" LIKE %Zhang San% ESCAPE '\' 
   OR 
-  "app01_userinfo"."username" LIKE %张三% ESCAPE '\' 
+  "app01_userinfo"."username" LIKE %Zhang San% ESCAPE '\' 
   OR 
-  "app01_userinfo"."age" LIKE %张三% ESCAPE '\'
+  "app01_userinfo"."age" LIKE %Zhang San% ESCAPE '\'
   ```

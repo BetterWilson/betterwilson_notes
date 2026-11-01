@@ -3,7 +3,7 @@
 ## 1 Backup the database from MySQL
 
 ```bash
-mysqldump -uroot -p --default-character-set=utf8 -B 要备份的数据库 >要保存的数据文件名.sql
+mysqldump -uroot -p --default-character-set=utf8 -B <database_to_backup> > <filename>.sql
 
 mysqldump -uroot -p --default-character-set=utf8 -B dahe >dahe_data.sql
 ```

@@ -5,7 +5,7 @@ In Python, if we want to maintain a sorted sequence, we can use the built-in `bi
 ```python
 import bisect
 
-# 用于处理已排序的序列
+# For handling already sorted sequences
 inter_list = []
 bisect.insort(inter_list, 3)
 bisect.insort(inter_list, 2)

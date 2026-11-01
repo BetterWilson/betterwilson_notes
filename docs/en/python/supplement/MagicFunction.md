@@ -1,6 +1,6 @@
 # Magic Functions
 
-In Python classes, there are some special methods, all in the `__方法__` format. These methods have special meanings internally. Next, let's talk about some common special members:
+In Python classes, there are some special methods, all in the `__method__` format. These methods have special meanings internally. Next, let's talk about some common special members:
 
 # String Representation
 
@@ -20,14 +20,14 @@ In Python classes, there are some special methods, all in the `__方法__` forma
           self.name = name
   
       def __str__(self):
-          return "哈哈哈"
+          return "hahaha"
   
       # def __repr__(self):
-      #     return self.name + "自定义的内容"
+      #     return self.name + "custom content"
   
   foo = Foo("wilson")
-  print(foo)				# 哈哈哈
-  print(foo.__str__())    # 哈哈哈
+  print(foo)				# hahaha
+  print(foo.__str__())    # hahaha
   ```
 
   - Defining only `__repr__`
@@ -38,14 +38,14 @@ In Python classes, there are some special methods, all in the `__方法__` forma
           self.name = name
   
       # def __str__(self):
-      #     return "哈哈哈"
+      #     return "hahaha"
   
       def __repr__(self):
-          return self.name + "自定义的内容"
+          return self.name + "custom content"
   
   foo = Foo("wilson")
-  print(foo)				# wilson自定义的内容
-  print(foo.__repr__())   # wilson自定义的内容
+  print(foo)				# wilsoncustom content
+  print(foo.__repr__())   # wilsoncustom content
   ```
 
   - Defining both
@@ -56,15 +56,15 @@ In Python classes, there are some special methods, all in the `__方法__` forma
           self.name = name
   
       def __str__(self):
-          return "哈哈哈"
+          return "hahaha"
   
       def __repr__(self):
-          return self.name + "自定义的内容"
+          return self.name + "custom content"
   
   foo = Foo("wilson")
-  print(foo)				# 哈哈哈
-  print(foo.__str__())    # 哈哈哈
-  print(foo.__repr__())   # wilson自定义的内容
+  print(foo)				# hahaha
+  print(foo.__str__())    # hahaha
+  print(foo.__repr__())   # wilsoncustom content
   ```
   
   
@@ -74,7 +74,7 @@ In Python classes, there are some special methods, all in the `__方法__` forma
 
 - `__len()__`: returns the specified length.
 
-  We can override this method in a class; when `len(类的实例化对象)` is called, this method will be executed, and we can customize it to return the length of one or more members of the class.
+  We can override this method in a class; when `len(class_instance)` is called, this method will be executed, and we can customize it to return the length of one or more members of the class.
 
 - ```python
   class Foo(object):
@@ -172,7 +172,7 @@ In Python classes, there are some special methods, all in the `__方法__` forma
   ```python
   class Foo(object):
       def __call__(self, *args, **kwargs):
-          print("执行call方法")
+          print("call method executed")
   
   
   obj = Foo()
@@ -187,11 +187,11 @@ In Python classes, there are some special methods, all in the `__方法__` forma
   class Foo(object):
   
       def __enter__(self):
-          print("进入了")
+          print("entered")
           return 666
   
       def __exit__(self, exc_type, exc_val, exc_tb):
-          print("出去了")
+          print("exited")
   
   
   obj = Foo()
@@ -207,17 +207,17 @@ In Python classes, there are some special methods, all in the `__方法__` forma
   
   @contextlib.contextmanager
   def file_open(file_name):
-      print("进入了")
+      print("entered")
       yield {}
-      print("出去了")
+      print("exited")
   
   
   with file_open("a.txt") as f:
       print("file")
   
-  >>>进入了
+  >>>entered
   >>>file
-  >>>出去了
+  >>>exited
   ```
   
   
@@ -257,11 +257,11 @@ In Python classes, there are some special methods, all in the `__方法__` forma
   ```python
   class Foo(object):
       def __init__(self, name):
-          print("第二步：初始化对象，在空对象中创建数据")
+          print("Step 2: Initialize object, create data in empty object")
           self.name = name
   
       def __new__(cls, *args, **kwargs):
-          print("第一步：先创建空对象并返回")
+          print("Step 1: Create empty object first and return it")
           return object.__new__(cls)
   
   
@@ -322,25 +322,25 @@ In Python classes, there are some special methods, all in the `__方法__` forma
   
   ```python
   '''
-  如果user是某个类的实例，那么user.age（以及等价的getattr(user,’age’)）
-  首先调用__getattribute__。如果类定义了__getattr__方法，
-  那么在__getattribute__抛出 AttributeError 的时候就会调用到__getattr__，
-  而对于描述符(__get__）的调用，则是发生在__getattribute__内部的。
-  user = User(), 那么user.age 顺序如下：
+  If user is an instance of some class, then user.age (and equivalently getattr(user, ‘age’))
+  first calls __getattribute__. If the class defines the __getattr__ method,
+  then __getattr__ will be called when __getattribute__ raises AttributeError,
+  and the invocation of descriptors (__get__) happens inside __getattribute__.
+  user = User(), then the lookup order for user.age is as follows:
   
-  （1）如果“age”是出现在User或其基类的__dict__中， 且age是data descriptor， 那么调用其__get__方法, 否则
+  (1) If “age” appears in the __dict__ of User or its base classes, and age is a data descriptor, call its __get__ method; otherwise
   
-  （2）如果“age”出现在obj(user)的__dict__中， 那么直接返回 obj.__dict__[‘age’]， 否则
+  (2) If “age” appears in obj(user)’s __dict__, return obj.__dict__[‘age’] directly; otherwise
   
-  （3）如果“age”出现在User或其基类的__dict__中
+  (3) If “age” appears in the __dict__ of User or its base classes
   
-  （3.1）如果age是non-data descriptor，那么调用其__get__方法， 否则
+  (3.1) If age is a non-data descriptor, call its __get__ method; otherwise
   
-  （3.2）返回 __dict__[‘age’]
+  (3.2) Return __dict__[‘age’]
   
-  （4）如果User有__getattr__方法，调用__getattr__方法，否则
+  (4) If User has a __getattr__ method, call __getattr__; otherwise
   
-  （5）抛出AttributeError
+  (5) Raise AttributeError
   '''
   ```
 
@@ -361,13 +361,13 @@ Generators provide a lazy way to access data.
 - Iterator
 
   ```python
-  # 迭代器类型的定义：
-      1.当类中定义了 __iter__ 和 __next__ 两个方法。
-      2.__iter__ 方法需要返回对象本身，即：self
-      3. __next__ 方法，返回下一个数据，如果没有数据了，则需要抛出一个StopIteration的异常。
-  	官方文档：https://docs.python.org/3/library/stdtypes.html#iterator-types
+  # Iterator type definition:
+      1. When a class defines both __iter__ and __next__ methods.
+      2. The __iter__ method must return the object itself, i.e.: self
+      3. The __next__ method returns the next piece of data; if there is no more data, it must raise a StopIteration exception.
+  	Official docs: https://docs.python.org/3/library/stdtypes.html#iterator-types
           
-  # 创建迭代器类型 ：
+  # Create an iterator type:
   class IT(object): 
       def __init__(self):
           self.counter = 0
@@ -382,12 +382,12 @@ Generators provide a lazy way to access data.
           return self.counter
   
   
-  # 根据类实例化创建一个迭代器对象：
+  # Instantiate the class to create an iterator object:
       obj1 = IT()
       
       # v1 = obj1.__next__()
       # v2 = obj1.__next__()
-      # v3 = obj1.__next__() # 抛出异常
+      # v3 = obj1.__next__() # throws exception
       
       v1 = next(obj1) # obj1.__next__()
       print(v1)
@@ -400,24 +400,24 @@ Generators provide a lazy way to access data.
   
   
       obj2 = IT()
-      for item in obj2:  # 首先会执行迭代器对象的__iter__方法并获取返回值，一直去反复的执行 next(对象) 
+      for item in obj2:  # First executes the iterator object's __iter__ method to get the return value, then repeatedly calls next(obj) 
           print(item)
           
-  迭代器对象支持通过next取值，如果取值结束则自动抛出StopIteration。
-  for循环内部在循环时，先执行__iter__方法，获取一个迭代器对象，然后不断执行的next取值（有异常StopIteration则终止循环）。
+  Iterator objects support getting values via next(); when values are exhausted, StopIteration is raised automatically.
+  Inside a for loop, __iter__ is first called to obtain an iterator object, then next() is called repeatedly (the loop stops when StopIteration is raised).
   ```
 
 - Generator
 
   ```python
-  # 创建生成器函数
+  # Create a generator function
   def func():
       yield 1
       yield 2
   
   
-  # 创建生成器对象（内部是根据生成器类generator创建的对象），生成器类的内部也声明了：__iter__、__next__ 方法。
-  # 生成器对象是在python编译字节码时产生的
+  # Create a generator object (internally an object created from the generator class); the generator class also declares __iter__ and __next__ internally.
+  # Generator objects are produced when Python compiles the bytecode
   obj1 = func()
   
   v1 = next(obj1)
@@ -434,7 +434,7 @@ Generators provide a lazy way to access data.
       print(item)
       
   
-  # 如果按照迭代器的规定来看，其实生成器类也是一种特殊的迭代器类（生成器也是一个中特殊的迭代器）。
+  # By the iterator definition, the generator class is actually a special kind of iterator class (a generator is a special iterator).
   ```
 
 - Iterable Object
@@ -445,11 +445,11 @@ Generators provide a lazy way to access data.
   class Foo(object):
       
       def __iter__(self):
-          return 迭代器对象(生成器对象)
+          return iterator_object(generator_object)
       
-  obj = Foo() # obj是 可迭代对象。
+  obj = Foo() # obj is an iterable object.
   
-  # 可迭代对象是可以使用for来进行循环，在循环的内部其实是先执行 __iter__ 方法，获取其迭代器对象，然后再在内部执行这个迭代器对象的next功能，逐步取值。
+  # Iterable objects can be looped over with for; internally the loop first calls __iter__ to get the iterator object, then repeatedly calls next() on it to fetch values.
   for item in obj:
       pass
   ```
@@ -474,15 +474,15 @@ Generators provide a lazy way to access data.
           return IT()
   
   
-  obj = Foo() # 可迭代对象
+  obj = Foo() # iterable object
   
   
-  for item in obj: # 循环可迭代对象时，内部先执行obj.__iter__并获取迭代器对象；不断地执行迭代器对象的next方法。
+  for item in obj: # When looping an iterable object, obj.__iter__ is called first to get the iterator; then the iterator's next() is called repeatedly.
       print(item)
   ```
 
   ```python
-  # 基于可迭代对象&迭代器实现：自定义range
+  # Implement a custom range based on iterable objects & iterators
   class IterRange(object):
       def __init__(self, num):
           self.num = num
@@ -527,7 +527,7 @@ Generators provide a lazy way to access data.
   ```
 
   ```python
-  # 基于可迭代对象&生成器 实现：自定义range
+  # Implement a custom range based on iterable objects & generators
   
   class Xrange(object):
       def __init__(self, max_num):
@@ -550,24 +550,24 @@ Generators provide a lazy way to access data.
   ```python
   v1 = list([11,22,33,44])
   
-  v1是一个可迭代对象，因为在列表中声明了一个 __iter__ 方法并且返回一个迭代器对象。
+  v1 is an iterable object, because the list declares an __iter__ method that returns an iterator object.
   ```
 
   ```python
   from collections.abc import Iterator, Iterable
   
   v1 = [11, 22, 33]
-  print( isinstance(v1, Iterator) )  # false，判断是否是迭代器；判断依据是__iter__ 和 __next__。
+  print( isinstance(v1, Iterator) )  # False; checks whether it is an iterator, based on __iter__ and __next__.
   v2 = v1.__iter__()
   print( isinstance(v2, Iterator) )  # True
   
   
   
   v1 = [11, 22, 33]
-  print( isinstance(v1, Iterable) )  # True，判断依据是是否有 __iter__且返回迭代器对象。
+  print( isinstance(v1, Iterable) )  # True; the check is based on whether __iter__ exists and returns an iterator object.
   
   v2 = v1.__iter__()
-  print( isinstance(v2, Iterable) )  # True，判断依据是是否有 __iter__且返回迭代器对象。
+  print( isinstance(v2, Iterable) )  # True; the check is based on whether __iter__ exists and returns an iterator object.
   ```
 
 ### Others
@@ -601,7 +601,7 @@ Generators provide a lazy way to access data.
   foo1 = Foo("wilson")
   foo2 = Foo("123")
   
-  # 对象+值，内部会去执行 对象.__add__方法，并将+号后面的值当做参数other传递过去。
+  # object + value: internally calls object.__add__, passing the value after the + as the "other" argument.
   v3 = foo1 + foo2
   print(v3)	# wilson-123
   ```

@@ -3,7 +3,7 @@
 Here we demonstrate transferring `redis` and its configuration files between servers without a password.
 
 ```bash
-# 关闭防火墙和下载一些可能用到的工具
+# Disable the firewall and install some potentially useful tools
 systemctl stop firewalld.service
 systemctl disable firewalld.service
 systemctl status firewalld.service
@@ -13,7 +13,7 @@ yum install vim
 yum -y install gcc automake autoconf libtool make
 yum -y install net-tools vim wget lrzsz
 
-# 生成类型rsa免密的公钥私钥，下面的命令执行完，一路回车即可
+# Generate an RSA passwordless public/private key pair; after running the command below, just press Enter through all prompts
 ssh-keygen
 
 [root@cs ~]# ssh-keygen
@@ -40,8 +40,8 @@ The key's randomart image is:
 +----[SHA256]-----+
 
 
-# 将公钥拷贝到目标机器上
-ssh-copy-id 目标ip
+# Copy the public key to the target machine
+ssh-copy-id <target-ip>
 
 ssh-copy-id 192.168.43.128
 
@@ -50,10 +50,10 @@ ssh-copy-id 192.168.43.128
 The authenticity of host '192.168.43.128 (192.168.43.128)' can't be established.
 ECDSA key fingerprint is SHA256:IpkQ09hlQlGw6zgKwI8tVRbme+jRTATj6vnOv9a1JaQ.
 ECDSA key fingerprint is MD5:7d:8b:62:ca:c2:d0:6a:f5:d0:06:08:22:22:b2:65:d0.
-Are you sure you want to continue connecting (yes/no)? yes					# 提示这里输入yes
+Are you sure you want to continue connecting (yes/no)? yes					# Type "yes" when prompted
 /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
 /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
-root@192.168.10.150's password:   				# 输入目标机器的登录密码
+root@192.168.10.150's password:   				# Enter the target machine's login password
 
 Number of key(s) added: 1
 
@@ -71,10 +71,10 @@ rsync -avz 192.168.43.128:/opt/redis* /opt/
 rsync -avz 192.168.43.128:/usr/local/bin/redis* /usr/local/bin/
 rsync -avz 192.168.43.128:/usr/lib/systemd/system/redis.service /usr/lib/systemd/system/
 mkdir -p /data/redis6379
-# -u和-g选项表示同时添加具有特定UID和GID的用户
-# -M创建一个没有主目录的用户
-# -s表示当前创建的当前用户无法用来登录系统
-# chown -R redis:redis表示指定目录以及内部的文件所有用户属组归于redis:redis
+# -u and -g options specify creating a user with a particular UID and GID simultaneously
+# -M creates a user without a home directory
+# -s specifies that the newly created user cannot log in to the system
+# chown -R redis:redis sets the owner and group of the specified directory and its contents to redis:redis
 # groupdel redis
 # cat /etc/group |grep redis
 groupadd redis -g 1000

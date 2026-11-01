@@ -32,7 +32,7 @@ app.mount('#app')
 import {useCookies} from "vue3-cookies";
 const {cookies} = useCookies()
 
-cookies.set("key", "value", 30)	//30s是有效期
+cookies.set("key", "value", 30)	// 30 seconds expiration
 cookies.get("key")
 cookies.remove("key")
 ```
@@ -57,8 +57,8 @@ export const useInfoStore = defineStore('useInfoStore', () => {
 
 	function doLogin(info) {
 		// info={id:1, name:"wilson", token:"xxx"}
-		// 登录成功后，用户信息写到cookie中
-		cookies.set("info", JSON.stringify(info), 60 * 60 * 24 * 7)	// 7天的有效期
+		// After login, write user info to cookie
+		cookies.set("info", JSON.stringify(info), 60 * 60 * 24 * 7)	// 7 days expiration
 		userDict.value = info
 	}
 

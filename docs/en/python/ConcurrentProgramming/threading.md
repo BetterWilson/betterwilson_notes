@@ -11,7 +11,7 @@ Analogy:
 - A **program** has at least one **process**, and a process has at least one **thread**. Ultimately, it is the threads that do the work.
 
   ```
-  上述串行的代码示例就是一个程序，在使用python xx.py 运行时，内部就创建一个进程（主进程），在进程中创建了一个线程（主线程），由线程逐行运行代码。
+  The serial code example above is a program. When you run it with `python xx.py`, it creates a process (the main process) internally, and a thread (the main thread) is created within the process to execute the code line by line.
   ```
 
 Processes and threads:
@@ -37,8 +37,8 @@ import time
 import requests
 
 url_list = [
-    ("抖音视频1.mp4", "https://v26-web.douyinvod.com/d715a7c5935857e3135400032fc7297e/66518623/video/tos/cn/tos-cn-ve-15/o0nQXgbOIVmul8IAehaBAsCoD5RAMgFg9EflJu/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=1753&bt=1753&cs=0&ds=4&ft=LjhJEL998xXdu4PmD0P58lZW_3iXwPklxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=0&rc=N2VlNzo3NGg8Omg2NGRmNkBpMzxvMzk6ZmVocTMzNGkzM0A0YTBeYTQzXjExYDMyMmEuYSNpL15mcjQwNGdgLS1kLS9zcw%3D%3D&btag=c0000e00038000&cquery=100B_100H_100K_100a_101s&dy_q=1716614580&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=2024052513225947A31C5B1D32D47EA5B6"),
-    ("抖音视频2.mp4", "https://v3-web.douyinvod.com/e710348d50895f395cbb045ec2b1f7a3/665184ca/video/tos/cn/tos-cn-ve-15c001-alinc2/oEtAtSQNceDyABDgfmLV9WgbcDILbAanEK50wG/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=955&bt=955&cs=0&ds=6&ft=LjhJEL998xXdu4PmD0P58lZW_3iXU4klxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=12&rc=MzpnNDllOWRoM2QzZmhkO0BpM3R2ODg6ZjhnczMzNGkzM0AvNjZjMTE2X14xNjVjNV5iYSNtM2trcjRfYjJgLS1kLTBzcw%3D%3D&btag=c0000e00028000&cquery=100B_100H_100K_100a_101s&dy_q=1716614607&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=202405251323263CE1D887DFEBCC8E1816"),
+    ("Douyin_video1.mp4", "https://v26-web.douyinvod.com/d715a7c5935857e3135400032fc7297e/66518623/video/tos/cn/tos-cn-ve-15/o0nQXgbOIVmul8IAehaBAsCoD5RAMgFg9EflJu/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=1753&bt=1753&cs=0&ds=4&ft=LjhJEL998xXdu4PmD0P58lZW_3iXwPklxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=0&rc=N2VlNzo3NGg8Omg2NGRmNkBpMzxvMzk6ZmVocTMzNGkzM0A0YTBeYTQzXjExYDMyMmEuYSNpL15mcjQwNGdgLS1kLS9zcw%3D%3D&btag=c0000e00038000&cquery=100B_100H_100K_100a_101s&dy_q=1716614580&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=2024052513225947A31C5B1D32D47EA5B6"),
+    ("Douyin_video2.mp4", "https://v3-web.douyinvod.com/e710348d50895f395cbb045ec2b1f7a3/665184ca/video/tos/cn/tos-cn-ve-15c001-alinc2/oEtAtSQNceDyABDgfmLV9WgbcDILbAanEK50wG/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=955&bt=955&cs=0&ds=6&ft=LjhJEL998xXdu4PmD0P58lZW_3iXU4klxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=12&rc=MzpnNDllOWRoM2QzZmhkO0BpM3R2ODg6ZjhnczMzNGkzM0AvNjZjMTE2X14xNjVjNV5iYSNtM2trcjRfYjJgLS1kLTBzcw%3D%3D&btag=c0000e00028000&cquery=100B_100H_100K_100a_101s&dy_q=1716614607&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=202405251323263CE1D887DFEBCC8E1816"),
 ]
 
 print(time.time())
@@ -49,7 +49,7 @@ for file_name, url in url_list:
     print(file_name, time.time())
 ```
 
-Through **processes** and **threads**, you can turn a `串行` program into a `并发` one. For the above example, this means downloading the two videos at the same time, so the download finishes in a very short time.
+Through **processes** and **threads**, you can turn a `serial` program into a `concurrent` one. For the above example, this means downloading the two videos at the same time, so the download finishes in a very short time.
 
 
 
@@ -69,14 +69,14 @@ import threading
 """
 def func(a1,a2,a3):
     pass
-t = threaing.Thread(target=函数名,args=参数)
-例如：t = threaing.Thread(target=func,args=(11,22,33))
-t.start()	# 创建好线程并让线程开始工作
+t = threaing.Thread(target=function_name, args=args)
+For example: t = threaing.Thread(target=func, args=(11,22,33))
+t.start()  # Create the thread and start working
 """
 
 url_list = [
-    ("抖音视频1.mp4", "https://v26-web.douyinvod.com/d715a7c5935857e3135400032fc7297e/66518623/video/tos/cn/tos-cn-ve-15/o0nQXgbOIVmul8IAehaBAsCoD5RAMgFg9EflJu/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=1753&bt=1753&cs=0&ds=4&ft=LjhJEL998xXdu4PmD0P58lZW_3iXwPklxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=0&rc=N2VlNzo3NGg8Omg2NGRmNkBpMzxvMzk6ZmVocTMzNGkzM0A0YTBeYTQzXjExYDMyMmEuYSNpL15mcjQwNGdgLS1kLS9zcw%3D%3D&btag=c0000e00038000&cquery=100B_100H_100K_100a_101s&dy_q=1716614580&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=2024052513225947A31C5B1D32D47EA5B6"),
-    ("抖音视频2.mp4", "https://v3-web.douyinvod.com/e710348d50895f395cbb045ec2b1f7a3/665184ca/video/tos/cn/tos-cn-ve-15c001-alinc2/oEtAtSQNceDyABDgfmLV9WgbcDILbAanEK50wG/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=955&bt=955&cs=0&ds=6&ft=LjhJEL998xXdu4PmD0P58lZW_3iXU4klxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=12&rc=MzpnNDllOWRoM2QzZmhkO0BpM3R2ODg6ZjhnczMzNGkzM0AvNjZjMTE2X14xNjVjNV5iYSNtM2trcjRfYjJgLS1kLTBzcw%3D%3D&btag=c0000e00028000&cquery=100B_100H_100K_100a_101s&dy_q=1716614607&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=202405251323263CE1D887DFEBCC8E1816"),
+    ("Douyin_video1.mp4", "https://v26-web.douyinvod.com/d715a7c5935857e3135400032fc7297e/66518623/video/tos/cn/tos-cn-ve-15/o0nQXgbOIVmul8IAehaBAsCoD5RAMgFg9EflJu/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=1753&bt=1753&cs=0&ds=4&ft=LjhJEL998xXdu4PmD0P58lZW_3iXwPklxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=0&rc=N2VlNzo3NGg8Omg2NGRmNkBpMzxvMzk6ZmVocTMzNGkzM0A0YTBeYTQzXjExYDMyMmEuYSNpL15mcjQwNGdgLS1kLS9zcw%3D%3D&btag=c0000e00038000&cquery=100B_100H_100K_100a_101s&dy_q=1716614580&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=2024052513225947A31C5B1D32D47EA5B6"),
+    ("Douyin_video2.mp4", "https://v3-web.douyinvod.com/e710348d50895f395cbb045ec2b1f7a3/665184ca/video/tos/cn/tos-cn-ve-15c001-alinc2/oEtAtSQNceDyABDgfmLV9WgbcDILbAanEK50wG/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=955&bt=955&cs=0&ds=6&ft=LjhJEL998xXdu4PmD0P58lZW_3iXU4klxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=12&rc=MzpnNDllOWRoM2QzZmhkO0BpM3R2ODg6ZjhnczMzNGkzM0AvNjZjMTE2X14xNjVjNV5iYSNtM2trcjRfYjJgLS1kLTBzcw%3D%3D&btag=c0000e00028000&cquery=100B_100H_100K_100a_101s&dy_q=1716614607&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=202405251323263CE1D887DFEBCC8E1816"),
 ]
 
 
@@ -88,7 +88,7 @@ def task(file_name, video_url):
 
 
 for name, url in url_list:
-    # 创建线程，让每个线程都去执行task函数（参数不同）
+    # Create a thread to execute the task function for each item (with different arguments)
     t = threading.Thread(target=task, args=(name, url))
     t.start()
 ```
@@ -107,15 +107,15 @@ import time
 import requests
 import multiprocessing
 
-# 进程创建之后，在进程中还会创建一个线程。
-# t = multiprocessing.Process(target=函数名, args=参数)
+# After a process is created, a thread is also created within it.
+# t = multiprocessing.Process(target=function_name, args=args)
 # t.start()
     
     
 
 url_list = [
-    ("抖音视频1.mp4", "https://v26-web.douyinvod.com/d715a7c5935857e3135400032fc7297e/66518623/video/tos/cn/tos-cn-ve-15/o0nQXgbOIVmul8IAehaBAsCoD5RAMgFg9EflJu/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=1753&bt=1753&cs=0&ds=4&ft=LjhJEL998xXdu4PmD0P58lZW_3iXwPklxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=0&rc=N2VlNzo3NGg8Omg2NGRmNkBpMzxvMzk6ZmVocTMzNGkzM0A0YTBeYTQzXjExYDMyMmEuYSNpL15mcjQwNGdgLS1kLS9zcw%3D%3D&btag=c0000e00038000&cquery=100B_100H_100K_100a_101s&dy_q=1716614580&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=2024052513225947A31C5B1D32D47EA5B6"),
-    ("抖音视频2.mp4", "https://v3-web.douyinvod.com/e710348d50895f395cbb045ec2b1f7a3/665184ca/video/tos/cn/tos-cn-ve-15c001-alinc2/oEtAtSQNceDyABDgfmLV9WgbcDILbAanEK50wG/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=955&bt=955&cs=0&ds=6&ft=LjhJEL998xXdu4PmD0P58lZW_3iXU4klxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=12&rc=MzpnNDllOWRoM2QzZmhkO0BpM3R2ODg6ZjhnczMzNGkzM0AvNjZjMTE2X14xNjVjNV5iYSNtM2trcjRfYjJgLS1kLTBzcw%3D%3D&btag=c0000e00028000&cquery=100B_100H_100K_100a_101s&dy_q=1716614607&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=202405251323263CE1D887DFEBCC8E1816"),
+    ("Douyin_video1.mp4", "https://v26-web.douyinvod.com/d715a7c5935857e3135400032fc7297e/66518623/video/tos/cn/tos-cn-ve-15/o0nQXgbOIVmul8IAehaBAsCoD5RAMgFg9EflJu/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=1753&bt=1753&cs=0&ds=4&ft=LjhJEL998xXdu4PmD0P58lZW_3iXwPklxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=0&rc=N2VlNzo3NGg8Omg2NGRmNkBpMzxvMzk6ZmVocTMzNGkzM0A0YTBeYTQzXjExYDMyMmEuYSNpL15mcjQwNGdgLS1kLS9zcw%3D%3D&btag=c0000e00038000&cquery=100B_100H_100K_100a_101s&dy_q=1716614580&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=2024052513225947A31C5B1D32D47EA5B6"),
+    ("Douyin_video2.mp4", "https://v3-web.douyinvod.com/e710348d50895f395cbb045ec2b1f7a3/665184ca/video/tos/cn/tos-cn-ve-15c001-alinc2/oEtAtSQNceDyABDgfmLV9WgbcDILbAanEK50wG/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=955&bt=955&cs=0&ds=6&ft=LjhJEL998xXdu4PmD0P58lZW_3iXU4klxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=12&rc=MzpnNDllOWRoM2QzZmhkO0BpM3R2ODg6ZjhnczMzNGkzM0AvNjZjMTE2X14xNjVjNV5iYSNtM2trcjRfYjJgLS1kLTBzcw%3D%3D&btag=c0000e00028000&cquery=100B_100H_100K_100a_101s&dy_q=1716614607&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=202405251323263CE1D887DFEBCC8E1816"),
 ]
 
 
@@ -176,7 +176,7 @@ Summation example (CPU-bound):
   
   end = time.time()
   
-  print("耗时：", end - start) # 耗时： 5.035789489746094
+  print("Time:", end - start) # Time: 5.035789489746094
   ```
 
 - Multi-process processing
@@ -210,7 +210,7 @@ Summation example (CPU-bound):
   
       end_time = time.time()
   
-      print("耗时:", end_time - start_time)  # 耗时: 1.361469030380249
+      print("Time:", end_time - start_time)  # Time: 1.361469030380249
   ```
 
   
@@ -260,12 +260,12 @@ def task(arg):
 	pass
 
 
-# 创建一个Thread对象（线程），并封装线程被CPU调度时应该执行的任务和相关参数。
+# Create a Thread object and encapsulate the task and parameters it should execute when scheduled by the CPU.
 t = threading.Thread(target=task,args=('xxx',))
-# 字线程准备就绪（等待CPU调度），代码继续向下执行。
+# The child thread is ready (waiting for CPU scheduling); code continues to execute.
 t.start()
 
-print("继续执行...") # 主线程执行完所有代码，不结束（等所有子线程执行完毕，结束）
+print("Continuing...") # The main thread finishes all code but does not exit (it waits until all child threads have finished)
 ```
 
 
@@ -308,7 +308,7 @@ Common thread methods:
   t = threading.Thread(target=_add)
   t.start()
   
-  t.join() # 让主线程等待直至子线程完成
+  t.join() # Wait for the child thread to finish before the main thread continues
   
   print(number)	# 10000000
   ```
@@ -330,17 +330,17 @@ Common thread methods:
       for i in range(10000000):
           number -= 1
   
-  # 创建两个线程
+  # Create two threads
   t1 = threading.Thread(target=_add)
   t2 = threading.Thread(target=_sub)
   
-  # 第一个线程准备完成，可以执行
+  # The first thread is ready, can execute
   t1.start()
-  t1.join()  # t1线程执行完毕,才继续往后走
+  t1.join()  # t1 thread execution finished, then continue
   
-  # 第二个线程准备完成，可以执行
+  # The second thread is ready, can execute
   t2.start()
-  t2.join()  # t2线程执行完毕,才继续往后走
+  t2.join()  # t2 thread execution finished, then continue
   
   print(number)	# 0
   ```
@@ -367,12 +367,12 @@ Common thread methods:
   t1 = threading.Thread(target=_add, args=(loop,))
   t2 = threading.Thread(target=_sub, args=(loop,))
   
-  # 两个线程同时准备完成
+  # Both threads are ready at the same time
   t1.start()
   t2.start()
   
-  t1.join()  # t1线程执行完毕,才继续往后走
-  t2.join()  # t2线程执行完毕,才继续往后走
+  t1.join()  # t1 thread execution finished, then continue
+  t2.join()  # t2 thread execution finished, then continue
   
   print(number)
   ```
@@ -418,7 +418,7 @@ Common thread methods:
   
   def task(arg):
       time.sleep(5)
-      print('任务')
+      print('Task')
   
   t = threading.Thread(target=task, args=(11,))
   t.daemon = True # True/False
@@ -434,7 +434,7 @@ Common thread methods:
   
   
   def task(arg):
-      # 获取当前执行此代码的线程
+      # Get the current thread executing this code
       name = threading.current_thread().name
       print(name)
   
@@ -453,7 +453,7 @@ Common thread methods:
   
   class MyThread(threading.Thread):
       def run(self):
-          print('执行此线程', self._args)
+          print('Execute this thread', self._args)
   
   
   t = MyThread(args=(100,))
@@ -474,8 +474,8 @@ Common thread methods:
   
   
   url_list = [
-      ("抖音视频1.mp4", "https://v26-web.douyinvod.com/d715a7c5935857e3135400032fc7297e/66518623/video/tos/cn/tos-cn-ve-15/o0nQXgbOIVmul8IAehaBAsCoD5RAMgFg9EflJu/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=1753&bt=1753&cs=0&ds=4&ft=LjhJEL998xXdu4PmD0P58lZW_3iXwPklxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=0&rc=N2VlNzo3NGg8Omg2NGRmNkBpMzxvMzk6ZmVocTMzNGkzM0A0YTBeYTQzXjExYDMyMmEuYSNpL15mcjQwNGdgLS1kLS9zcw%3D%3D&btag=c0000e00038000&cquery=100B_100H_100K_100a_101s&dy_q=1716614580&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=2024052513225947A31C5B1D32D47EA5B6"),
-      ("抖音视频2.mp4", "https://v3-web.douyinvod.com/e710348d50895f395cbb045ec2b1f7a3/665184ca/video/tos/cn/tos-cn-ve-15c001-alinc2/oEtAtSQNceDyABDgfmLV9WgbcDILbAanEK50wG/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=955&bt=955&cs=0&ds=6&ft=LjhJEL998xXdu4PmD0P58lZW_3iXU4klxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=12&rc=MzpnNDllOWRoM2QzZmhkO0BpM3R2ODg6ZjhnczMzNGkzM0AvNjZjMTE2X14xNjVjNV5iYSNtM2trcjRfYjJgLS1kLTBzcw%3D%3D&btag=c0000e00028000&cquery=100B_100H_100K_100a_101s&dy_q=1716614607&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=202405251323263CE1D887DFEBCC8E1816"),
+      ("Douyin_video1.mp4", "https://v26-web.douyinvod.com/d715a7c5935857e3135400032fc7297e/66518623/video/tos/cn/tos-cn-ve-15/o0nQXgbOIVmul8IAehaBAsCoD5RAMgFg9EflJu/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=1753&bt=1753&cs=0&ds=4&ft=LjhJEL998xXdu4PmD0P58lZW_3iXwPklxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=0&rc=N2VlNzo3NGg8Omg2NGRmNkBpMzxvMzk6ZmVocTMzNGkzM0A0YTBeYTQzXjExYDMyMmEuYSNpL15mcjQwNGdgLS1kLS9zcw%3D%3D&btag=c0000e00038000&cquery=100B_100H_100K_100a_101s&dy_q=1716614580&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=2024052513225947A31C5B1D32D47EA5B6"),
+      ("Douyin_video2.mp4", "https://v3-web.douyinvod.com/e710348d50895f395cbb045ec2b1f7a3/665184ca/video/tos/cn/tos-cn-ve-15c001-alinc2/oEtAtSQNceDyABDgfmLV9WgbcDILbAanEK50wG/?a=6383&ch=5&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=955&bt=955&cs=0&ds=6&ft=LjhJEL998xXdu4PmD0P58lZW_3iXU4klxVJE3QwCPCPD-Ipz&mime_type=video_mp4&qs=12&rc=MzpnNDllOWRoM2QzZmhkO0BpM3R2ODg6ZjhnczMzNGkzM0AvNjZjMTE2X14xNjVjNV5iYSNtM2trcjRfYjJgLS1kLTBzcw%3D%3D&btag=c0000e00028000&cquery=100B_100H_100K_100a_101s&dy_q=1716614607&feature_id=46a7bb47b4fd1280f3d3825bf2b29388&l=202405251323263CE1D887DFEBCC8E1816"),
   ]
   
   for item in url_list:
@@ -508,19 +508,19 @@ We can use a locking mechanism to ensure thread safety and prevent data confusio
   
   
   def _add(count):
-      lock_object.acquire() # 加锁
+      lock_object.acquire() # Acquire lock
       global number
       for i in range(count):
           number += 1
-      lock_object.release() # 释放锁
+      lock_object.release() # Release lock
   
   
   def _sub(count):
-      lock_object.acquire() # 申请锁（等待）
+      lock_object.acquire() # Request lock (wait)
       global number
       for i in range(count):
           number -= 1
-      lock_object.release() # 释放锁
+      lock_object.release() # Release lock
   
   
   t1 = threading.Thread(target=_add, args=(loop,))
@@ -528,8 +528,8 @@ We can use a locking mechanism to ensure thread safety and prevent data confusio
   t1.start()
   t2.start()
   
-  t1.join()  # t1线程执行完毕,才继续往后走
-  t2.join()  # t2线程执行完毕,才继续往后走
+  t1.join()  # t1 thread execution finished, then continue
+  t2.join()  # t2 thread execution finished, then continue
   
   print(number)	# 0
   ```
@@ -561,12 +561,12 @@ We can use a locking mechanism to ensure thread safety and prevent data confusio
   
   
   def task():
-      print("开始")
-      lock_object.acquire()  # 第1个抵达的线程进入并上锁，其他线程就需要再此等待。
+      print("Start")
+      lock_object.acquire()  # The first thread to arrive enters and locks, other threads need to wait here.
       global num
       for i in range(1000000):
           num += 1
-      lock_object.release()  # 线程出去，并解开锁，其他线程就可以进入并执行了
+      lock_object.release()  # Thread exits and unlocks, other threads can enter and execute
       print(num)
   
   
@@ -583,8 +583,8 @@ We can use a locking mechanism to ensure thread safety and prevent data confusio
   
   
   def task():
-      print("开始")
-      with lock_object: # 基于上下文管理，内部自动执行 acquire 和 release
+      print("Start")
+      with lock_object: # Based on context management, internally automatically executes acquire and release
           global num
           for i in range(1000000):
               num += 1
@@ -609,7 +609,7 @@ lock_object = threading.RLock()
 
 
 def task():
-    print("开始")
+    print("Start")
     for i in range(1000000):
         data_list.append(i)
     print(len(data_list))
@@ -644,12 +644,12 @@ If you want to manually add locking in a program, there are generally two option
   
   
   def task():
-      print("开始")
-      lock_object.acquire()  # 第1个抵达的线程进入并上锁，其他线程就需要再此等待。
+      print("Start")
+      lock_object.acquire()  # The first thread to arrive enters and locks, other threads need to wait here.
       global num
       for i in range(1000000):
           num += 1
-      lock_object.release()  # 线程出去，并解开锁，其他线程就可以进入并执行了
+      lock_object.release()  # Thread exits and unlocks, other threads can enter and execute
       
       print(num)
   
@@ -669,12 +669,12 @@ If you want to manually add locking in a program, there are generally two option
   
   
   def task():
-      print("开始")
-      lock_object.acquire()  # 第1个抵达的线程进入并上锁，其他线程就需要再此等待。
+      print("Start")
+      lock_object.acquire()  # The first thread to arrive enters and locks, other threads need to wait here.
       global num
       for i in range(1000000):
           num += 1
-      lock_object.release()  # 线程出去，并解开锁，其他线程就可以进入并执行了
+      lock_object.release()  # Thread exits and unlocks, other threads can enter and execute
       print(num)
   
   
@@ -694,7 +694,7 @@ lock_object = threading.RLock()
 
 
 def task():
-    print("开始")
+    print("Start")
     lock_object.acquire()
     lock_object.acquire()
     print(123)
@@ -725,14 +725,14 @@ lock_object = threading.Lock()
 
 
 def task():
-    print("开始")
-    lock_object.acquire()  # 第1个抵达的线程进入并上锁，其他线程就需要再此等待。
-    lock_object.acquire()  # 第1个抵达的线程进入并上锁，其他线程就需要再此等待。
+    print("Start")
+    lock_object.acquire()  # The first thread to arrive enters and locks, other threads need to wait here.
+    lock_object.acquire()  # The first thread to arrive enters and locks, other threads need to wait here.
     global num
     for i in range(1000000):
         num += 1
-    lock_object.release()  # 线程出去，并解开锁，其他线程就可以进入并执行了
-    lock_object.release()  # 线程出去，并解开锁，其他线程就可以进入并执行了
+    lock_object.release()  # Thread exits and unlocks, other threads can enter and execute
+    lock_object.release()  # Thread exits and unlocks, other threads can enter and execute
     
     print(num)
 
@@ -804,7 +804,7 @@ for url in url_list:
     t = threading.Thread(target=task, args=(url,))
     t.start()
 
-# 这种每次都创建一个线程去操作，创建任务的太多，线程就会特别多，可能效率反倒降低了。
+# Creating a new thread for each operation every time, too many tasks created, threads will be too many, efficiency may actually decrease.
 ```
 
 **Recommended**: use a thread pool
@@ -815,21 +815,21 @@ Example 1:
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-# pool = ThreadPoolExecutor(100)	# 线程池中可以维护100个线程
-# pool.submit(函数名,参数1，参数2，参数...)	# 将一个任务推到线程池中执行
+# pool = ThreadPoolExecutor(100)	# The thread pool can maintain 100 threads
+# pool.submit(function_name, arg1, arg2, ...)	# Push a task to the thread pool for execution
 
 
 def task(video_url,num):
-    print("开始执行任务", video_url)
+    print("Start executing task", video_url)
     time.sleep(5)
 
-# 创建线程池，最多维护10个线程。
+# Create thread pool, maintain up to 10 threads.
 pool = ThreadPoolExecutor(10)
 
 url_list = ["www.xxxx-{}.com".format(i) for i in range(300)]
 
 for url in url_list:
-    pool.submit(task, url,2)	# 主线程将300个任务同时交给线程池，但是由于线程池只能同时维护10个线程，所以线程池会去其中10个线程执行，其余的290个线程则等待，如果有线程执行完成，则填充
+    pool.submit(task, url, 2)	# The main thread hands over 300 tasks to the thread pool at the same time, but since the thread pool can only maintain 10 threads at a time, the thread pool will execute with 10 threads, and the remaining 290 tasks will wait; if a thread finishes execution, it will be filled.
     
 print("END")
 ```
@@ -846,20 +846,20 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 def task(video_url):
-    print("开始执行任务", video_url)
+    print("Start executing task", video_url)
     time.sleep(5)
 
 
-# 创建线程池，最多维护10个线程。
+# Create thread pool, maintain up to 10 threads.
 pool = ThreadPoolExecutor(10)
 
 url_list = ["www.xxxx-{}.com".format(i) for i in range(300)]
 for url in url_list:
     pool.submit(task, url)
 
-print("执行中...")
-pool.shutdown(True)  # 主线程等待，等待线程池中的任务执行完毕后，在继续执行
-print('继续往下走')
+print("Executing...")
+pool.shutdown(True)  # Main thread waits, waits for tasks in the thread pool to finish executing, then continues
+print('Continue going down')
 ```
 
 
@@ -873,23 +873,23 @@ from concurrent.futures import ThreadPoolExecutor, Future
 
 
 def task(video_url):
-    print("开始执行任务", video_url)
+    print("Start executing task", video_url)
     time.sleep(2)
     return random.randint(0, 10)
 
 
 def done(response):
-    print("任务执行后的返回值", response.result())
+    print("Return value after task execution", response.result())
 
 
-# 创建线程池，最多维护10个线程。
+# Create thread pool, maintain up to 10 threads.
 pool = ThreadPoolExecutor(10)
 
 url_list = ["www.xxxx-{}.com".format(i) for i in range(15)]
 
 for url in url_list:
     future = pool.submit(task, url)
-    future.add_done_callback(done) # 当线程池中每一个线程任务执行完成之后，就会执行done函数
+    future.add_done_callback(done) # When each thread task in the thread pool finishes executing, the done function will be executed
 ```
 
 
@@ -903,12 +903,12 @@ from concurrent.futures import ThreadPoolExecutor,Future
 
 
 def task(video_url):
-    print("开始执行任务", video_url)
+    print("Start executing task", video_url)
     time.sleep(2)
     return random.randint(0, 10)
 
 
-# 创建线程池，最多维护10个线程。
+# Create thread pool, maintain up to 10 threads.
 pool = ThreadPoolExecutor(10)
 
 future_list = []
@@ -973,7 +973,7 @@ In future development, you will encounter the singleton pattern: every time the 
           self.name = name
   
       def __new__(cls, *args, **kwargs):
-          # 返回空对象
+          # Return empty object
           if cls.instance:
               return cls.instance
           cls.instance = object.__new__(cls)

@@ -1,8 +1,8 @@
 # Deploying a Frontend/Backend Separated Project
 
 ```
-本文采用阿里云服务器，centos7.9操作系统
-本文默认服务器已安装nginx,mysql并且可以正常运行
+This article uses an Alibaba Cloud server with CentOS 7.9 operating system
+This article assumes the server already has nginx and mysql installed and running normally
 
 Django + vue + uwsgi + nginx
 ```
@@ -28,9 +28,9 @@ Django + vue + uwsgi + nginx
 ![image-20240327183916816](assets\image-20240327183916816.png)
 
 ```
-申请后很快就能通过，下载nginx格式证书，备用
+It will be approved shortly after application; download the certificate in nginx format for later use
 
-有几个需要用到的二级域名就需要几个ssl证书，用来支持HTTPS请求
+You need one SSL certificate for each secondary domain required, to support HTTPS requests
 ```
 
 
@@ -55,7 +55,7 @@ In the Django project's `settings.py`, change `DEBUG` to `True` and set `ALLOWED
 ![image-20240327194957533](assets\image-20240327194957533.png)
 
 ```bash
-# 项目目录规划
+# Project directory planning
 mkdir -p /od/backend
 cd /od/backend
 
@@ -63,18 +63,18 @@ cd /od/backend
 yum install unzip
 unzip dahe.zip -d /od/backend/dahe/
 
-# 启动虚拟环境
+# Activate the virtual environment
 cd /od/backend
 pip3 install virtualenv
 virtualenv venv
 source /od/backend/venv/bin/activate
-# 安装依赖包
+# Install dependency packages
 pip -V
 pip install --upgrade pip
 pip install uwsgi==2.0.23
 pip install -r /od/backend/dahe/requirements.txt
 
-# 检查是否包依赖安装成功
+# Check whether dependencies were installed successfully
 (venv) [root@iZgc7d0d1szot7fke40ez9Z od]# pip list
 Package                 Version
 ----------------------- ------------
@@ -105,8 +105,8 @@ wheel                   0.42.0
 ### 2 Database Migration
 
 ```sql
-# 云服务器中执行
-cd到data.sql文件所在的目录，执行下面的命令
+# Execute on the cloud server
+cd to the directory where the data.sql file is located, then run the command below
 mysql -uroot -p123 <dahe_data.sql
 ```
 
@@ -154,34 +154,34 @@ Explanation of the file contents:
 ```ini
 [uwsgi]
 
-# 填写订单项目的根目录
+# Fill in the project root directory
 chdir=/od/backend/dahe/
 
-# 填写与项目同名的目录，这是个相对路径，主要就是找到其内的wsgi.py这个文件
+# Fill in the directory with the same name as the project; this is a relative path, mainly to locate the wsgi.py file inside it
 module=dahe.wsgi
 
-# 虚拟环境的根目录，也就是工作目录
+# Root directory of the virtual environment, i.e., the working directory
 home=/od/backend/venv/
 
-# uwsgi的主进程，其他的uwsgi的进程都是这个主进程的子进程，当你kill时，杀掉的也是这个master主进程
+# The uwsgi master process; all other uwsgi processes are child processes of this master process. When you kill it, this master process is what gets killed
 master=true
 
-# uwsgi并发时的工作进程的数量，官网的建议是：2 * cup核数 + 1
-# 由这几个进程来分摊并发请求
+# Number of worker processes for uwsgi concurrency; official recommendation: 2 * CPU cores + 1
+# These processes will share the concurrent requests
 processes=3
 
-# 临时使用http，实际部署时，通过nginx反向代理，就要把http换成socket，这点别忘了改
+# Temporarily use http; during actual deployment, use nginx reverse proxy and replace http with socket — don't forget to change this
 http=0.0.0.0:8000
 # socket=0.0.0.0:8000
 
-# 当服务器退出时，自动删除unix socket文件和pid文件
+# Automatically delete unix socket files and pid files when the server exits
 vacuum=true
 
-# 默认的请求的大小为4096，如果你接收到了一个更大的请求 (例如，带有大cookies或者查询字符串)，那么超过4096的限制就会报错invalid request block size: 4547 (max 4096)...skip，所以我们这里提前调整下
+# The default request size is 4096; if you receive a larger request (e.g., with large cookies or query strings), exceeding the 4096 limit will raise an error: invalid request block size: 4547 (max 4096)...skip, so we adjust it here in advance
 # https://uwsgi-docs-zh.readthedocs.io/zh_CN/latest/Options.html#buffer-size
 buffer-size=32768
 
-# uwsgi的日志文件
+# uwsgi log file
 logto=/od/logs/uwsgi.log
 ```
 
@@ -190,7 +190,7 @@ Start the backend project:
 ```bash
 source /od/backend/venv/bin/activate
 uwsgi --ini script/uwsgi.ini
-# 以后台方式运行(直接回车就行)
+# Run in the background (just press Enter)
 uwsgi --ini script/uwsgi.ini &
 ```
 
@@ -276,26 +276,26 @@ http {
     }
 
     server {
-        #HTTPS的默认访问端口443。
-        #如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。
+        #Default HTTPS access port is 443.
+        #If the default HTTPS access port is not configured here, Nginx may fail to start.
         listen 443 ssl;
      
-        #填写证书绑定的域名
+        #Enter the domain name bound to the certificate
         server_name qianmo.betterwilson.com;
      
-        #填写证书文件绝对路径
+        #Enter the absolute path of the certificate file
         ssl_certificate /od/qianmo.betterwilson.com_nginx/qianmo.betterwilson.com.pem;
-        #填写证书私钥文件绝对路径
+        #Enter the absolute path of the certificate private key file
         ssl_certificate_key /od/qianmo.betterwilson.com_nginx/qianmo.betterwilson.com.key;
      
         ssl_session_cache shared:SSL:1m;
         ssl_session_timeout 5m;
-        #自定义设置使用的TLS协议的类型以及加密套件（以下为配置示例，请您自行评估是否需要配置）
-        #TLS协议版本越高，HTTPS通信的安全性越高，但是相较于低版本TLS协议，高版本TLS协议对浏览器的兼容性较差。
+        #Custom TLS protocol types and cipher suites (the following is a configuration example; please evaluate whether to configure it yourself)
+        #The higher the TLS protocol version, the more secure the HTTPS communication, but compared to lower TLS versions, higher versions have poorer browser compatibility.
         ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
         ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
 
-        #表示优先使用服务端加密套件。默认开启
+        #Indicates that server cipher suites are preferred. Enabled by default.
         ssl_prefer_server_ciphers on;
  
  
@@ -314,26 +314,26 @@ http {
     }
 
     server {
-        #HTTPS的默认访问端口443。
-        #如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。
+        #Default HTTPS access port is 443.
+        #If the default HTTPS access port is not configured here, Nginx may fail to start.
         listen 443 ssl;
      
-        #填写证书绑定的域名
+        #Enter the domain name bound to the certificate
         server_name shipper.betterwilson.com;
      
-        #填写证书文件绝对路径
+        #Enter the absolute path of the certificate file
         ssl_certificate /od/shipper.betterwilson.com_nginx/shipper.betterwilson.com.pem;
-        #填写证书私钥文件绝对路径
+        #Enter the absolute path of the certificate private key file
         ssl_certificate_key /od/shipper.betterwilson.com_nginx/shipper.betterwilson.com.key;
      
         ssl_session_cache shared:SSL:1m;
         ssl_session_timeout 5m;
-        #自定义设置使用的TLS协议的类型以及加密套件（以下为配置示例，请您自行评估是否需要配置）
-        #TLS协议版本越高，HTTPS通信的安全性越高，但是相较于低版本TLS协议，高版本TLS协议对浏览器的兼容性较差。
+        #Custom TLS protocol types and cipher suites (the following is a configuration example; please evaluate whether to configure it yourself)
+        #The higher the TLS protocol version, the more secure the HTTPS communication, but compared to lower TLS versions, higher versions have poorer browser compatibility.
         ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
         ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
 
-        #表示优先使用服务端加密套件。默认开启
+        #Indicates that server cipher suites are preferred. Enabled by default.
         ssl_prefer_server_ciphers on;
  
  
@@ -356,33 +356,33 @@ http {
     }
 
     server {
-        #HTTPS的默认访问端口443。
-        #如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。
+        #Default HTTPS access port is 443.
+        #If the default HTTPS access port is not configured here, Nginx may fail to start.
         listen 443 ssl;
      
-        #填写证书绑定的域名
+        #Enter the domain name bound to the certificate
         server_name dahe.betterwilson.com;
      
-        #填写证书文件绝对路径
+        #Enter the absolute path of the certificate file
         ssl_certificate /od/dahe.betterwilson.com_nginx/dahe.betterwilson.com.pem;
-        #填写证书私钥文件绝对路径
+        #Enter the absolute path of the certificate private key file
         ssl_certificate_key /od/dahe.betterwilson.com_nginx/dahe.betterwilson.com.key;
      
         ssl_session_cache shared:SSL:1m;
         ssl_session_timeout 5m;
-        #自定义设置使用的TLS协议的类型以及加密套件（以下为配置示例，请您自行评估是否需要配置）
-        #TLS协议版本越高，HTTPS通信的安全性越高，但是相较于低版本TLS协议，高版本TLS协议对浏览器的兼容性较差。
+        #Custom TLS protocol types and cipher suites (the following is a configuration example; please evaluate whether to configure it yourself)
+        #The higher the TLS protocol version, the more secure the HTTPS communication, but compared to lower TLS versions, higher versions have poorer browser compatibility.
         ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
         ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
 
-        #表示优先使用服务端加密套件。默认开启
+        #Indicates that server cipher suites are preferred. Enabled by default.
         ssl_prefer_server_ciphers on;
 
         location / {
            include uwsgi_params;
-           uwsgi_pass 0.0.0.0:8000;  # 端口要和uwsgi里配置的一样
-           # uwsgi_param UWSGI_SCRIPT dahe.wsgi;  #wsgi.py所在的目录名+.wsgi
-           # uwsgi_param UWSGI_CHDIR /od/backend/dahe; # 项目路径
+           uwsgi_pass 0.0.0.0:8000;  # The port must match the one configured in uwsgi
+           # uwsgi_param UWSGI_SCRIPT dahe.wsgi;  #directory name where wsgi.py is located + .wsgi
+           # uwsgi_param UWSGI_CHDIR /od/backend/dahe; # project path
         }
     }   
 }

@@ -4,7 +4,7 @@
 
 ```python
 pip install -U scikit-learn
-# -U表示，如果已经安装了sklearn，那么将其升级到最新版本
+# -U means: if scikit-learn is already installed, upgrade it to the latest version
 ```
 
 ## Model Selection
@@ -18,33 +18,33 @@ pip install -U scikit-learn
 `DictVectorizer` converts a list of dictionaries containing features into a numeric matrix (feature vectors) that machine learning models can use directly.
 
 ```python
-# 导入字典提取器
+# Import dictionary vectorizer
 from sklearn.feature_extraction import DictVectorizer
 import pandas as pd
 
-# 准备字典数据
+# Prepare dictionary data
 data = [
-    {'颜色': '红', '尺寸': '大', '价格': 100},
-    {'颜色': '蓝', '尺寸': '中', '价格': 80},
-    {'颜色': '红', '尺寸': '小', '价格': 50}
+    {'color': 'red', 'size': 'large', 'price': 100},
+    {'color': 'blue', 'size': 'medium', 'price': 80},
+    {'color': 'red', 'size': 'small', 'price': 50}
 ]
 
-# 初始化字典提取器
-# sparse=False 表示返回的矩阵是二维的，而不是稀疏矩阵
-# sparse=True 默认值，返回的矩阵是稀疏矩阵, 稀疏矩阵只保存非零的元素,省内存
-# 稀疏矩阵: 矩阵中，大多数值都为0的矩阵
+# Initialize dictionary vectorizer
+# sparse=False means return a dense 2D matrix instead of a sparse matrix
+# sparse=True (default) returns a sparse matrix, which only stores non-zero elements and saves memory
+# Sparse matrix: a matrix where most values are zero
 dict_vec = DictVectorizer(sparse=False)
 
-# 提取特征
+# Extract features
 X = dict_vec.fit_transform(data)
 
-# 查看结果
+# View results
 print(X)
 
-# 查看特征名
+# View feature names
 print(dict_vec.get_feature_names_out())
 
-# 结合DataFrame查看结果
+# View results with DataFrame
 pd.DataFrame(X, columns=dict_vec.get_feature_names_out())
 ```
 
@@ -70,30 +70,30 @@ Additional notes: One-hot encoding is a **one-bit effective encoding**. Its core
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 
-# 样本文本（3个文档）
+# Sample texts (3 documents)
 documents = [
     "I love machine learning. Machine learning is interesting.",
     "I love coding. Coding is fun and useful.",
     "Machine learning and coding are my favorite skills."
 ]
 
-# 创建CountVectorizer对象（默认参数：小写化文本、按空格/标点分词、不过滤停用词）
-# min_df/max_df参数解释:
-# min_df：最小文档频率，即单词至少出现的文档次数或比例，低于此阈值的单词将被忽略（注意是出现的文档数）
-# max_df：最大文档频率，即单词在文档中的文档次数或比例，高于此阈值的单词将被忽略
-# 当min_df和max_df都为整数时，表示单词出现的次数， 当min_df和max_df都为小数时，表示单词在文档中的比例
+# Create CountVectorizer object (default params: lowercase text, tokenize by space/punctuation, no stop-word filtering)
+# min_df/max_df parameter explanation:
+# min_df: minimum document frequency, i.e., the minimum number or proportion of documents a word must appear in; words below this threshold will be ignored (note: it's the number of documents)
+# max_df: maximum document frequency, i.e., the number or proportion of documents a word appears in; words above this threshold will be ignored
+# When both min_df and max_df are integers, they represent document counts; when both are floats, they represent proportions
 count_vec = CountVectorizer(min_df=2)
 
-# 训练并转换文档
+# Fit and transform documents
 X = count_vec.fit_transform(documents)
 
-# 查看结果
+# View results
 print(X.toarray())
 
-# 查看特征名
+# View feature names
 print(count_vec.get_feature_names_out())
 
-# 结合DataFrame查看
+# View with DataFrame
 df = pd.DataFrame(X.toarray(), columns=count_vec.get_feature_names_out())
 print(df)
 ```
@@ -107,24 +107,24 @@ import jieba
 from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 
-# 1. 文本
+# 1. Texts
 documents = [
-    "人生苦短，我喜欢 python",
-    "人生漫长，不用 python python",
-    "人生漫漫，不用 python python python"
+    "Life is short, I love python",
+    "Life is long, no need for python python",
+    "Life is long, no need for python python python"
 ]
 
-# 2. 文本分词，得到一个分词之后的文本列表
-cut_doucuments = [" ".join(jieba.cut(document)) for document in documents]
-print(cut_doucuments)
+# 2. Word segmentation, get a list of segmented texts
+cut_documents = [" ".join(jieba.cut(document)) for document in documents]
+print(cut_documents)
 
-# 3. 创建特征提取对象
+# 3. Create feature extraction object
 vectorizer = CountVectorizer(min_df=2)
 
-# 4. 创建特征矩阵
-X = vectorizer.fit_transform(cut_doucuments)
+# 4. Create feature matrix
+X = vectorizer.fit_transform(cut_documents)
 
-# 5. 使用DataFrame查看结果
+# 5. View results with DataFrame
 pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())
 ```
 
@@ -150,22 +150,22 @@ Finally, **TF-IDF value = TF × IDF**, which combines the word's "frequency of o
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 
-# 样本文本（3个文档）
+# Sample texts (3 documents)
 documents = [
     "I love machine learning. Machine learning is interesting.",
     "I love coding. Coding is fun and useful.",
     "Machine learning and coding are my favorite skills."
 ]
 
-# 2. 创建TF-IDF对象
-# stopwords='english' 忽略英文中的停用词
-# 停用词: 指文本中频繁出现，但通常对语义理解帮助不大的虚词或常见词
+# 2. Create TF-IDF object
+# stopwords='english' ignores English stop words
+# Stop words: words that appear frequently but usually contribute little to semantic understanding
 tfidf = TfidfVectorizer(min_df=1, stop_words='english')
 
-# 3. 创建特征矩阵
+# 3. Create feature matrix
 X = tfidf.fit_transform(documents)
 
-# 4. 显示结果
+# 4. Display results
 print(pd.DataFrame(X.toarray(), columns=tfidf.get_feature_names_out()))
 ```
 
@@ -200,17 +200,17 @@ The default range is [0,1]. The characteristics of this linear transformation ar
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
-# 创建数据
+# Create data
 data = np.array([[1, 200], [2, 300], [3, 400]])
 print(data)
 
-# 创建归一化类
+# Create normalization scaler
 scaler = MinMaxScaler(feature_range=(0, 1))
 
-# 训练并归一化数据
+# Fit and normalize data
 data_scaled = scaler.fit_transform(data)
 
-# 显示结果
+# Display results
 print(data_scaled)
 ```
 
@@ -227,16 +227,16 @@ $$
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 
-# 创建数据
+# Create data
 data = np.array([[1, 200], [2, 300], [3, 400]])
 
-# 创建标准化类
+# Create standardization scaler
 scaler = StandardScaler()
 
-# 训练并标准化数据
+# Fit and standardize data
 data_scaled = scaler.fit_transform(data)
 
-# 显示结果
+# Display results
 print(data_scaled)
 ```
 
@@ -271,18 +271,18 @@ Key parameter: strategy (imputation strategy)
 import numpy as np
 from sklearn.impute import SimpleImputer
 
-# 创建数据(包含缺失值)
+# Create data (with missing values)
 data = np.array([[1, np.nan], [2, 300], [np.nan, 400]])
 
-# 创建缺失值处理类
+# Create missing value handler
 # strategy: mean, median, most_frequent, constant
-# mean: 使用数据的平均值填充缺失值
+# mean: fill missing values with the mean of the data
 imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
 
-# 训练模型并预测
+# Fit model and transform
 data_new = imputer.fit_transform(data)
 
-# 输出结果
+# Output results
 print(data_new)
 ```
 
@@ -299,14 +299,14 @@ from sklearn.feature_selection import VarianceThreshold
 data = np.array([[0, 2, 0, 3], [0, 1, 4, 3], [0, 1, 1, 3]])
 print(data)
 
-# 创建选择器
-# threshold: 阈值，默认threshold=0，即删除所有方差为0的特征
-selector = VarianceThreshold(threshold=0.05)  # 保留方差≥0.05的特征
+# Create selector
+# threshold: default threshold=0, i.e., remove all features with zero variance
+selector = VarianceThreshold(threshold=0.05)  # Keep features with variance >= 0.05
 
-# 训练数据
+# Fit data
 selected_data = selector.fit_transform(data)
 
-# 输出结果
+# Output results
 print(selected_data)
 ```
 
@@ -345,18 +345,18 @@ Dimensionality reduction: a 2D plane has 5 sample points. If we find a 1D number
 from sklearn.decomposition import PCA
 import numpy as np
 
-# 创建PCA对象
-# n_components 是整数时: 保留的维度
-# n_components 是小数(0~1)时: 保留的主成分解释的方差比例
+# Create PCA object
+# When n_components is an integer: number of dimensions to keep
+# When n_components is a float (0~1): proportion of variance explained by retained principal components
 pca = PCA(n_components=2)
 
-# 准备数据
+# Prepare data
 X = np.array([[0, 2, 0, 3], [0, 1, 4, 3], [0, 1, 1, 3]])
 
-# 训练PCA模型
+# Train PCA model
 X_pca = pca.fit_transform(X)
 
-# 输出结果
-print(f"原始数据结构：{X.shape[0]}个数据, {X.shape[1]}维")
-print(f"降维后特征数：{X_pca.shape[0]}个数据, {X_pca.shape[1]}维")
+# Output results
+print(f"Original data structure: {X.shape[0]} samples, {X.shape[1]} dimensions")
+print(f"Reduced feature count: {X_pca.shape[0]} samples, {X_pca.shape[1]} dimensions")
 ```

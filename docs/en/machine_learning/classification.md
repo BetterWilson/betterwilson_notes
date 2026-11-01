@@ -16,7 +16,7 @@ Core idea: If most of the k most similar samples of a sample in feature space be
 > 📖 **Euclidean vs Manhattan distance — understand it through "walking"**
 >
 > **Euclidean distance = straight-line distance (how a bird flies)**
-> $$d_{欧} = \sqrt{(x_1-x_2)^2 + (y_1-y_2)^2}$$
+> $$d_{euc} = \sqrt{(x_1-x_2)^2 + (y_1-y_2)^2}$$
 > From point A(1,1) to point B(4,5): $d = \sqrt{(4-1)^2 + (5-1)^2} = \sqrt{9+16} = \sqrt{25} = 5$
 >
 > **Manhattan distance = block distance (how a person walks)**
@@ -28,19 +28,19 @@ Core idea: If most of the k most similar samples of a sample in feature space be
 ### API
 
 ```python
-from sklearn.neighbors import KNeighborsClassifier  # KNN分类算法
-from sklearn.neighbors import KNeighborsRegressor  # KNN回归算法
+from sklearn.neighbors import KNeighborsClassifier  # KNN classification algorithm
+from sklearn.neighbors import KNeighborsRegressor  # KNN regression algorithm
 
-#  创建对象		
-estimator = KNeighborsClassifier(n_neighbors=3)  # 创建一个KNN分类模型对象， K值取3
+#  Create object		
+estimator = KNeighborsClassifier(n_neighbors=3)  # Create a KNN classification model object, K=3
 
-# 模型训练		
-estimator.fit(X_train, y_train)  # X_train: 训练集特征， y_train：训练集标签
+# Model training		
+estimator.fit(X_train, y_train)  # X_train: training set features, y_train: training set labels
 
-# 结果预测		
-y_predict = estimator.predict(X_test)  # X_test: 测试集特征， y_predict：测试集的预测结果
-# 模型评估		
-score = estimator.score(X_test, y_test)  # score: 准确率	X_test: 测试集特征，y_test: 测试集标签
+# Result prediction		
+y_predict = estimator.predict(X_test)  # X_test: test set features, y_predict: test set predictions
+# Model evaluation		
+score = estimator.score(X_test, y_test)  # score: accuracy	X_test: test set features, y_test: test set labels
 ```
 
 ### Example - Facebook Check-in Prediction
@@ -54,53 +54,53 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 
-# 读取数据
+# Read data
 data = pd.read_csv('./data/FBlocation/train.csv')
 
-# 过滤条件
+# Filtering conditions
 filtered_data = data[(data['x'] > 1.0) & (data['x'] < 1.25) & (data['y'] > 2.5) & (data['y'] < 2.75)].copy()
 print(filtered_data.shape)
 print(filtered_data.dtypes)
 print(filtered_data.columns)
 
-# 处理时间特征，time 列是距离1970年1月1号的分钟数
+# Process time feature: the 'time' column is minutes since 1970-01-01
 if 'time' in filtered_data.columns:
-    # 将 time 列转换为 pandas 的 datetime 类型（单位为分钟，从1970-01-01开始）
+    # Convert the 'time' column to pandas datetime (unit=minutes, origin=1970-01-01)
     filtered_data['datetime'] = pd.to_datetime(filtered_data['time'], unit='m', origin='1970-01-01')
     filtered_data['hour'] = filtered_data['datetime'].dt.hour
     filtered_data['day'] = filtered_data['datetime'].dt.dayofweek  # 0=Monday
     filtered_data['month'] = filtered_data['datetime'].dt.month
 
-# 只保留去该place_id人数大于3的记录
+# Keep only records where the number of visits to a place_id is greater than 3
 place_counts = filtered_data['place_id'].value_counts()
 valid_places = place_counts[place_counts > 3].index
 filtered_data = filtered_data[filtered_data['place_id'].isin(valid_places)].copy()
 print(filtered_data.shape)
 
-# 选择特征列和目标列，可以根据数据适当调整
+# Select feature columns and target column; adjust as appropriate for the data
 features = ['x', 'y', 'accuracy', 'hour', 'day', 'month']
 
 X = filtered_data[features]
 y = filtered_data['place_id']
 
-# 划分训练集和测试集
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 对特征进行标准化
+# Standardize features
 scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)  # 使用训练集来计算 均值和方差
-X_test = scaler.transform(X_test)  # 使用训练集的均值和方差来标准化测试集
+X_train = scaler.fit_transform(X_train)  # Use training set to compute mean and variance
+X_test = scaler.transform(X_test)  # Standardize test set using training set mean and variance
 
-# KNN建模
+# KNN modeling
 knn = KNeighborsClassifier(n_neighbors=3)
 knn.fit(X_train, y_train)
 
-# 预测
+# Predict
 y_pred = knn.predict(X_test)
 
-# 评估
+# Evaluate
 accuracy = accuracy_score(y_test, y_pred)
-print(f"KNN预测准确率: {accuracy:.4f}")
+print(f"KNN prediction accuracy: {accuracy:.4f}")
 ```
 
 ## Cross Validation + Grid Search
@@ -140,8 +140,8 @@ The purpose of cross validation is actually to reduce the randomness of the resu
 >
 > ```python
 > param_grid = {
->     'n_neighbors': [1, 3, 5, 7, 9],   # 5种K值
->     'weights': ['uniform', 'distance']  # 2种权重方式
+>     'n_neighbors': [1, 3, 5, 7, 9],   # 5 K values
+>     'weights': ['uniform', 'distance']  # 2 weight modes
 > }
 > ```
 >
@@ -165,61 +165,61 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 
-# 读取数据
+# Read data
 data = pd.read_csv(r'./data/FBlocation/train.csv')
 
-# 过滤条件
+# Filtering conditions
 filtered_data = data[(data['x'] > 1.0) & (data['x'] < 1.25) & (data['y'] > 2.5) & (data['y'] < 2.75)]
 
-# 处理时间特征，time 列是距离1970年1月1号的分钟数
+# Process time feature: the 'time' column is minutes since 1970-01-01
 if 'time' in filtered_data.columns:
-    # 将 time 列转换为 pandas 的 datetime 类型（单位为分钟，从1970-01-01开始）
+    # Convert the 'time' column to pandas datetime (unit=minutes, origin=1970-01-01)
     filtered_data['datetime'] = pd.to_datetime(filtered_data['time'], unit='m', origin='1970-01-01')
     filtered_data['hour'] = filtered_data['datetime'].dt.hour
     filtered_data['day'] = filtered_data['datetime'].dt.dayofweek  # 0=Monday
     filtered_data['month'] = filtered_data['datetime'].dt.month
 
-# 只保留去该place_id人数大于等于3的记录
+# Keep only records where the number of visits to a place_id is >= 3
 place_counts = filtered_data['place_id'].value_counts()
 valid_places = place_counts[place_counts > 3].index
 filtered_data = filtered_data[filtered_data['place_id'].isin(valid_places)].copy()
 
-# 选择特征列和目标列，可以根据数据适当调整
+# Select feature columns and target column; adjust as appropriate for the data
 features = ['x', 'y', 'accuracy', 'hour', 'day', 'month']
 
 X = filtered_data[features]
 y = filtered_data['place_id']
 
-# 划分训练集和测试集
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 from sklearn.preprocessing import StandardScaler
 
-# 对特征进行标准化
+# Standardize features
 scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)  # 使用训练集来计算 均值和方差
-X_test = scaler.transform(X_test)  # 使用训练集的均值和方差来标准化测试集
+X_train = scaler.fit_transform(X_train)  # Use training set to compute mean and variance
+X_test = scaler.transform(X_test)  # Standardize test set using training set mean and variance
 
-# 网格搜索
-# 定义参数搜索空间
+# Grid search
+# Define parameter search space
 param_grid = {
     'n_neighbors': [1, 3, 5, 7, 9],
-    'weights': ['uniform', 'distance']  # weights 权重，uniform 均匀权重，distance 距离权重
+    'weights': ['uniform', 'distance']  # weights: uniform = equal weights, distance = distance-based weights
 }
 
-# 建立网格搜索对象
+# Create grid search object
 grid_search = GridSearchCV(KNeighborsClassifier(), param_grid, cv=5, scoring='accuracy', n_jobs=-1)
 
-# 拟合模型
+# Fit model
 grid_search.fit(X_train, y_train)
 
-print(f"最优参数: {grid_search.best_params_}")
-print(f"最优准确率: {grid_search.best_score_:.4f}")
+print(f"Best parameters: {grid_search.best_params_}")
+print(f"Best accuracy: {grid_search.best_score_:.4f}")
 
-# 使用最佳参数的模型预测测试集
-best_knn = grid_search.best_estimator_  # best_estimator_里边是最佳的模型
+# Predict on test set with the best-parameter model
+best_knn = grid_search.best_estimator_  # best_estimator_ contains the best model
 y_pred_best = best_knn.predict(X_test)
 best_accuracy = accuracy_score(y_test, y_pred_best)
-print(f"使用最优参数模型的测试集准确率: {best_accuracy:.4f}")
+print(f"Test set accuracy with best parameters: {best_accuracy:.4f}")
 ```
 
 ## Naive Bayes
@@ -338,42 +338,43 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report, accuracy_score
 
-# 加载数据
+# Load data
 newsgroups = fetch_20newsgroups(subset='all', shuffle=True, random_state=42, data_home='data')
 X, y = newsgroups.data, newsgroups.target
-print(f'X的样本数量: {len(X)}')
-print(f"第一个新闻样本内容：\n{X[0]}\n")
-print(f"第一个新闻样本的标签：{y[0]} ({newsgroups.target_names[y[0]]})\n")
+print(f'Number of X samples: {len(X)}')
+print(f"First news sample content:\n{X[0]}\n")
+print(f"First news sample label: {y[0]} ({newsgroups.target_names[y[0]]})\n")
 
 print(f'y[0:50]: {y[0:50]}')
-print(f"类别总数: {len(newsgroups.target_names)}")
-print(f"类别名称: {newsgroups.target_names}")
+print(f"Total categories: {len(newsgroups.target_names)}")
+print(f"Category names: {newsgroups.target_names}")
 
-# 分割数据集
+# Split dataset
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 文本特征提取：TF-IDF
-# max_df 参数用于设置词频的上限阈值，用于过滤掉出现频率过高的词语，这些词很可能是对分类没有帮助的噪声。
-# max_df 可以是:
-#   1. 浮点数（0.0 ~ 1.0）：表示“出现于超过该比例文档中的词”将被过滤（如 max_df=0.7 表示出现在70%以上文档中的词会被忽略）。
-#   2. 整数：表示“出现于超过max_df个 文档中的词”将被过滤。
-# 通常 max_df=0.8~0.9 可以去除常见无用词，有助于提升模型泛化能力。
+# Text feature extraction: TF-IDF
+# The max_df parameter sets the upper threshold for word frequency to filter out words that appear too frequently,
+# which are likely noise not helpful for classification.
+# max_df can be:
+#   1. Float (0.0 ~ 1.0): words appearing in more than this proportion of documents will be filtered (e.g., max_df=0.7 ignores words in >70% of docs).
+#   2. Integer: words appearing in more than max_df documents will be filtered.
+# Usually max_df=0.8~0.9 removes common useless words and helps generalization.
 
-vectorizer = TfidfVectorizer(stop_words='english', max_df=0.8) #stop_words='english' 停用词含义是：在文本中出现频率很高，但是对分类没有帮助的词，如：the, is, at, which等
+vectorizer = TfidfVectorizer(stop_words='english', max_df=0.8) # stop_words='english' means stop words: words that appear frequently but are not helpful for classification, e.g., the, is, at, which
 X_train_tfidf = vectorizer.fit_transform(X_train)
 X_test_tfidf = vectorizer.transform(X_test)
-print(f"X_train_tfidf的形状: {X_train_tfidf.shape}")
+print(f"X_train_tfidf shape: {X_train_tfidf.shape}")
 
-# 朴素贝叶斯模型训练
+# Naive Bayes model training
 nb = MultinomialNB(alpha=0.01)
 nb.fit(X_train_tfidf, y_train)
 
-# 预测
+# Predict
 y_pred = nb.predict(X_test_tfidf)
 
-# 评估
+# Evaluate
 accuracy = accuracy_score(y_test, y_pred)
-print(f"朴素贝叶斯分类器的准确率: {accuracy:.4f}")
+print(f"Naive Bayes classifier accuracy: {accuracy:.4f}")
 ```
 
 ## Decision Trees
@@ -492,75 +493,75 @@ from sklearn.model_selection import train_test_split
 df = pd.read_csv('data/titanic.csv')
 
 X = df[['pclass', 'age', 'sex']].copy()
-# 将性别转为数值型变量
+# Convert gender to numeric variable
 X['sex'] = X['sex'].map({'male': 0, 'female': 1})
 y = df['survived']
 
-# 确保pclass为数值型
-# 将 'pclass' 中的 '1st', '2nd', '3rd' 映射为数值 1, 2, 3
+# Ensure pclass is numeric
+# Map '1st', '2nd', '3rd' in 'pclass' to numeric values 1, 2, 3
 X['pclass'] = X['pclass'].map({'1st': 1, '2nd': 2, '3rd': 3})
 
-# age 可能也有缺失值，补充缺失值（可选）
+# age may also have missing values; fill them (optional)
 X['age'] = X['age'].fillna(X['age'].median())
 
-# 划分训练集和测试集
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 决策树分类
+# Decision tree classification
 
-# 决策树分类器常用/优先调节的主要超参数及其含义如下：
-# 1. criterion：用于划分节点时评估分裂质量的指标。常用'gini'（基尼不纯度）或'entropy'（信息增益，ID3）。
-# 2. max_depth：树的最大深度。过大容易过拟合，过小可能欠拟合。
-# 3. min_samples_split：内部节点再划分所需最小样本数。默认为2，可以有效控制树的生长，从而避免过拟合。
-# 4. min_samples_leaf：叶子节点所需的最小样本数。用来控制每个叶子节点最少要包含的样本数量，增大有助于平滑模型。
-# 5. max_features：划分时考虑的最大特征数。可以控制每次寻找最佳分割时考虑的特征数，一定程度上防止过拟合。
-# 6. random_state：随机数种子，方便结果复现。
-# 7. splitter：划分节点的策略，'best'（默认）表示每次选择最优的划分，'random'表示在一个随机的特征上划分。
-# 一般建议优先尝试调节max_depth, min_samples_split, min_samples_leaf, criterion等参数，根据模型在验证集上的表现确定最优值。
+# Main hyperparameters of DecisionTreeClassifier and their meanings:
+# 1. criterion: metric for evaluating split quality. Common choices: 'gini' (Gini impurity) or 'entropy' (information gain, ID3).
+# 2. max_depth: maximum depth of the tree. Too large may overfit; too small may underfit.
+# 3. min_samples_split: minimum samples required to split an internal node. Default is 2; increasing it controls tree growth and avoids overfitting.
+# 4. min_samples_leaf: minimum samples required in a leaf node. Controls the minimum number of samples per leaf; larger values smooth the model.
+# 5. max_features: maximum number of features to consider when splitting. Controls how many features are examined for the best split, helping prevent overfitting.
+# 6. random_state: random seed for reproducibility.
+# 7. splitter: strategy for choosing the split at each node. 'best' (default) chooses the best split; 'random' chooses a random feature to split on.
+# It is generally recommended to tune max_depth, min_samples_split, min_samples_leaf, criterion first, and determine optimal values based on validation set performance.
 
 clf = DecisionTreeClassifier(random_state=42,max_depth=5)
 clf.fit(X_train, y_train)
 
-# 预测
+# Predict
 y_pred = clf.predict(X_test)
 
-# 评估
+# Evaluate
 accuracy = accuracy_score(y_test, y_pred)
-print(f"决策树分类准确率: {accuracy:.4f}")
+print(f"Decision tree classification accuracy: {accuracy:.4f}")
 
 
-# 绘制决策树图
+# Plot decision tree
 from sklearn import tree
 import matplotlib.pyplot as plt
 
-# 配置matplotlib支持中文显示
+# Configure matplotlib to support Chinese display
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
 
 plt.figure(figsize=(100,50),dpi=300)
 
 tree.plot_tree(
-    clf,  # 训练好的决策树分类器
-    feature_names=X.columns,  # 特征名称列表，对应于输入X的每一列
-    class_names=['未幸存', '幸存'],  # 类别名称，依次对应于目标变量的类别
-    filled=True,  # 是否填充节点颜色，便于区分不同类别
-    rounded=True,  # 节点框是否显示为圆角矩形
-    fontsize=12  # 字体大小设置为12
+    clf,  # trained decision tree classifier
+    feature_names=X.columns,  # list of feature names corresponding to each column of input X
+    class_names=['Not Survived', 'Survived'],  # class names corresponding to target variable categories
+    filled=True,  # whether to fill node colors to distinguish different classes
+    rounded=True,  # whether to show nodes as rounded rectangles
+    fontsize=12  # font size set to 12
 )
 plt.savefig('decision_tree.png', dpi=300, bbox_inches='tight')
 plt.close()
-print("决策树图已保存为 decision_tree.png")
+print("Decision tree image saved as decision_tree.png")
 
 if __name__ == '__main__':
     sex_0_count = (X_train['sex'] == 0).sum()
     sex_1_count = (X_train['sex'] == 1).sum()
-    print(f"X_train中sex为0的数目: {sex_0_count}")
-    print(f"X_train中sex为1的数目: {sex_1_count}")
+    print(f"Number of sex=0 in X_train: {sex_0_count}")
+    print(f"Number of sex=1 in X_train: {sex_1_count}")
 
     age_le_12 = X_train[(X_train['sex'] == 0) & (X_train['age'] <= 12)].shape[0]
     age_gt_12 = X_train[(X_train['sex'] == 0) & (X_train['age'] > 12)].shape[0]
-    print(f"X_train中sex为0且age≤12的数目: {age_le_12}")
-    print(f"X_train中sex为0且age>12的数目: {age_gt_12}")
+    print(f"Number of sex=0 and age≤12 in X_train: {age_le_12}")
+    print(f"Number of sex=0 and age>12 in X_train: {age_gt_12}")
 ```
 
 ![decision_tree](assets/decision_tree.png)
@@ -623,91 +624,91 @@ from sklearn.model_selection import train_test_split
 df = pd.read_csv('data/titanic.csv')
 
 X = df[['pclass', 'age', 'sex']].copy()
-# 将性别转为数值型变量
+# Convert gender to numeric variable
 X['sex'] = X['sex'].map({'male': 0, 'female': 1})
 y = df['survived']
 
-# 确保pclass为数值型
-# 将 'pclass' 中的 '1st', '2nd', '3rd' 映射为数值 1, 2, 3
+# Ensure pclass is numeric
+# Map '1st', '2nd', '3rd' in 'pclass' to numeric values 1, 2, 3
 X['pclass'] = X['pclass'].map({'1st': 1, '2nd': 2, '3rd': 3})
 
-# age 可能也有缺失值，补充缺失值（可选）
+# age may also have missing values; fill them (optional)
 X['age'] = X['age'].fillna(X['age'].median())
 
-# 划分训练集和测试集
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 from sklearn.ensemble import RandomForestClassifier
 
-# 创建随机森林分类器
-# 设置每次抽样控制样本数的超参数max_samples（如0.8表示每棵树只用80%的训练样本）
-# max_features 是 RandomForestClassifier 等集成模型中的一个重要参数，
-# 用于控制每棵树在寻找最佳分割时可用的特征数量。
-# - 如果设置为整数，比如 4，则每次分裂时从全部特征中随机选择 4 个特征考虑最佳切分。
-# - 如果设置为浮点数（如 0.6），则每次分裂时从全部特征中随机选择 60% 的特征考虑最佳切分。
-# - 如果设置为 "sqrt"，则使用特征总数的平方根（常用于分类问题）。
-# - 如果设置为 "log2"，则使用特征总数的对数（以 2 为底）。
-# 这样做可以增加模型多样性，降低过拟合风险。
+# Create random forest classifier
+# Set max_samples (e.g., 0.8 means each tree uses 80% of training samples)
+# max_features is an important parameter in RandomForestClassifier and other ensemble models,
+# controlling the number of features available to each tree when searching for the best split.
+# - If set to an integer, e.g., 4, then 4 features are randomly chosen from all features at each split.
+# - If set to a float (e.g., 0.6), then 60% of features are randomly chosen at each split.
+# - If set to "sqrt", then sqrt(total features) is used (commonly used for classification).
+# - If set to "log2", then log2(total features) is used.
+# This increases model diversity and reduces overfitting risk.
 
 rf_clf = RandomForestClassifier(
-    n_estimators=100,  # 集成 100 棵决策树，最终预测通过多数投票决定
-    max_depth=5,  # 限制单棵树深度，控制模型复杂度，防止单棵树过拟合
+    n_estimators=100,  # Ensemble of 100 decision trees; final prediction by majority voting
+    max_depth=5,  # Limit single tree depth to control model complexity and prevent overfitting
     random_state=42,
-    max_samples=1,  # 每棵树使用的训练样本比例，1 表示使用全部训练样本（bootstrap 有放回抽样）
-    max_features='sqrt',  # 每次分裂时考虑的特征数 = sqrt(总特征数)，本数据集3个特征 → 约1~2个
-    min_samples_leaf=5,  # 每个叶子至少 5 个样本
+    max_samples=1,  # Proportion of training samples per tree; 1 means use all training samples (bootstrap sampling with replacement)
+    max_features='sqrt',  # Number of features considered at each split = sqrt(total features); with 3 features in this dataset -> about 1~2
+    min_samples_leaf=5,  # Each leaf must have at least 5 samples
 )
 
-# 用训练集拟合随机森林模型
+# Fit random forest model on training set
 rf_clf.fit(X_train, y_train)
 
-# 用测试集预测
+# Predict on test set
 y_pred_rf = rf_clf.predict(X_test)
 
-# 评估随机森林的准确率
+# Evaluate random forest accuracy
 rf_accuracy = accuracy_score(y_test, y_pred_rf)
-print(f"随机森林分类准确率: {rf_accuracy:.4f}")
+print(f"Random forest classification accuracy: {rf_accuracy:.4f}")
 
 from sklearn.model_selection import GridSearchCV
 
-# 定义待调参的参数网格
+# Define parameter grid for tuning
 param_grid = {
     'n_estimators': [50, 100, 200, 500, 800],
     'max_depth': [3, 5, 7, None],
     'min_samples_leaf': [1, 3, 5, 10],
     'max_features': ['sqrt', 'log2', 1, 0.7],
     'max_samples': [0.6, 0.7, 0.8, None],
-    'random_state': [42]  # 保证结果可复现
+    'random_state': [42]  # Ensure reproducibility
 }
 
 rf = RandomForestClassifier()
 
-# 使用网格搜索交叉验证寻找最佳超参数
+# Use grid search with cross-validation to find best hyperparameters
 grid_search = GridSearchCV(
     estimator=rf,
     param_grid=param_grid,
-    cv=5,  # 5折交叉验证
-    scoring='accuracy',  # 使用准确率作为评估指标
-    n_jobs=-1  # 并行计算，加快速度
+    cv=5,  # 5-fold cross-validation
+    scoring='accuracy',  # Use accuracy as evaluation metric
+    n_jobs=-1  # Parallel computation to speed up
 )
 
 grid_search.fit(X_train, y_train)
 
-print("最佳参数：", grid_search.best_params_)
-print("交叉验证下的最佳准确率：", grid_search.best_score_)
+print("Best parameters:", grid_search.best_params_)
+print("Best accuracy under cross-validation:", grid_search.best_score_)
 
-# 如果你想用最优参数重新训练并评估模型，可以使用：
+# If you want to retrain and evaluate with the best parameters, you can use:
 best_rf = grid_search.best_estimator_
 y_pred_best = best_rf.predict(X_test)
 best_accuracy = accuracy_score(y_test, y_pred_best)
-print(f"测试集上使用最佳参数的随机森林准确率: {best_accuracy:.4f}")
+print(f"Random forest accuracy on test set with best parameters: {best_accuracy:.4f}")
 
 
-# === 运行输出示例 ===
-# 随机森林分类准确率: 0.6388
-# 最佳参数： {'max_depth': None, 'max_features': 'sqrt', 'max_samples': 0.8, 'min_samples_leaf': 3, 'n_estimators': 500, 'random_state': 42}
-# 交叉验证下的最佳准确率： 0.8333333333333334
-# 测试集上使用最佳参数的随机森林准确率: 0.8137
+# === Sample output ===
+# Random forest classification accuracy: 0.6388
+# Best parameters: {'max_depth': None, 'max_features': 'sqrt', 'max_samples': 0.8, 'min_samples_leaf': 3, 'n_estimators': 500, 'random_state': 42}
+# Best accuracy under cross-validation: 0.8333333333333334
+# Random forest accuracy on test set with best parameters: 0.8137
 ```
 
 ## Classification Model Evaluation Metrics
@@ -807,35 +808,35 @@ $$
 #### API
 
 ```python
-# 准确率
+# accuracy
 from sklearn.metrics import accuracy_score
-# 精确率
+# precision
 from sklearn.metrics import precision_score
-# 召回率
+# recall
 from sklearn.metrics import recall_score
-# 混淆矩阵
+# confusion matrix
 from sklearn.metrics import confusion_matrix
 # F1-score
 from sklearn.metrics import f1_score
-# 分类评估报告
+# classification report
 from sklearn.metrics import classification_report
 
 
-# 1. 给出预测结果和真实结果
-# y_pred = ['有病', '有病', '有病', '有病', '无病', '无病', '无病', '无病', '无病', '无病']
+# 1. Provide predicted and true results
+# y_pred = ['ill', 'ill', 'ill', 'ill', 'healthy', 'healthy', 'healthy', 'healthy', 'healthy', 'healthy']
 y_pred = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
-# y_true = ['有病', '有病', '无病', '无病', '有病', '有病', '无病', '无病', '有病', '有病']
+# y_true = ['ill', 'ill', 'healthy', 'healthy', 'ill', 'ill', 'healthy', 'healthy', 'ill', 'ill']
 y_true = [1, 0, 0, 0, 0, 0, 0, 0, 1, 1]
 
-# 2. 计算值
-print("混淆矩阵:\n", confusion_matrix(y_true, y_pred, labels=[1, 0]))
-print("准确率:", accuracy_score(y_true, y_pred))
-print("精确率:", precision_score(y_true, y_pred))
-print("召回率:", recall_score(y_true, y_pred))
+# 2. Compute metrics
+print("Confusion matrix:\n", confusion_matrix(y_true, y_pred, labels=[1, 0]))
+print("Accuracy:", accuracy_score(y_true, y_pred))
+print("Precision:", precision_score(y_true, y_pred))
+print("Recall:", recall_score(y_true, y_pred))
 print("F1-score:", f1_score(y_true, y_pred))
-# digits: 保留几位小数
-# target_names: 类别名称
-# macro avg: 不考虑样本数量，两类指标的算术平均
-# weighted avg: 考虑样本数量，两类指标的加权平均
-print("评估报告:\n", classification_report(y_true, y_pred,target_names=['健康','病患'],digits=4))
+# digits: number of decimal places to keep
+# target_names: class names
+# macro avg: arithmetic mean of metrics across classes, ignoring sample counts
+# weighted avg: weighted mean of metrics across classes, considering sample counts
+print("Evaluation report:\n", classification_report(y_true, y_pred,target_names=['Healthy','Patient'],digits=4))
 ```

@@ -18,8 +18,8 @@ Here, the server side is the server deployed on the server machine, and the clie
   server.listen()
   sock, addr = server.accept()
   
-  # 获取从客户端发送的数据
-  # 一次获取1024个字节的数据
+  # Get data sent from the client
+  # Receive up to 1024 bytes at a time
   data = sock.recv(1024)
   print(data.decode('utf-8'))
   sock.send(f"hello {data.decode('utf-8')}".encode('utf-8'))
@@ -72,7 +72,7 @@ For multi-user connections, we can use multi-threading.
   while True:
       sock, addr = server.accept()
   
-      # 用线程去处理新接受的用户连接
+      # Use a thread to handle each newly accepted client connection
       client_thread = threading.Thread(target=handle_sock, args=(sock, addr))
       client_thread.start()
   
@@ -107,14 +107,14 @@ from urllib.parse import urlparse
 
 
 def get_url(url):
-    # 通过socket请求html
+    # Request HTML via socket
     url = urlparse(url=url)
     host = url.netloc
     path = url.path
     if path == "":
         path = "/"
 
-    # 建立socket连接
+    # Establish a socket connection
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((host, 80))
     client.send(f"GET {path} HTTP/1.1\r\nHost:{host}\r\nConnection:close\r\n\r\n".encode('utf-8'))

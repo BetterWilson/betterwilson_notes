@@ -78,9 +78,9 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
 
     <div>
-      <router-link to="/?v1=123&v2=456">Home</router-link><!--方法一-->
-      <router-link :to="{name: 'about', query: {v1:123, v2:456}}">About</router-link><!--方法二-->
-      <router-link :to="{name: 'demo', params: {id:1}}">About</router-link><!--方法三-->
+      <router-link to="/?v1=123&v2=456">Home</router-link><!--Method 1-->
+      <router-link :to="{name: 'about', query: {v1:123, v2:456}}">About</router-link><!--Method 2-->
+      <router-link :to="{name: 'demo', params: {id:1}}">About</router-link><!--Method 3-->
     </div>
 
   <RouterView />
@@ -98,8 +98,8 @@ To receive the parameters carried on a route, import `useRoute` from vue-router;
 <script setup>
 import {useRoute} from "vue-router";
 const route = useRoute()
-console.log(route.query) // 方法一方法二
-console.log(route.params) // 方法三  
+console.log(route.query) // Method 1 and Method 2
+console.log(route.params) // Method 3
 </script>
 ```
 
@@ -206,7 +206,7 @@ const router = useRouter()
 const router = useRouter()
 router.push({path: "/admin/mine"})
 router.push({name: "login"})
-//也可以接收参数
+// Can also accept parameters
 router.push({name: "login", params: {nid: 100}, query:{page: 100}})
 ```
 
@@ -238,8 +238,8 @@ const router = createRouter({
     }
   ]
 })
-router.beforeEach(function (to, from, next){})//函数
-router.beforeEach((to, from, next) => {})//函数简写
+router.beforeEach(function (to, from, next){})// function
+router.beforeEach((to, from, next) => {})// function shorthand
 export default router
 ```
 

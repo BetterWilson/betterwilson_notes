@@ -72,7 +72,8 @@ export const useInfoStore = defineStore('useInfoStore', () => {
 
 	function doLogin(info) {
 		// info={id:1, name:"wilson", token:"xxx"}
-		// 登录成功后，用户信息写到本地存储，并同步到pinia中；当页面刷新时，pinia可以重新去localStorage中获取用户信息
+		// After login, save user info to local storage and sync it to Pinia;
+		// on page refresh, Pinia can re-read user info from localStorage
 		localStorage.setItem("info", JSON.stringify(info))
 		userString.value = JSON.stringify(info)
 	}
@@ -93,12 +94,12 @@ import {useInfoStore} from "@/stores/counter.js";
 const router = useRouter()
 
 function doLogin() {
-  // 发送网络请求
-  // pinia存储用户信息
+  // Send network request
+  // Store user info in Pinia
   const store = useInfoStore()
   let info = {id:1, name:username.value, token:"xxx"}
   store.doLogin(info)
-  // 成功后跳转
+  // Redirect on success
   router.push({name: "mine"})
 }
 

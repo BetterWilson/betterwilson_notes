@@ -8,7 +8,7 @@ Two approaches:
 
   ```javascript
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  或
+  or
   <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.3.4/vue.global.prod.js"></script>
   ```
 
@@ -69,9 +69,9 @@ Both the Composition API and the Options API are provided by Vue. However, when 
 <body>
 
 <div id="app">
-    <h1>欢迎{{name}}-余额{{balance}}</h1>
-    <input type="button" value="点击充值" @click="doCharge">
-    <input type="button" value="双击充值" @dblclick="doCharge2">
+    <h1>Welcome {{name}} - Balance {{balance}}</h1>
+    <input type="button" value="Recharge on Click" @click="doCharge">
+    <input type="button" value="Recharge on Double-Click" @dblclick="doCharge2">
 </div>
 
 <script>
@@ -84,11 +84,11 @@ Both the Composition API and the Options API are provided by Vue. However, when 
 		},
 		methods: {
 			doCharge: function () {
-				alert("点击")
+				alert("Clicked")
 				this.name = "Wilson2"
 			},
 			doCharge2: function () {
-				alert("双击")
+				alert("Double-clicked")
 				this.balance += 1000
 			}
 		}
@@ -125,20 +125,20 @@ When using the Composition API, the code conventions we must follow are:
 
   ```html
   <div id="app">
-      <h1>欢迎{{name}}-余额{{balance}}</h1>
-      <input type="button" value="点击充值" @click="doCharge">
-      <input type="button" value="双击充值" @dblclick="doCharge2">
+      <h1>Welcome {{name}} - Balance {{balance}}</h1>
+      <input type="button" value="Recharge on Click" @click="doCharge">
+      <input type="button" value="Recharge on Double-Click" @dblclick="doCharge2">
   </div>
   
   <script>
   var app = Vue.createApp({
   	methods: {
   		doCharge: function () {
-  			alert("点击")
+  			alert("Clicked")
   			this.name = "Wilson2"
   		},
   		doCharge2: function () {
-  			alert("双击")
+  			alert("Double-clicked")
   			this.balance += 1000
   		}
   	}
@@ -160,9 +160,9 @@ Here I only cover the difference between the Options API and the Composition API
 <body>
 
 <div id="app">
-    <h1>欢迎{{name}}-余额{{balance}}</h1>
-    <input type="button" value="点击充值" @click="doCharge">
-    <input type="button" value="双击充值" @dblclick="doCharge2">
+    <h1>Welcome {{name}} - Balance {{balance}}</h1>
+    <input type="button" value="Recharge on Click" @click="doCharge">
+    <input type="button" value="Recharge on Double-Click" @dblclick="doCharge2">
 </div>
 
 <script>
@@ -245,9 +245,9 @@ Vue also provides a simpler way: we can write `setup` inside `<script>`, so we d
 <body>
 
 <div id="app">
-    <h1>欢迎{{name}}-余额{{balance}}</h1>
-    <input type="button" value="点击充值" @click="doCharge">
-    <input type="button" value="双击充值" @dblclick="doCharge2">
+    <h1>Welcome {{name}} - Balance {{balance}}</h1>
+    <input type="button" value="Recharge on Click" @click="doCharge">
+    <input type="button" value="Recharge on Double-Click" @dblclick="doCharge2">
 </div>
 
 <script setup>
@@ -352,9 +352,9 @@ In Vue, constants and variables cannot be modified directly. When we need to mod
 
   ```html
   <div id="app">
-      <h1>欢迎{{name}}-余额{{balance}}</h1>
+      <h1>Welcome {{name}} - Balance {{balance}}</h1>
       <h1>{{info.city}}-{{info.size}}</h1>
-      <input type="button" value="修改" @click="doChange">
+      <input type="button" value="Modify" @click="doChange">
   </div>
   
   <script>
@@ -364,17 +364,17 @@ In Vue, constants and variables cannot be modified directly. When we need to mod
   			var name = ref("Wilson")
   			var balance = ref(1000)
   			var info = ref({
-  				city: "北京",
+  				city: "Beijing",
   				size: 1000
   			})
   			var doChange = function () {
   				name.value = "Wilson999"
   				balance.value = 999
-  				info.value.city = "广州"
+  				info.value.city = "Guangzhou"
   				info.value.size = 999
-                  // ref还支持整体修改
+                  // ref also supports full replacement
   				info = {
-  					city: "南京",
+  					city: "Nanjing",
   					size: 666
   				}
   			}
@@ -393,9 +393,9 @@ In Vue, constants and variables cannot be modified directly. When we need to mod
 
   ```html
   <div id="app">
-      <h1>欢迎{{name}}-余额{{balance}}</h1>
+      <h1>Welcome {{name}} - Balance {{balance}}</h1>
       <h1>{{info.city}}-{{info.size}}</h1>
-      <input type="button" value="修改" @click="doChange">
+      <input type="button" value="Modify" @click="doChange">
   </div>
   
   <script>
@@ -405,13 +405,13 @@ In Vue, constants and variables cannot be modified directly. When we need to mod
   			var name = ref("Wilson")
   			var balance = ref(1000)
   			var info = reactive({
-  				city: "北京",
+  				city: "Beijing",
   				size: 1000
   			})
   			var doChange = function () {
   				name.value = "Wilson999"
   				balance.value = 999
-  				info.city = "广州"
+  				info.city = "Guangzhou"
   				info.size = 999
   			}
   			return {name, balance, info, doChange}
@@ -429,14 +429,14 @@ Note: the area enclosed by `{{}}` is a JS syntax region, where some JS syntax ca
 
 ```html
 <div id="app">
-    <h1>欢迎{{name}}-余额{{balance}}</h1>
+    <h1>Welcome {{name}} - Balance {{balance}}</h1>
     <h1>{{info.city}}-{{info.size}}</h1>
-    <input type="button" value="修改" @click="doChange">
+    <input type="button" value="Modify" @click="doChange">
     <hr>
     <ul>
-        <li>{{"中国北京"}}</li>
-        <li>{{"Wilson" + "中国北京"}}</li>
-        <!--三元表达式-->
+        <li>{{"Beijing, China"}}</li>
+        <li>{{"Wilson" + "Beijing, China"}}</li>
+        <!--Ternary expression-->
         <li>{{1 === 1 ? "Ture" : "False"}}</li>
         <li>{{balance > 500 ? "Ture" : "False"}}</li>
     </ul>
@@ -448,7 +448,7 @@ Note: the area enclosed by `{{}}` is a JS syntax region, where some JS syntax ca
 			var name = ref("Wilson")
 			var balance = ref(100)
 			var info = reactive({
-				city: "北京",
+				city: "Beijing",
 				size: 1000
 			})
 			var doChange = function () {
@@ -488,10 +488,10 @@ Similarly, the `v-bind` directive also supports ternary expressions.
 <body>
 
 <div id="app">
-    <h3 v-bind:class="[green, pink]">北京</h3>
-    <h4 v-bind:style="{color:'red', fontSize: '19px'}">上海</h4>
+    <h3 v-bind:class="[green, pink]">Beijing</h3>
+    <h4 v-bind:style="{color:'red', fontSize: '19px'}">Shanghai</h4>
     <img v-bind:src="url" v-bind:class="cls" class="">
-    <input type="button" value="修改" @click="doCharge">
+    <input type="button" value="Modify" @click="doCharge">
 </div>
 
 
@@ -542,7 +542,7 @@ Options API:
 
 <div id="app">
     <h3>{{city}}</h3>
-    <input type="text" placeholder="请输入指令" v-model="user">
+    <input type="text" placeholder="Enter command" v-model="user">
     <h4>{{user}}</h4>
 </div>
 
@@ -550,7 +550,7 @@ Options API:
 	const {createApp, ref, reactive} = Vue
 	var app = createApp({
 		setup: function () {
-                const city= ref("北京")
+                const city= ref("Beijing")
                 const user = ref("wilson")
 			return {city, user}
 		},
@@ -576,7 +576,7 @@ Composition API:
 
 <div id="app">
     <h3>{{city}}</h3>
-    <input type="text" placeholder="请输入指令" v-model="user">
+    <input type="text" placeholder="Enter command" v-model="user">
     <h4>{{user}}</h4>
 </div>
 
@@ -622,7 +622,7 @@ v-for is used for iterating over lists.
 	const {createApp, ref, reactive} = Vue
 	var app = createApp({
 		setup: function () {
-			    const cityList = ["北京", "上海" ,"深圳"]
+			    const cityList = ["Beijing", "Shanghai" ,"Shenzhen"]
 			return {cityList}
 		},
 	});
@@ -649,7 +649,7 @@ v-show controls whether a tag is displayed.
 
 <div id="app">
     <div>
-        <button @click="show">展示</button>
+        <button @click="show">Show</button>
     </div>
     <div v-show="isshow">
         <h1>Wilson</h1>
@@ -703,8 +703,8 @@ Related events include: click, dbclick, mouseover, mouseover...
 
 <div id="app">
 
-    <h1 style="background-color:cornflowerblue;width: 300px;height: 400px " @mouseover="doSomething('进入')"
-        @mouseout="doSomething('出去')">北京</h1>
+    <h1 style="background-color:cornflowerblue;width: 300px;height: 400px " @mouseover="doSomething('Enter')"
+        @mouseout="doSomething('Leave')">Beijing</h1>
 
 </div>
 

@@ -11,10 +11,10 @@ Quick start:
 ```python
 import redis
 
-# 创建连接对象，后续操作都是通过连接对象来操作，方式1
+# Create a connection object; all subsequent operations are performed through it, method 1
 conn1 = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8', decode_responses=True, db=0)
 
-# 创建连接对象，后续操作都是通过连接对象来操作，方式2
+# Create a connection object; all subsequent operations are performed through it, method 2
 conn2 = redis.Redis.from_url("redis://:1234@127.0.0.1:6379/0")
 conn1.set('k1', 'v1')
 print(conn1.get('k1'))
@@ -42,7 +42,7 @@ pool = redis.ConnectionPool(
     password="1234",
     db=0,
     max_connections=100,
-    decode_responses=True  # 如果使用这个参数，那么必须在连接池中声明
+    decode_responses=True  # If using this parameter, it must be declared in the connection pool
 )
 conn = redis.Redis(connection_pool=pool)
 conn.set('k1', 'v1')
@@ -68,46 +68,46 @@ So how is the connection object handled after the operation completes? In the `r
 import time
 import redis
 
-# 创建连接对象，后续操作都是通过连接对象来操作，方式1
+# Create a connection object; all subsequent operations are performed through it, method 1
 conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8', decode_responses=True, db=0)
 
 
 
-# ------------------ 通用操作 ------------------
-print(conn.keys("*"))  # 获取当前数据库下所有的key，尽量避免在生产中使用
+# ------------------ General operations ------------------
+print(conn.keys("*"))  # Get all keys in the current database; avoid using this in production whenever possible
 
-# 返回k1的value类型
+# Return the value type of k1
 print(conn.type('k1'))  # string
 
-# 判断 key 是否存在
+# Check if the key exists
 print(conn.exists('k1'))  # 1
 print(conn.exists('k8888'))  # 0
 
-# 重命名
+# Rename
 conn.rename('k1', 'k11')
 print(conn.get('k11'))
 
-# 删除key,key不存在返回0，key存在，且删除成功返回1
+# Delete a key; returns 0 if the key doesn't exist, returns 1 if the key exists and is deleted successfully
 print(conn.delete('k2'))
 
-# 设置过期时间
-conn.set('k1', 'v1')  # 起始是没有过期时间的
+# Set expiration time
+conn.set('k1', 'v1')  # Initially there is no expiration time
 time.sleep(5)
-conn.expire('k1', 10)  # 给它设置上过期时间
-conn.persist('k3')    # 取消过期时间
+conn.expire('k1', 10)  # Set the expiration time for it
+conn.persist('k3')    # Remove the expiration time
 
-# 返回key的剩余过期时间
+# Return the remaining TTL of the key
 conn.set('k1', 'v1')
-print(conn.ttl('k1'))  # -1 表示没有设置生存时间
+print(conn.ttl('k1'))  # -1 means no expiration time has been set
 conn.set('k1', 'v1', ex=10)
 print(conn.ttl('k1'))  # 10
 time.sleep(2)
 print(conn.ttl('k1'))  # 8
 
-# 返回数据库中key的数量，生产可用
+# Return the number of keys in the database; safe for production use
 print(conn.dbsize())
 
-# 清空数据库的所有key，生产禁用
+# Flush all keys from the database; never use this in production
 print(conn.flushall())  # True
 print(conn.dbsize())    # 0
 ```
@@ -119,51 +119,51 @@ print(conn.dbsize())    # 0
 ```python
 import redis
 
-# 创建连接对象，后续操作都是通过连接对象来操作，方式1
+# Create a connection object; all subsequent operations are performed through it, method 1
 conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8', decode_responses=True, db=0)
 
 
 
-# ------------------ 字符串操作 ------------------
+# ------------------ String operations ------------------
 
-# 设置一个值
-conn.set('k1', 'v1')  # 没有过期时间限制
-conn.set('k1', 'v1', ex=10)  # ex: 过期时间：秒
+# Set a value
+conn.set('k1', 'v1')  # No expiration time limit
+conn.set('k1', 'v1', ex=10)  # ex: expiration time in seconds
 
-# 设置一个值，带过期时间
-conn.setex('k2', 10, 'v1')  # 过期时间：秒
+# Set a value with expiration time
+conn.setex('k2', 10, 'v1')  # expiration time: seconds
 
-# 先get，不存在返回None，存在返回上一次的值，然后再设置一个新值
+# get first, return None if not exists, return previous value if exists, then set a new value
 print(conn.getset('k1', 'v11'))
 print(conn.get('k1'))
 
-# 如果key不存在，就设置一个key:value，如果key存在则什么都不做
+# If key does not exist, set a key:value; if key exists, do nothing
 conn.setnx('k3', 'v3')
 print(conn.get('k3'))
 
-# 批量设置值和取值
+# Batch set and get values
 d = {'k1': "v1", "k2": "v2"}
 conn.mset(mapping=d)
 conn.set('k3', 'v3')
-print(conn.mget('k1', 'k2'))  # 批量获取
-print(conn.mget(d.keys()))  # 批量获取
-print(conn.keys("*"))  # 获取当前数据库下所有的key
+print(conn.mget('k1', 'k2'))  # Batch get
+print(conn.mget(d.keys()))  # Batch get
+print(conn.keys("*"))  # Get all keys in the current database
 
-# 如果key存在，返回值的长度，否则返回0
+# If key exists, return value length, otherwise return 0
 print(conn.strlen('k3'))
 
-# 查
-conn.set('k1', 'v1')  # 没有过期时间限制
-conn.set('k2', 'v2')  # 没有过期时间限制
+# Read
+conn.set('k1', 'v1')  # No expiration time limit
+conn.set('k2', 'v2')  # No expiration time limit
 print(conn.get('k1'))  # v1
 print(conn.keys('*'))
-# 删
-conn.set('k1', 'v1')  # 没有过期时间限制
+# Delete
+conn.set('k1', 'v1')  # No expiration time limit
 print(conn.get('k1'))  # v1
 conn.delete('k1')
 print(conn.get('k1'))  # None
 
-# 修改，起始就是从新赋值就完了
+# Update, essentially just reassign
 conn.set('k1', 'v1')
 print(conn.get('k1'))  # v1
 conn.set('k1', 'v111')
@@ -175,28 +175,28 @@ print(conn.get('k1'))  # v111
 ```python
 import redis
 
-# 创建连接对象，后续操作都是通过连接对象来操作，方式1
+# Create a connection object; all subsequent operations are performed through it, method 1
 conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8', decode_responses=True, db=0)
 
-# ------------------ 字符串计数功能 ------------------
-# 每次调用incr命令，num值自加一
+# ------------------ String counter functionality ------------------
+# Each incr call increments num by one
 conn.set('num', 1)
 print(conn.get('num'))
 for i in range(5):
     print(conn.incr('num'))
 
-# 一次性累加指定数
+# Increment by a specified number at once
 conn.set('num', 1)
 print(conn.incrby('num', 1000))  # 1001
 print(conn.get('num'))  # 1001
 
-# decr 使num自减一
+# decr decrements num by one
 conn.set('num', 10)
 for i in range(5):
     print(conn.decr('num'))
 print(conn.get('num'))  # 5
 
-# 一次性累减指定数
+# Decrement by a specified number at once
 conn.set('num', 10)
 print(conn.decrby('num', 8))  # 2
 print(conn.get('num'))  # 2
@@ -215,53 +215,53 @@ conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8
 data = {"id": 1, "user": "zhangsan", 'age': 18}
 
 conn.hmset('user1', mapping=data)
-conn.hset(name='user2', key="name", value='zhangsan')  # 这种写法没问题
-conn.hset(name='user3', mapping=data)  # 这种写法，有问题
+conn.hset(name='user2', key="name", value='zhangsan')  # This way of writing is fine
+conn.hset(name='user3', mapping=data)  # This way of writing has issues
 print(conn.hget('user3', 'name'))
 """
-关于conn.hset(name='user3', mapping=data)：
-    hmset：
-        兼容redis低版本(redis3.2.100)和高版本(redis5.0.7及以上)    
-        但高版本不推荐使用这个方法了，虽然能用，但是运行有warning
-        高版本的redis推荐使用hset来代替hmset
-        至于低版本的redis使用hmset有warning的话，请忽略
+About conn.hset(name='user3', mapping=data):
+    hmset:
+        Compatible with low Redis versions (redis3.2.100) and high versions (redis5.0.7+)    
+        Not recommended for high versions, works but produces warnings
+        High version Redis recommends using hset instead of hmset
+        If low version Redis shows warnings with hmset, please ignore
     hset
-        低版本的redis(redis3.2.100)用这个报错：redis.exceptions.ResponseError: wrong number of arguments for 'hset' command
-        但高版本的redis就不报错
-    最终：如果你用的redis版本较低如Redis3，请用hmset，如果redis版本较高Redis5，请用hset
+        Low version Redis (redis3.2.100) throws error: redis.exceptions.ResponseError: wrong number of arguments for 'hset' command
+        But high version Redis does not throw error
+    Final: if using low Redis version like Redis3, use hmset; if using high version like Redis5, use hset
 """
 
-# 获取指定字段的值
+# Get the value of a specified field
 print(conn.hget('user1', 'id'))
-# 获取多个字典的值
+# Get values of multiple fields
 print(conn.hmget('user1', "id", "user"))
-# 返回所有字段和值
+# Return all fields and values
 print(conn.hgetall('user1'))
 
-# 返回key中所有的字段
+# Return all fields in the key
 print(conn.hkeys('user1'))
-# 返回key中所有的字段值
+# Return all field values in the key
 print(conn.hvals('user1'))
-# 判断指定字段是否存在，存在返回1，否则返回0
+# Check if specified field exists, return 1 if exists, otherwise 0
 print(conn.hexists('user1', 'id'))
-# 返回key中所有字段的数量
+# Return the number of fields in the key
 print(conn.hlen('user1'))
-# 为整型字段的值加固定数字
+# Add a fixed number to an integer field
 print(conn.hincrby('user1', "age", 10))
-# 为指定字段重新赋值
+# Reassign a value to a specified field
 print(conn.hset('user1', "age", 12))
 print(conn.hget('user1', 'age'))
 
-# 当key不存在，创建该key，并且设置上指定的字段和值
+# When key does not exist, create it and set specified field and value
 print(conn.hgetall('user5'))
 print(conn.hsetnx('user5', 'addr2', "beijing2"))
 print(conn.hgetall('user5'))
 
-# 当key存在，想要设置的字段和值存在，不生效
+# When key exists, if the field and value to be set already exist, it has no effect
 print(conn.hgetall('user1'))
 print(conn.hsetnx('user1', 'addr', "beijing"))
 print(conn.hgetall('user1'))
-# 当key存在，指想要设置的字段值如果不存在则设置上该字段和值
+# When key exists, if the field value to be set does not exist, set it
 print(conn.hsetnx('user4', 'age', 30))
 print(conn.hgetall('user1'))
 print(conn.hsetnx('user1', 'addr2', "beijing2"))
@@ -283,7 +283,7 @@ conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8
 data = {"id": 1, "user": "zhangsan", 'age': 18}
 conn.hmset('user1', mapping=data)
 print(conn.hgetall('user1'))
-conn.expire('user1', 8)  # 过期时间: 秒
+conn.expire('user1', 8)  # expiration time: seconds
 time.sleep(10)
 print(conn.hgetall('user1'))
 ```
@@ -298,56 +298,56 @@ conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8
 # ------------------ list ------------------
 l1 = ['a', 'b', 'c', 'd']
 # conn.lpush('l1', 'a', 'b', 'c')
-# 批量插入列表
+# Batch insert into list
 conn.lpush('l1', *l1)
-# 如果 key 存在则插入，不存在则什么也不做
+# If key exists then insert, otherwise do nothing
 conn.lpushx('l1', 'd')
 conn.lpushx('l2', 'w')
 
-# 从列表的左侧找到元素a，即不往后找了，然后在元素 a 前面/后面插入一个元素
+# Find element a from the left side of the list, i.e. do not search further, then insert an element before/after a
 conn.linsert('l1', 'before', 'c', 'x')
 conn.linsert('l1', 'after', 'c', 'z')
 
-# 在列表尾部追加 元素 1   注意，插入的整型元素也会转变为str类型
+# Append element 1 to the tail of the list. Note: integer elements will also be converted to str
 print(conn.lrange('l1', 0, -1))
 # conn.rpush('l1', 1)
-# 在列表尾部先追加 2 再追加 3
+# First append 2 then append 3 to the tail
 conn.rpush('l1', 2, 3)
 print(conn.lrange('l1', 0, -1))
-# 如果列表 l1 存在就将元素4追加到列表尾部，如果列表不存在则什么也不做
+# If list l1 exists, append element 4 to the tail; if not, do nothing
 conn.rpushx('l1', 4)
 
-# 根据索引下标返回元素
+# Return element by index
 print(conn.lindex('l1', 1))
-# 从索引0开始取到-1，也就是从头取到尾，获取列表中的所有元素
+# From index 0 to -1, i.e. from head to tail, get all elements in the list
 print(conn.lrange('l1', 0, -1))
-# 取索引 0 1 2 三个索引对应的元素
+# Get elements at indexes 0 1 2
 print(conn.lrange('l1', 0, 2))
-# 取索引下标为 2 对应的元素
+# Get element at index 2
 print(conn.lrange('l1', 2, 2))
-# 如果索引不在合法范围内，则取空
+# If index is out of range, return empty
 print(conn.lrange('l1', 8, 9))
-# 返回列表的长度
+# Return list length
 print(conn.llen('l1'))
 
-# 抛出列表头部/尾部元素
+# Pop head/tail element from list
 print(conn.lpop('l1'))
 print(conn.rpop('l1'))
 
-# 将列表 l1 尾部的元素抛出并且添加到列表 l2 中，l2不存在则自动创建
+# Pop tail element from l1 and add to l2; l2 is auto-created if it does not exist
 conn.rpoplpush('l1', 'l2')
 
-# 从左到右，删除指定个数的元素 a1 ，本示例中，若 a1 有 1 个，就删一个，若 a1  有 3 个或者更多，也就删除 2 个
+# From left to right, delete specified count of element a1. In this example, if there is 1 a1, delete one; if there are 3 or more, still delete 2
 l3 = ['a1', 'a2', 'a1', 'a3', 'a1', 'a4', 'a5']
 conn.lpush('l3', *l3)
 print(conn.lrem('l3', 2, 'a1'))
 print(conn.lrange('l3', 0, -1))
-# 保留索引2-4的元素，其余删除
+# Keep elements at indexes 2-4, delete the rest
 conn.ltrim('l3', 2, 4)
 print(conn.lrange('l3', 0, -1))
 
 
-# 将列表索引为0的元素修改为指定值，如果索引位置不存在则报错
+# Modify element at index 0 to specified value; error if index does not exist
 l1 = ['a', 'b', 'c', 'd']
 conn.lpush('l1', *l1)
 print(conn.lrange('l1', 0, -1))
@@ -355,7 +355,7 @@ conn.lset('l1', 0, 'w')
 print(conn.lrange('l1', 0, -1))
 
 
-# 删除列表
+# Delete list
 conn.delete('l1')
 ```
 
@@ -367,35 +367,35 @@ import redis
 conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8', decode_responses=True, db=0)
 
 # ------------------ set ------------------
-# 增
-# 声明集合s1，并添加多个元素，也可以是一个元素，也可以批量添加多个元素
+# Add
+# Declare set s1 and add multiple elements; can be one element or batch add
 conn.sadd('s1', 'a')
-# 对于整型同样转为str, 且元素不能重复，且是无序的
+# Integers are also converted to str, elements must be unique, and order is not guaranteed
 conn.sadd('s1', 'a', 'b', 'c', 1, 2, 3, 1)
 
-# 查
+# Read
 conn.sadd('s1', *{'a', 'b', 'c', 1, 2, 3, 1})
-# 返回 s1 中所有元素
+# Return all elements in s1
 print(conn.smembers('s1'))
-# 返回 s1 中元素的个数
+# Return the count of elements in s1
 print(conn.scard('s1'))
-# 随机返回集合中的元素
+# Randomly return an element from the set
 print(conn.srandmember('s1'))
-# 判断元素 a 是否存在
+# Check if element a exists
 print(conn.sismember('s1', 'a'))
 
-# 删除
+# Delete
 conn.sadd('s1', *{'a', 'b', 'c', 1, 2, 3, 1})
-# 随机删除一个元素，并将这个元素返回
+# Randomly delete an element and return it
 print(conn.spop('s1'))
-# 删除整个集合
+# Delete entire set
 print(conn.delete('s1'))
 
 
-# 移动
-# 将元素 a 从s1移动到s2中，如果s2不存在，就先创建再移动
+# Move
+# Move element a from s1 to s2; if s2 does not exist, create it first then move
 conn.sadd('s1', *{'a', 'b', 'c', 1, 2, 3, 1})
-print(conn.smove('s1', 's2', 'w'))  # s1中没有该元素则啥也不做，并返回False
+print(conn.smove('s1', 's2', 'w'))  # If s1 does not have this element, do nothing and return False
 print(conn.smove('s1', 's2', 'a'))
 print(conn.smembers('s1'))
 print(conn.smembers('s2'))
@@ -409,7 +409,7 @@ import redis
 conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8', decode_responses=True, db=0)
 
 # ------------------ zset ------------------
-# 增
+# Add
 score = {
     "zhangsan": 108,
     "likai": 99,
@@ -418,78 +418,78 @@ score = {
 }
 conn.zadd('score', mapping=score)
 
-# 查, withscores是可选参数,表示同时返回所有成员和分数
+# Read, withscores is optional, indicates returning all members and scores
 print(conn.zrange('score', 0, -1))
 print(conn.zrange('score', 0, -1, withscores=True))
-# 升序/降序排序返回成员和得分
+# Return members and scores in ascending/descending order
 print(conn.zrange('score', 0, -1, withscores=True))
 print(conn.zrevrange('score', 0, -1, withscores=True))
 
-# 返回成员在有序集合中的索引下标，如果成员不存在返回None
+# Return index of member in sorted set; return None if member does not exist
 print(conn.zrank('score', 'zhangsan'))
 print(conn.zrank('score', 'w'))  # None
 
-# 返回成员的总数量
+# Return total number of members
 print(conn.zcard('score'))
 
-# 升序返回score中所有成员和分数
+# Return all members and scores in ascending order
 print(conn.zrangebyscore('score', '-inf', '+inf', withscores=True))
-# # 加减不能调换位置
+# # Plus/minus cannot be swapped
 print(conn.zrangebyscore('score', '+inf', '-inf', withscores=True))
 
-# 升序返回score中分数在 100 <= 分数 <= 200 这个范围内的成员/分数
+# Return members/scores in ascending order where 100 <= score <= 200
 print(conn.zrangebyscore('score', 100, 200))
 print(conn.zrangebyscore('score', 100, 200, withscores=True))
 
-# 返回score中分数在 100 <= 分数 <= 200 这个范围内的成员的数量
+# Return count of members in score where 100 <= score <= 200
 print(conn.zcount('score', 100, 200))
 
-# 返回score中所有成员/分数，并且以索引从大到小排序
+# Return all members/scores sorted by index from large to small
 print(conn.zrevrange('score', 0, -1, withscores=True))
 
-# 返回降序集合score中 0 <= index <= 2 索引范围内的成员
+# Return members in descending sorted set score within index range 0 <= index <= 2
 print(conn.zrevrange('score', 0, 2))
 
 
-# 返回score中分数范围在 120 <= 的 <= 100 范围内的成员，并以大到小降序排序
-# 注意，源码中的min和max位置和其他的方法不一样，其他的都是min,max, 这个方法是max，min
-# 所以，按下面这么写，你要把大的值放前面
+# Return members in score within score range 120 >= score >= 100, sorted descending
+# Note: min and max positions in source code differ from other methods; others are min,max, this one is max,min
+# So, as written below, put the larger value first
 print(conn.zrevrangebyscore('score', 120, 100, withscores=True))
-# 或者这样写,指名道姓的传值也行
+# Or write it this way, explicitly passing values also works
 print(conn.zrevrangebyscore('score', min=100, max=120, withscores=True))
 
-# 改
-# 为指定成员重新赋值
+# Update
+# Reassign value to specified member
 print(conn.zrevrange('score', 0, -1, withscores=True))
-print(conn.zadd('score',  mapping={"zhangsan": 110}))  # 修改其得分，可以同时修改多个
-print(conn.zadd('score',  mapping={"zhangsan": 120, 'sunkai': 12}))  # 修改其得分，可以同时修改多个,也可以添加新的成员
+print(conn.zadd('score',  mapping={"zhangsan": 110}))  # Modify its score; can modify multiple at once
+print(conn.zadd('score',  mapping={"zhangsan": 120, 'sunkai': 12}))  # Modify its score; can modify multiple at once,or add new members
 print(conn.zrevrange('score', 0, -1, withscores=True))
 
 
 
-# 为指定成员增加指定分数，并返回增加后的分数
+# Add specified score to a member and return the new score
 print(conn.zscore('score', 'zhangsan'))
 print(conn.zincrby('score',  5, 'zhangsan'))
 print(conn.zscore('score', 'zhangsan'))
 
-# 删除
-# 删除分数在指定范围(包含)内的成员，并返回删除成员的数量
+# Delete
+# Delete members with scores in specified range (inclusive) and return count of deleted members
 print(conn.zrange('score', 0, -1, withscores=True))
 print(conn.zremrangebyscore('score', 90, 100))
 print(conn.zrange('score', 0, -1, withscores=True))
 
 
-# 删除score中指定索引范围内 0 <= index <= 2 的成员，并返回删除成员的数量
+# Delete members in score within specified index range 0 <= index <= 2 and return count
 print(conn.zrange('score', 0, -1, withscores=True))
 print(conn.zremrangebyrank('score', 0, 2))
 print(conn.zrange('score', 0, -1, withscores=True))
 
-# 删除score中一个或者多个成员，返回实际删除的个数
+# Delete one or more members in score, return actual count deleted
 print(conn.zrange('score', 0, -1, withscores=True))
 print(conn.zrem('score', *{"zhangsan", 'likai'}))
 print(conn.zrange('score', 0, -1, withscores=True))
 
-# 删除key
+# Delete key
 conn.delete('score')
 ```
 
@@ -508,13 +508,13 @@ Redis implements message queues with the `list` type, which supports adding and 
 ```python
 import redis
 
-# 创建连接对象，后续操作都是通过连接对象来操作
+# Create a connection object; all subsequent operations are performed through it
 conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', encoding='utf-8')
 
 conn.lpush('my_queue', 'root')
 conn.lpush('my_queue', 'admin')
 
-# 取值
+# Get value
 q1 = conn.brpop('my_queue', timeout=5)
 print(q1)  # (b'my_queue', b'root')
 print(q1[-1])  # b'root'
@@ -523,7 +523,7 @@ print(q1[-1].decode('utf8'))  # root
 q2 = conn.brpop('my_queue', timeout=5)
 print(q2)  # (b'my_queue', b'admin')
 
-# 由于队列中没有元素了，那么就会等5秒，然后不等了，返回None
+# Since queue has no elements, it will wait 5 seconds, then stop waiting and return None
 q3 = conn.brpop('my_queue', timeout=5)
 print(q3)  # None
 ```
@@ -544,13 +544,13 @@ pool = redis.ConnectionPool(
     password="1234",
     db=0,
     max_connections=2,
-    decode_responses=True  # 这个参数必须在连接池中声明
+    decode_responses=True  # This parameter must be declared in the connection pool
 )
 conn = redis.Redis(connection_pool=pool)
 
 
 def producer():
-    """ 生产者 """
+    """ Producer """
     count = 0
     while True:
         conn.lpush('my_queue', count)
@@ -562,25 +562,25 @@ def customer1():
     while True:
         res = conn.rpop('my_queue')
         if res:
-            print('\n消费者rpop，消费了: ', res)
-        print('\r消费者rpop啥都没拿到，默认返回{} {}'.format(res, '.' * random.randrange(1, 6)), end='')
+            print('\nConsumer rpop, consumed: ', res)
+        print('\rConsumer rpop got nothing, default returns {} {}'.format(res, '.' * random.randrange(1, 6)), end='')
         """
-        通过上面的打印效果，可以发现，conn.rpop的执行效果是一直取值
-        取不到值，返回None之后马不停蹄的接着取值，这个在生产中尽量不用，损耗性能
+        From the print output above, we can see that conn.rpop continuously tries to get values
+        If no value is retrieved, it immediately tries again after returning None; avoid in production as it wastes performance
         """
 
 
 def customer2():
     while True:
         res = conn.brpop('my_queue', timeout=5)
-        print('消费者brpop，消费了: ', res)
+        print('Consumer brpop, consumed: ', res)
         """
-        brpop可以设置阻塞时间，比如示例中的5秒
-        执行逻辑是这样的：
-            取值，取到了就消费掉，也就是赋值给res了，我们可以进行后续的处理
-            如果没有取到值，就阻塞5秒，这5秒内拿到值了，就消费掉，然后进行下一轮的阻塞取值
-            如果阻塞的5秒内，也没有取到值，就返回None，然后进行下一轮的阻塞取值
-        实际开发中，这个用的多一些
+        brpop can set blocking time, e.g. 5 seconds in this example
+        Execution logic is as follows:
+            Get value; if retrieved, consume it (assign to res), then we can process it
+            If no value retrieved, block for 5 seconds; if value retrieved within 5s, consume it and start next blocking get
+            If no value retrieved within 5s blocking, return None and start next blocking get
+        More commonly used in actual development
         """
 
 
@@ -603,69 +603,69 @@ from concurrent.futures import ThreadPoolExecutor
 
 class Product(object):
     def __init__(self):
-        # 这个示例中，多个订阅者，应该是多个独立的连接对象，所以不能共用一个连接池，一个订阅者一个脚本文件就没问题
+        # In this example, multiple subscribers should use multiple independent connection objects, so a shared pool cannot be used; one subscriber per script file is fine
         # self.conn = redis.Redis(connection_pool=pool)
         self.conn = redis.Redis(host='127.0.0.1', port=6379, password='1234', decode_responses=True)
         """
-        # 向指定频道发布消息
+        # Publish message to specified channel
         self.conn.publish(channel, message)
 
-        # 下面三行一起用
-        self.pub = self.conn.pubsub()  # 打开收音机
-        self.pub.subscribe(channel)   # 以列表的形式指定一个或者多个频道
-            channel: 以列表的形式指定一个或者多个频道['fm97.5', 'fm80.5', 'fm77.5']
-                     如果该频道有消息，则都会接收到
-        res = self.pub.listen()  # 准备接收消息
-        for msg in res:  # 从监听的这些频道中，拿到最新的消息
+        # Use the following three lines together
+        self.pub = self.conn.pubsub()  # Turn on the radio
+        self.pub.subscribe(channel)   # Specify one or more channels as a list
+            channel: specify one or more channels as a list ['fm97.5', 'fm80.5', 'fm77.5']
+                     If the channel has messages, they will all be received
+        res = self.pub.listen()  # Prepare to receive messages
+        for msg in res:  # Get the latest message from these monitored channels
             print(res)
 
-        # 取消订阅指定频道
+        # Unsubscribe from specified channel
         self.pub.unsubscribe(channel)
-            channel: 取消订阅一个或者多个频道['fm97.5', 'fm80.5', 'fm77.5']
+            channel: unsubscribe from one or more channels ['fm97.5', 'fm80.5', 'fm77.5']
         """
 
     def add_channel_msg(self):
-        """ 模拟发布消息：往不同的频道中添加消息 """
-        # 频道列表
+        """ Simulate publishing messages: add messages to different channels """
+        # Channel list
         self.pub_list = ['fm97.5', 'fm80.5', 'fm77.5']
         while True:
-            channel = random.choice(self.pub_list)  # 随机选出来一个频道
-            msg = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 处理消息
-            print(f"{channel},发布消息{msg}")
-            self.conn.publish(channel, msg)  # 往指定频道发布消息
+            channel = random.choice(self.pub_list)  # Randomly select a channel
+            msg = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # Process message
+            print(f"{channel}, published message {msg}")
+            self.conn.publish(channel, msg)  # Publish message to specified channel
             time.sleep(random.randrange(1, 3))
 
     def subscribe(self, channel):
         """
-        不同的消费者，通过传递不同的频道号，订阅该频道的消息
+        Different consumers subscribe to messages on the channel by passing different channel numbers
         channel: ['fm97.5', 'fm77.5']
         """
-        # 1. 打开收音机
+        # 1. Turn on the radio
         self.pub = self.conn.pubsub()
-        # 2. 调频
+        # 2. Tune frequency
         self.pub.subscribe(channel)
-        # 3. 监听我订阅的频道(可以是多个)
-        return self.pub.listen()  # 准备接收消息,后续就可以循环接受来自该频道发布的消息了
+        # 3. Listen to subscribed channels (can be multiple)
+        return self.pub.listen()  # Prepare to receive messages, can then loop to receive messages published to this channel
 
 
     def get(self, user, channel):
-        # 持续接受来自指定(多个)频道的消息
+        # Continuously receive messages from specified (multiple) channels
         for msg in self.subscribe(channel):  # channel = ['fm97.5', 'fm77.5']
-            print(f"用户{user}接受来自{msg['channel']}的消息: {msg}")
+            print(f"User {user} received message from {msg['channel']}: {msg}")
             time.sleep(1)
 
 
 if __name__ == '__main__':
 
     with ThreadPoolExecutor(4) as t:
-        # 整个连接对象，专门负责发布消息
+        # The entire connection object is dedicated to publishing messages
         t.submit(Product().add_channel_msg)
         user_dict = {
             "zhangsan": {'get': Product().get, 'channel': ['fm97.5', 'fm77.5']},
             "lisi": {'get': Product().get, 'channel': ['fm80.5']},
             "wangwu": {'get': Product().get, 'channel': ['fm97.5']},
         }
-        # 模拟三个订阅者，订阅指定频道的消息
+        # Simulate three subscribers subscribing to specified channel messages
         for k, v in user_dict.items():
             t.submit(v['get'], k, v['channel'])
 ```
@@ -708,20 +708,20 @@ pool = redis.ConnectionPool(
     password="1234",
     db=0,
     max_connections=2,
-    decode_responses=True  # 这个参数必须在连接池中声明
+    decode_responses=True  # This parameter must be declared in the connection pool
 )
 conn = redis.Redis(connection_pool=pool)
-# ------------------ pipeline基础写法 ------------------
-# 再执行多个命令之前，要创建好管道
+# ------------------ Pipeline basic usage ------------------
+# Before executing multiple commands, create the pipeline
 pipe = conn.pipeline()
-# 写法1(推荐)
+# Style 1 (recommended)
 pipe.set('k1', 'v1')
 pipe.set('k2', 'v2')
 
-# 写法2
+# Style 2
 pipe.set('k3', 'v3').set('k4', 'v4')
 
-# 批量执行多个命令，但注意，返回的是这几个命令的执行情况
+# Execute multiple commands in batch, but note that the return value is the execution status of these commands
 res = pipe.execute()
 print(res)  # [True, True, True, True]
 
@@ -732,7 +732,7 @@ pipe.get('k3').get('k4')
 res = pipe.execute()
 print(res)  # ['v1', 'v2', 'v3', 'v4']
 
-# ------------------ with管理pipeline ------------------
+# ------------------ Manage pipeline with with ------------------
 with conn.pipeline() as pipe:
     pipe.get('k1')
     pipe.get('k2')

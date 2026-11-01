@@ -23,8 +23,8 @@ These periodic tasks are what keep the Redis service running normally, and their
 redis-cli info Server
 redis-cli config get hz
 
-# 永久修改该参数的值，可以在其配置文件中指定如下参数：
-hz n     # n表示的是一个1~100返回的数值
+# To permanently modify this parameter, specify the following in the configuration file:
+hz n     # n is a value between 1 and 100
 ```
 
 **Typical application scenario**

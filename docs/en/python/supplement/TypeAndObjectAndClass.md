@@ -12,8 +12,8 @@ For example:
 ```python
 a = 1
 b = "abc"
-print(type(1))          # <class 'int'> 返回对象的类型
-print(type(int))        # <class 'type'> 表明这个类是由type生成的
+print(type(1))          # <class 'int'> returns the type of the object
+print(type(int))        # <class 'type'> indicates this class is created by type
 print(type(b))          # <class 'str'>
 print(type(str))        # <class 'type'>
 ```

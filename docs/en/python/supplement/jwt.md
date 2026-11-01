@@ -13,13 +13,13 @@ What is the difference between the traditional token approach and JWT in terms o
 - Traditional token approach
 
     ```
-    用户登录成功后，服务端生成一个随机token给用户，并且在服务端(数据库或缓存)中保存一份token，以后用户再来访问时需携带token，服务端接收到token之后，去数据库或缓存中进行校验token的是否超时、是否合法。
+    After the user logs in successfully, the server generates a random token for the user and stores a copy of the token on the server side (in the database or cache). Thereafter, the user must carry the token when making requests. Upon receiving the token, the server looks it up in the database or cache to verify whether the token has expired and whether it is valid.
     ```
 
 - JWT approach
 
     ```
-    用户登录成功后，服务端通过jwt生成一个随机token给用户（服务端无需保留token），以后用户再来访问时需携带token，服务端接收到token之后，通过jwt对token进行校验是否超时、是否合法。
+    After the user logs in successfully, the server uses JWT to generate a random token for the user (the server does not need to retain the token). Thereafter, the user must carry the token when making requests. Upon receiving the token, the server uses JWT to verify whether the token has expired and whether it is valid.
     ```
 
 ### 2. Creating a token with JWT
@@ -60,7 +60,7 @@ The generation rules are as follows:
     base64url(
         HMACSHA256(
           base64UrlEncode(header) + "." + base64UrlEncode(payload),
-          your-256-bit-secret (秘钥加盐)
+          your-256-bit-secret (secret key with salt)
         )
     )
     ```
@@ -88,17 +88,17 @@ Create a JWT token using Python's pyjwt module.
     
     
     def create_token():
-        # 构造header
+        # Construct the header
         headers = {
             'typ': 'jwt',
             'alg': 'HS256'
         }
     
-        # 构造payload
+        # Construct the payload
         payload = {
-            'user_id': 1,  # 自定义用户ID
-            'username': 'wupeiqi',  # 自定义用户名
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)  # 超时时间
+            'user_id': 1,  # Custom user ID
+            'username': 'wupeiqi',  # Custom username
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)  # Expiration time
         }
     
         result = jwt.encode(payload=payload, key=SALT.encode('utf-8'), algorithm="HS256", headers=headers)
@@ -133,24 +133,24 @@ SALT = 'iv%x6xo7l7_u9bf_u!9#g#m*)*=ej@bek5)(@u3kh*72+unjv='
 
 def get_payload(token):
     """
-    根据token获取payload
+    Get the payload based on the token
     :param token:
     :return:
     """
     try:
-        # 从token中获取payload【不校验合法性】
+        # Get the payload from the token [without validating]
         # unverified_payload = jwt.decode(token, None, False)
         # print(unverified_payload)
 
-        # 从token中获取payload【校验合法性】
+        # Get the payload from the token [with validation]
         verified_payload = jwt.decode(token, SALT, algorithms=["HS256"])
         return verified_payload
     except exceptions.ExpiredSignatureError:
-        print('token已失效')
+        print('Token has expired')
     except jwt.DecodeError:
-        print('token认证失败')
+        print('Token authentication failed')
     except jwt.InvalidTokenError:
-        print('非法的token')
+        print('Invalid token')
 
 
 if __name__ == '__main__':

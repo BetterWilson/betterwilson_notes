@@ -11,7 +11,7 @@
     ```python
     # settings.py
     REST_FRAMEWORK = {
-        "EXCEPTION_HANDLER": 'utils.handlers.exception_handler'		# 自定义的exceptional_handler路径
+        "EXCEPTION_HANDLER": 'utils.handlers.exception_handler'		# Path to custom exception_handler
     }
     ```
 
@@ -34,12 +34,12 @@ from rest_framework.response import Response
 class DemoView(APIView):
 
     def get(self, request: Request):
-        return Response({"name": "张三", "age": 22})
+        return Response({"name": "Zhang San", "age": 22})
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super().finalize_response(request, response, *args, **kwargs)
 
-        # 对数据进行改造
+        # Transform the data
         response.data = {"code": 0, "data": response.data}
         return response
 ```
@@ -79,7 +79,7 @@ def exception_handler(exc, context):
     elif isinstance(exc, ValidationError):
         exc.ret_code = 1005
 
-    # 处理drf相关的异常
+    # Handle DRF-related exceptions
     if isinstance(exc, exceptions.APIException):
         headers = {}
         if getattr(exc, 'auth_header', None):
@@ -117,7 +117,7 @@ from utils import return_code
 
 
 def exception_handler(exc, context):
-    exc.status_code = status.HTTP_200_OK    # 更改HTTP返回值状态码，方便前端编写
+    exc.status_code = status.HTTP_200_OK    # Change HTTP response status code for easier frontend handling
     if isinstance(exc, Http404):
         exc = exceptions.NotFound()
         exc.ret_code = return_code.NotFound404
@@ -133,7 +133,7 @@ def exception_handler(exc, context):
     elif isinstance(exc, ValidationError):
         exc.ret_code = return_code.ValidationError
 
-    # 处理drf相关的异常
+    # Handle DRF-related exceptions
     if isinstance(exc, exceptions.APIException):
         headers = {}
         if getattr(exc, 'auth_header', None):
@@ -190,7 +190,7 @@ from utils.exceptions import ExtraException
 
 class ExtraAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        raise exceptions.AuthenticationFailed("认证失败")
+        raise exceptions.AuthenticationFailed("Authentication failed")
 
     def authenticate_header(self, request):
         return "api"
@@ -225,9 +225,9 @@ class DemoView(ListModelMixin, CreateModelMixin, RetrieveModelMixin, DestroyMode
 
     def perform_create(self, serializer):
         if True:
-            # 自定义错误
-            # raise ExtraException("数据异常")
-            raise ExtraException("更新失败", ret_code=9000)
+            # Custom error
+            # raise ExtraException("Data anomaly")
+            raise ExtraException("Update failed", ret_code=9000)
         serializer.save()
 
     def finalize_response(self, request, response, *args, **kwargs):
@@ -269,7 +269,7 @@ class Demo1View(APIView):
                 models.UserInfo.objects.create(name='v1', age=1)
                 models.Order.objects.create(name='v1', age=1)
         except Exception as e:
-            print("异常，自动回滚")
+            print("Exception, auto-rollback")
 
         return Response("...")
 ```
@@ -293,14 +293,14 @@ class Demo1View(APIView):
     def get(self, request, *args, **kwargs):
         try:
             with transaction.atomic():
-                # 回调函数，事务正常提交自动执行
+                # Callback function, automatically executed on successful transaction commit
                 transaction.on_commit(db_success_callback)
                 transaction.on_commit( partial(db_success_callback, 11, 22, 33) )
 
                 models.UserInfo.objects.create(name='v1', age=1)
                 models.Order.objects.create(title='v1', count=1)
         except Exception as e:
-            print("异常，自动回滚") # on_commit回调函数内部异常时不会回滚
+            print("Exception, auto-rollback") # Exceptions inside on_commit callbacks will not trigger rollback
 
         return Response("...")
 ```
@@ -322,16 +322,16 @@ class Demo1View(APIView):
     def get(self, request, *args, **kwargs):
         try:
             with transaction.atomic():
-                # 回调函数，事务正常提交自动执行
+                # Callback function, automatically executed on successful transaction commit
                 n1 = transaction.savepoint()
                 models.UserInfo.objects.create(name='v1', age=1)
                 n2 = transaction.savepoint()
                 models.UserInfo.objects.create(name='v2', age=1)
 
-                # 必须在事务里面，回顾到指定 事务点，后续东西不提交
+                # Must be inside the transaction; rollback to the specified savepoint so subsequent changes are not committed
                 transaction.savepoint_rollback(n2)
         except Exception as e:
-            print("异常，自动回滚", e)  # on_commit回调函数内部异常时不会回滚
+            print("Exception, auto-rollback", e)  # Exceptions inside on_commit callbacks will not trigger rollback
 
         return Response("...")
 ```
@@ -368,8 +368,8 @@ class Demo1View(APIView):
     def get(self, request, *args, **kwargs):
         try:
             models.UserInfo.objects.create(name='v100', age=1)
-            models.UserInfo.objects.create(name="v200", age="xxx")  # 有异常，回滚，即：v100不会保存
-            int("asdf")   # 有异常，不会滚，即：两条数据正常保存到数据库
+            models.UserInfo.objects.create(name="v200", age="xxx")  # Exception occurs, rollback, i.e., v100 will not be saved
+            int("asdf")   # Exception occurs, no rollback, i.e., both records are saved to the database normally
         except Exception as e:
             pass
         return Response("...")
@@ -402,10 +402,10 @@ class Demo1View(APIView):
             n3 = transaction.savepoint()
             models.UserInfo.objects.create(name='v13', age=1)
             
-            # 后续读取到某些值后，发现 v12不应该创建，那么就可以主动回滚
+            # After reading some values, if v12 should not have been created, you can actively roll back
             transaction.savepoint_rollback(n1)
         except Exception as e:
-            print("有异常", e)
+            print("Exception occurred", e)
         return Response("...")
 ```
 
@@ -441,7 +441,7 @@ DATABASES = {
   class Demo1View(APIView):
       def get(self, request, *args, **kwargs):
           models.UserInfo.objects.create(name='v1', age=1)
-          models.UserInfo.objects.create(xxxxxxx='v2', age=1) # 错误
+          models.UserInfo.objects.create(xxxxxxx='v2', age=1) # Error
           return Response("...")
   ```
 
@@ -450,7 +450,7 @@ DATABASES = {
       def get(self, request, *args, **kwargs):
           models.UserInfo.objects.create(name='v1', age=1)
           models.UserInfo.objects.create(name='v2', age=1)
-          int("asdf")  # 错误
+          int("asdf")  # Error
           return Response("...")
   ```
 
@@ -467,7 +467,7 @@ DATABASES = {
               pass
           return Response("...")
   
-  # 视图函数执行没有报错，不会滚回。
+  # The view function executed without error, no rollback.
   ```
 
 
@@ -489,7 +489,7 @@ class Demo1View(APIView):
 
     def get(self, request, *args, **kwargs):
         models.UserInfo.objects.create(name='v100', age=1)
-        models.UserInfo.objects.create(name="v200", age="xxx") # 报错
+        models.UserInfo.objects.create(name="v200", age="xxx") # Error
         return Response("...")
 ```
 
@@ -522,15 +522,15 @@ NOTSET = 0
 ```python
 import logging
 
-# 1. 对日志进行配置
+# 1. Configure logging
 logging.basicConfig(
-    filename='error.log',  # 日志文件
-    format='%(asctime)s :  %(message)s',  # 写日志时，文件的格式。
+    filename='error.log',  # Log file
+    format='%(asctime)s :  %(message)s',  # Format when writing logs.
     datefmt='%Y-%m-%d %H:%M:%S %p',
-    level=20  # 级别，以后只有大于20的级别时，才能真正日志内容写入到文件中。
+    level=20  # Level; only messages with a level greater than 20 will actually be written to the file.
 )
 
-# 2.写日志
+# 2. Write logs
 """
 CRITICAL = 50
 FATAL = CRITICAL
@@ -541,9 +541,9 @@ INFO = 20
 DEBUG = 10
 NOTSET = 0
 """
-logging.debug("你好呀")  # 10,你好呀
-logging.info("中午好")  # 10,你好呀
-logging.error("你傻呀")  # 40,你傻呀
+logging.debug("Hello")  # 10, Hello
+logging.info("Good afternoon")  # 10, Good afternoon
+logging.error("Are you silly")  # 40, Are you silly
 ```
 
 ![image-20230115005930027](assets/image-20230115005930027.png)
@@ -558,24 +558,24 @@ By default, this form does not support writing logs to a file:
 import logging
 import traceback
 
-# 1. 对日志进行配置
+# 1. Configure logging
 logging.basicConfig(
-    filename='v10.log',  # 日志文件
-    format='%(asctime)s :  %(message)s',  # 写日志时，文件的格式。
+    filename='v10.log',  # Log file
+    format='%(asctime)s :  %(message)s',  # Format when writing logs.
     datefmt='%Y-%m-%d %H:%M:%S %p',
-    level=20  # 级别，以后只有大于20的级别时，才能真正日志内容写入到文件中。
+    level=20  # Level; only messages with a level greater than 20 will actually be written to the file.
 )
 
-# 2. 对日志进行配置（不生效，因为已配置过后生成在内存，不再支持设置）
+# 2. Configure logging (ineffective because the configuration is already in memory and cannot be reset)
 logging.basicConfig(
-    filename='v100.log',  # 日志文件
-    format='%(asctime)s :  %(message)s',  # 写日志时，文件的格式。
+    filename='v100.log',  # Log file
+    format='%(asctime)s :  %(message)s',  # Format when writing logs.
     datefmt='%Y-%m-%d %H:%M:%S %p',
-    level=20  # 级别，以后只有大于20的级别时，才能真正日志内容写入到文件中。
+    level=20  # Level; only messages with a level greater than 20 will actually be written to the file.
 )
 
 
-logging.error("沙雕alex")
+logging.error("silly alex")
 ```
 
 
@@ -592,7 +592,7 @@ logging.error("沙雕alex")
 
   ```python
   logger = Logger()
-  logger.error("内容") # 10 "xxx"
+  logger.error("content") # 10 "xxx"
   ```
 
 
@@ -602,19 +602,19 @@ Example 1:
 ```python
 import logging
 
-# 定义 Formatter
+# Define Formatter
 fmt = logging.Formatter(fmt="%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s")
 
-# 定义 FileHandler
+# Define FileHandler
 handler_object = logging.FileHandler('v2.log', 'a', encoding='utf-8')
 handler_object.setFormatter(fmt)
 
-# 定义 Logger
+# Define Logger
 logger_object = logging.Logger('s1', level=logging.INFO)  # 20
 logger_object.addHandler(handler_object)
 
-# ===>写日志<====
-logger_object.error("alex") # 40>20则写入日志
+# ===> Write logs <====
+logger_object.error("alex") # 40>20, so it will be written to the log
 ```
 
 
@@ -624,22 +624,22 @@ Example 2:
 ```python
 import logging
 
-# 定义 Formatter
+# Define Formatter
 fmt = logging.Formatter(fmt="%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s")
 
-# 定义 FileHandler
+# Define FileHandler
 handler_object = logging.FileHandler('v2.log', 'a', encoding='utf-8')
 handler_object.setFormatter(fmt)
 
 handler_object2 = logging.FileHandler('v22.log', 'a', encoding='utf-8')
 handler_object2.setFormatter(fmt)
 
-# 定义 Logger
+# Define Logger
 logger_object = logging.Logger('s1', level=logging.INFO)  # 20
 logger_object.addHandler(handler_object)
 logger_object.addHandler(handler_object2)
 
-# 写日志
+# Write logs
 logger_object.error("alex")
 ```
 
@@ -660,10 +660,10 @@ logger_object.error("alex")
 ```python
 import logging.config
 
-# 1. 定义字典
+# 1. Define the dict
 LOGGING_CONFIG = {
     "version": 1,
-    "disable_existing_loggers": True,  # 删除已存在其他日志的Handler
+    "disable_existing_loggers": True,  # Delete existing handlers from other loggers
     'formatters': {
         'standard': {
             'format': '{asctime} {levelname} ：{message}',
@@ -680,24 +680,24 @@ LOGGING_CONFIG = {
             "class": 'logging.handlers.RotatingFileHandler',
             'formatter': 'standard',
             'filename': 'demo.log',
-            # 'maxBytes': 10240,  # 根据文件大小拆分日志(字节)
-            # 'backupCount': 30,  # 5(保留几分历史日志文件)
+            # 'maxBytes': 10240,  # Split log by file size (bytes)
+            # 'backupCount': 30,  # 5 (how many historical log files to keep)
             "encoding": "utf-8"
         }
     },
     'loggers': {
         'nb': {
             'handlers': ['console', 'demo'],
-            'level': "INFO",  # >=20 则触发日志
+            'level': "INFO",  # >=20 triggers logging
             'propagate': False
         }
     }
 }
 
-# 2. 根据自定对logging进行配置
+# 2. Configure logging according to custom settings
 logging.config.dictConfig(LOGGING_CONFIG)
 
-# 3. 写日志
+# 3. Write logs
 logger_object = logging.getLogger("nb")
 logger_object.info('6666666666')
 ```
@@ -709,10 +709,10 @@ logger_object.info('6666666666')
 ```python
 import logging.config
 
-# 1. 定义字典
+# 1. Define the dict
 LOGGING_CONFIG = {
     "version": 1,
-    "disable_existing_loggers": True,  # 删除已存在其他日志的Handler
+    "disable_existing_loggers": True,  # Delete existing handlers from other loggers
     'formatters': {
         'standard': {
             'format': '{asctime} {levelname} {threadName} ：{message}',
@@ -731,21 +731,21 @@ LOGGING_CONFIG = {
             'formatter': 'simple',
         },
         'run': {
-            # 运行日志，按天自动分割
+            # Runtime log, auto-split by day
             "class": 'logging.handlers.TimedRotatingFileHandler',
             'formatter': 'standard',
             'filename': "run.log",
-            'when': 'D',  # 根据天拆分日志
-            'interval': 1,  # 1天
-            'backupCount': 3,  # 保留备份
+            'when': 'D',  # Split log by day
+            'interval': 1,  # 1 day
+            'backupCount': 3,  # Keep backups
             "encoding": "utf-8"
         },
         'error': {
-            # 错误日志，按照文件大小分割
+            # Error log, split by file size
             "class": 'logging.handlers.RotatingFileHandler',
             'formatter': 'standard',
             'filename': 'error.log',
-            'maxBytes': 1024 * 1025 * 50,  # 根据文件大小拆分日志 50M
+            'maxBytes': 1024 * 1025 * 50,  # Split log by file size 50M
             'backupCount': 5,
             "encoding": "utf-8"
         },
@@ -753,12 +753,12 @@ LOGGING_CONFIG = {
     'loggers': {
         'run': {
             'handlers': ['run'],
-            'level': "INFO",  # >=20 则触发日志
+            'level': "INFO",  # >=20 triggers logging
             'propagate': True
         },
         'error': {
             'handlers': ['console', 'error'],
-            'level': "ERROR",  # >=20 则触发日志
+            'level': "ERROR",  # >=20 triggers logging
             'propagate': False
         }
     },
@@ -769,19 +769,19 @@ LOGGING_CONFIG = {
     }
 }
 
-# 2. 根据自定对logging进行配置
+# 2. Configure logging according to custom settings
 logging.config.dictConfig(LOGGING_CONFIG)
 
-# 3. 写日志
+# 3. Write logs
 # root = logging.getLogger()
-# root.info("测试测试")
+# root.info("test test")
 
 # run = logging.getLogger('run')
-# run.info("测试测试")
+# run.info("test test")
 
 # run = logging.getLogger('error')
-# run.info("有信息了")
-# run.error("错误了")
+# run.info("has info")
+# run.error("error occurred")
 ```
 
 
@@ -804,7 +804,7 @@ class CallbackFilter(logging.Filter):
 
 class DynamicFilter(logging.Filter):
     def filter(self, record):
-        # record，包含了日志相关的对象 logging.LogRecord
+        # record contains the log-related object logging.LogRecord
         # print(record, type(record))
         if not record.msg:
             return False
@@ -816,10 +816,10 @@ class DynamicFilter(logging.Filter):
 ```python
 import logging.config
 
-# 1. 定义字典
+# 1. Define the dict
 LOGGING_CONFIG = {
     "version": 1,
-    "disable_existing_loggers": True,  # 删除已存在其他日志的Handler
+    "disable_existing_loggers": True,  # Delete existing handlers from other loggers
     'formatters': {
         'standard': {
             'format': '{asctime} {levelname} {threadName} ：{message}',
@@ -847,22 +847,22 @@ LOGGING_CONFIG = {
             'formatter': 'simple',
         },
         'run': {
-            # 运行日志，按天自动分割
+            # Runtime log, auto-split by day
             "class": 'logging.handlers.TimedRotatingFileHandler',
             'formatter': 'standard',
             'filters': ['', 'call'],
             'filename': "run.log",
-            'when': 'D',  # 根据天拆分日志
-            'interval': 1,  # 1天
-            'backupCount': 3,  # 保留备份
+            'when': 'D',  # Split log by day
+            'interval': 1,  # 1 day
+            'backupCount': 3,  # Keep backups
             "encoding": "utf-8"
         },
         'error': {
-            # 错误日志，按照文件大小分割
+            # Error log, split by file size
             "class": 'logging.handlers.RotatingFileHandler',
             'formatter': 'standard',
             'filename': 'error.log',
-            'maxBytes': 1024 * 1025 * 50,  # 根据文件大小拆分日志 50M
+            'maxBytes': 1024 * 1025 * 50,  # Split log by file size 50M
             'backupCount': 5,
             "encoding": "utf-8"
         },
@@ -870,12 +870,12 @@ LOGGING_CONFIG = {
     'loggers': {
         'run': {
             'handlers': ['run'],
-            'level': "INFO",  # >=20 则触发日志
+            'level': "INFO",  # >=20 triggers logging
             'propagate': True
         },
         'error': {
             'handlers': ['console', 'error'],
-            'level': "ERROR",  # >=20 则触发日志
+            'level': "ERROR",  # >=20 triggers logging
             'propagate': False
         }
     },
@@ -886,12 +886,12 @@ LOGGING_CONFIG = {
     }
 }
 
-# 2. 根据自定对logging进行配置
+# 2. Configure logging according to custom settings
 logging.config.dictConfig(LOGGING_CONFIG)
 
-# 3. 写日志
+# 3. Write logs
 run = logging.getLogger('run')
-run.info("测试测xxxxx")
+run.info("test test xxxxx")
 ```
 
 
@@ -910,10 +910,10 @@ BASE_LOG_DIR.mkdir(exist_ok=True)
 LOGGING_CONFIG = "logging.config.dictConfig"
 
 # Custom logging configuration.
-# 1. 定义字典
+# 1. Define the dict
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False,  # 删除已存在其他日志的Handler
+    "disable_existing_loggers": False,  # Delete existing handlers from other loggers
     'formatters': {
         'standard': {
             'format': '{asctime} {levelname} {threadName} ：{message}',
@@ -941,22 +941,22 @@ LOGGING = {
             'formatter': 'simple',
         },
         'run': {
-            # 运行日志，按天自动分割
+            # Runtime log, auto-split by day
             "class": 'logging.handlers.TimedRotatingFileHandler',
             'formatter': 'standard',
             # 'filters': ["dy", 'call'],
             'filename': os.path.join(BASE_LOG_DIR, 'run.log'),
-            'when': 'D',  # 根据天拆分日志
-            'interval': 1,  # 1天
-            'backupCount': 3,  # 保留备份
+            'when': 'D',  # Split log by day
+            'interval': 1,  # 1 day
+            'backupCount': 3,  # Keep backups
             "encoding": "utf-8"
         },
         'error': {
-            # 错误日志，按照文件大小分割
+            # Error log, split by file size
             "class": 'logging.handlers.RotatingFileHandler',
             'formatter': 'standard',
             'filename': os.path.join(BASE_LOG_DIR, 'error.log'),
-            'maxBytes': 1024 * 1025 * 50,  # 根据文件大小拆分日志 50M
+            'maxBytes': 1024 * 1025 * 50,  # Split log by file size 50M
             'backupCount': 5,
             "encoding": "utf-8"
         },
@@ -964,12 +964,12 @@ LOGGING = {
     'loggers': {
         'run': {
             'handlers': ['run'],
-            'level': "INFO",  # >=20 则触发日志
+            'level': "INFO",  # >=20 triggers logging
             'propagate': True
         },
         'error': {
             'handlers': ['console', 'error'],
-            'level': "ERROR",  # >=40 则触发日志
+            'level': "ERROR",  # >=40 triggers logging
             'propagate': False
         }
     },
@@ -1007,62 +1007,62 @@ LOGS_DIRS = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(LOGS_DIRS):
     os.makedirs(LOGS_DIRS)
 
-# 日志
+# Logging
 LOGGING = {
-    'version': 1,  # 使用的日志模块的版本，目前官方提供的只有版本1，但是官方有可能会升级，为了避免升级出现的版本问题，所以这里固定为1
-    'disable_existing_loggers': False,  # 是否禁用其他的已经存在的日志功能？肯定不能，有可能有些第三方模块在调用，所以禁用了以后，第三方模块无法捕获自身出现的异常了。
-    'formatters': {  # 日志格式设置，verbose或者simple都是自定义的
-        'verbose': {  # 详细格式，适合用于开发人员不在场的情况下的日志记录。
-            # 格式定义：https://docs.python.org/3/library/logging.html#logrecord-attributes
-            # levelname 日志等级
-            # asctime   发生时间
-            # module    文件名
-            # process   进程ID
-            # thread    线程ID
-            # message   异常信息
+    'version': 1,  # Version of the logging module used. Currently only version 1 is provided officially, but it may be upgraded in the future. To avoid version issues during upgrades, it is fixed to 1 here
+    'disable_existing_loggers': False,  # Whether to disable other existing logging functions? Definitely not, because some third-party modules may be using them. If disabled, third-party modules cannot catch their own exceptions.
+    'formatters': {  # Log format settings; verbose and simple are both custom
+        'verbose': {  # Detailed format, suitable for logging when developers are not present.
+            # Format definition: https://docs.python.org/3/library/logging.html#logrecord-attributes
+            # levelname log level
+            # asctime occurrence time
+            # module file name
+            # process process ID
+            # thread thread ID
+            # message exception info
             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',  # 变量格式分隔符
+            'style': '{',  # Variable format delimiter
         },
-        'simple': {  # 简单格式，适合用于开发人员在场的情况下的终端输出
+        'simple': {  # Simple format, suitable for terminal output when developers are present
             'format': '{levelname} {message}',
             'style': '{',
         },
     },
-    'filters': {  # 过滤器
+    'filters': {  # Filters
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
         },
     },
-    'handlers': {  # 日志处理流程，console或者mail_admins都是自定义的。
+    'handlers': {  # Log processing flow; console and mail_admins are both custom.
         'console': {
-            'level': 'DEBUG',  # 设置当前日志处理流程中的日志最低等级
-            'filters': ['require_debug_true'],  # 当前日志处理流程的日志过滤
-            'class': 'logging.StreamHandler',  # 当前日志处理流程的核心类，StreamHandler可以帮我们把日志信息输出到终端下
-            'formatter': 'simple'  # 当前日志处理流程的日志格式
+            'level': 'DEBUG',  # Set the minimum log level for the current log processing flow
+            'filters': ['require_debug_true'],  # Log filtering for the current log processing flow
+            'class': 'logging.StreamHandler',  # Core class for the current log processing flow; StreamHandler helps output log info to the terminal
+            'formatter': 'simple'  # Log format for the current log processing flow
         },
         # 'mail_admins': {
-        #     'level': 'ERROR',                  # 设置当前日志处理流程中的日志最低等级
-        #     'class': 'django.utils.log.AdminEmailHandler',  # AdminEmailHandler可以帮我们把日志信息输出到管理员邮箱中。
-        #     'filters': ['special']             # 当前日志处理流程的日志过滤
+        #     'level': 'ERROR',                  # Set the minimum log level for the current log processing flow
+        #     'class': 'django.utils.log.AdminEmailHandler',  # AdminEmailHandler can help output log info to the administrator's email.
+        #     'filters': ['special']             # Log filtering for the current log processing flow
         # }
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            # 日志位置,日志文件名，日志保存目录logs必须手动创建
+            # Log path, log file name; the logs directory must be created manually
             'filename': '%s/django.log' % LOGS_DIRS,
-            # 单个日志文件的最大值，这里我们设置300M
+            # Maximum size of a single log file; set to 300M here
             'maxBytes': 300 * 1024 * 1024,
-            # 备份日志文件的数量，设置最大日志数量为10
+            # Number of backup log files; set maximum to 10
             'backupCount': 10,
-            # 日志格式:详细格式
+            # Log format: detailed format
             'formatter': 'verbose',
-            'encoding': 'utf-8',  # 输出日志编码
+            'encoding': 'utf-8',  # Log output encoding
         },
     },
-    'loggers': {  # 日志处理的命名空间
+    'loggers': {  # Log processing namespace
         'django': {
-            'handlers': ['console', 'file'],  # 当基于django命名空间写入日志时，调用那几个日志处理流程
-            'propagate': True,  # 是否在django命名空间对应的日志处理流程结束以后，冒泡通知其他的日志功能。True表示允许
+            'handlers': ['console', 'file'],  # Which log processing flows to call when writing logs under the django namespace
+            'propagate': True,  # Whether to bubble up and notify other logging functions after the django namespace log processing flow ends. True means allowed
         },
     }
 }
@@ -1076,71 +1076,71 @@ A solution to permission errors when splitting log files, using Windows as an ex
 2.   Modify the existing configuration entries as follows:
 
 ```python
-# 决定日志保存到哪个文件夹下？我这里将自动创建到项目根目录下的logs文件夹内
+# Which folder to save logs to? Here it will auto-create under the logs folder in the project root
 LOGS_DIRS = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(LOGS_DIRS):
     os.makedirs(LOGS_DIRS)
 
-# 按照文件大小进行切割日志
+# Split logs by file size
 LOGGING = {
-    'version': 1,  # 使用的日志模块的版本，目前官方提供的只有版本1，但是官方有可能会升级，为了避免升级出现的版本问题，所以这里固定为1
-    'disable_existing_loggers': False,  # 是否禁用其他的已经存在的日志功能？肯定不能，有可能有些第三方模块在调用，所以禁用了以后，第三方模块无法捕获自身出现的异常了。
-    'formatters': {  # 日志格式设置，verbose或者simple都是自定义的
-        'verbose': {  # 详细格式，适合用于开发人员不在场的情况下的日志记录。
-            # 格式定义：https://docs.python.org/3/library/logging.html#logrecord-attributes
-            # levelname 日志等级
-            # asctime   发生时间
-            # module    文件名
-            # process   进程ID
-            # thread    线程ID
-            # message   异常信息
+    'version': 1,  # Version of the logging module used. Currently only version 1 is provided officially, but it may be upgraded in the future. To avoid version issues during upgrades, it is fixed to 1 here
+    'disable_existing_loggers': False,  # Whether to disable other existing logging functions? Definitely not, because some third-party modules may be using them. If disabled, third-party modules cannot catch their own exceptions.
+    'formatters': {  # Log format settings; verbose and simple are both custom
+        'verbose': {  # Detailed format, suitable for logging when developers are not present.
+            # Format definition: https://docs.python.org/3/library/logging.html#logrecord-attributes
+            # levelname log level
+            # asctime occurrence time
+            # module file name
+            # process process ID
+            # thread thread ID
+            # message exception info
             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',  # 变量格式分隔符
+            'style': '{',  # Variable format delimiter
         },
-        'simple': {  # 简单格式，适合用于开发人员在场的情况下的终端输出
+        'simple': {  # Simple format, suitable for terminal output when developers are present
             'format': '{levelname} {message}',
             'style': '{',
         },
     },
-    'filters': {  # 过滤器
+    'filters': {  # Filters
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
         },
     },
-    'handlers': {  # 日志处理流程，console或者mail_admins都是自定义的。
+    'handlers': {  # Log processing flow; console and mail_admins are both custom.
         'console': {
-            'level': 'DEBUG',  # 设置当前日志处理流程中的日志最低等级
-            'filters': ['require_debug_true'],  # 当前日志处理流程的日志过滤
-            'class': 'logging.StreamHandler',  # 当前日志处理流程的核心类，StreamHandler可以帮我们把日志信息输出到终端下
-            'formatter': 'simple'  # 当前日志处理流程的日志格式
+            'level': 'DEBUG',  # Set the minimum log level for the current log processing flow
+            'filters': ['require_debug_true'],  # Log filtering for the current log processing flow
+            'class': 'logging.StreamHandler',  # Core class for the current log processing flow; StreamHandler helps output log info to the terminal
+            'formatter': 'simple'  # Log format for the current log processing flow
         },
         # 'mail_admins': {
-        #     'level': 'ERROR',                  # 设置当前日志处理流程中的日志最低等级
-        #     'class': 'django.utils.log.AdminEmailHandler',  # AdminEmailHandler可以帮我们把日志信息输出到管理员邮箱中。
-        #     'filters': ['special']             # 当前日志处理流程的日志过滤
+        #     'level': 'ERROR',                  # Set the minimum log level for the current log processing flow
+        #     'class': 'django.utils.log.AdminEmailHandler',  # AdminEmailHandler can help output log info to the administrator's email.
+        #     'filters': ['special']             # Log filtering for the current log processing flow
         # }
         'file': {
             'level': 'INFO',
-            # 'class': 'logging.handlers.RotatingFileHandler',  # 默认的按照文件大小切割日志
-            'class': 'concurrent_log_handler.ConcurrentRotatingFileHandler',  # Windows下安装并使用 concurrent-log-handler
-            # 'class': 'cloghandler.ConcurrentRotatingFileHandler',  # Linux安装并使用 ConcurrentLogHandler
-            'delay': True,  # 同时添加delay参数
-            # 日志位置,日志文件名，日志保存目录logs必须手动创建
+            # 'class': 'logging.handlers.RotatingFileHandler',  # Default: split logs by file size
+            'class': 'concurrent_log_handler.ConcurrentRotatingFileHandler',  # Install and use concurrent-log-handler under Windows
+            # 'class': 'cloghandler.ConcurrentRotatingFileHandler',  # Install and use ConcurrentLogHandler on Linux
+            'delay': True,  # Also add the delay parameter
+            # Log path, log file name; the logs directory must be created manually
             'filename': '%s/django.log' % LOGS_DIRS,
-            # 单个日志文件的最大值，这里我们设置300M
+            # Maximum size of a single log file; set to 300M here
             # 'maxBytes': 300 * 1024 * 1024,
             'maxBytes': 0.1 * 1024 * 1024,
-            # 备份日志文件的数量，设置最大日志数量为10
+            # Number of backup log files; set maximum to 10
             'backupCount': 10,
-            # 日志格式:详细格式
+            # Log format: detailed format
             'formatter': 'verbose',
-            'encoding': 'utf-8',  # 输出日志编码
+            'encoding': 'utf-8',  # Log output encoding
         },
     },
-    'loggers': {  # 日志处理的命名空间
+    'loggers': {  # Log processing namespace
         'django': {
-            'handlers': ['console', 'file'],  # 当基于django命名空间写入日志时，调用那几个日志处理流程
-            'propagate': True,  # 是否在django命名空间对应的日志处理流程结束以后，冒泡通知其他的日志功能。True表示允许
+            'handlers': ['console', 'file'],  # Which log processing flows to call when writing logs under the django namespace
+            'propagate': True,  # Whether to bubble up and notify other logging functions after the django namespace log processing flow ends. True means allowed
         },
     }
 }
@@ -1157,67 +1157,67 @@ LOGS_DIRS = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(LOGS_DIRS):
     os.makedirs(LOGS_DIRS)
 
-# 日志
+# Logging
 LOGGING = {
-    'version': 1,  # 使用的日志模块的版本，目前官方提供的只有版本1，但是官方有可能会升级，为了避免升级出现的版本问题，所以这里固定为1
-    'disable_existing_loggers': False,  # 是否禁用其他的已经存在的日志功能？肯定不能，有可能有些第三方模块在调用，所以禁用了以后，第三方模块无法捕获自身出现的异常了。
-    'formatters': {  # 日志格式设置，verbose或者simple都是自定义的
-        'verbose': {  # 详细格式，适合用于开发人员不在场的情况下的日志记录。
-            # 格式定义：https://docs.python.org/3/library/logging.html#logrecord-attributes
-            # levelname 日志等级
-            # asctime   发生时间
-            # module    文件名
-            # process   进程ID
-            # thread    线程ID
-            # message   异常信息
+    'version': 1,  # Version of the logging module used. Currently only version 1 is provided officially, but it may be upgraded in the future. To avoid version issues during upgrades, it is fixed to 1 here
+    'disable_existing_loggers': False,  # Whether to disable other existing logging functions? Definitely not, because some third-party modules may be using them. If disabled, third-party modules cannot catch their own exceptions.
+    'formatters': {  # Log format settings; verbose and simple are both custom
+        'verbose': {  # Detailed format, suitable for logging when developers are not present.
+            # Format definition: https://docs.python.org/3/library/logging.html#logrecord-attributes
+            # levelname log level
+            # asctime occurrence time
+            # module file name
+            # process process ID
+            # thread thread ID
+            # message exception info
             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',  # 变量格式分隔符
+            'style': '{',  # Variable format delimiter
         },
-        'simple': {  # 简单格式，适合用于开发人员在场的情况下的终端输出
+        'simple': {  # Simple format, suitable for terminal output when developers are present
             'format': '{levelname} {message}',
             'style': '{',
         },
     },
-    'filters': {  # 过滤器
+    'filters': {  # Filters
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
         },
     },
-    'handlers': {  # 日志处理流程，console或者mail_admins都是自定义的。
+    'handlers': {  # Log processing flow; console and mail_admins are both custom.
         'console': {
-            'level': 'DEBUG',  # 设置当前日志处理流程中的日志最低等级
-            'filters': ['require_debug_true'],  # 当前日志处理流程的日志过滤
-            'class': 'logging.StreamHandler',  # 当前日志处理流程的核心类，StreamHandler可以帮我们把日志信息输出到终端下
-            'formatter': 'simple'  # 当前日志处理流程的日志格式
+            'level': 'DEBUG',  # Set the minimum log level for the current log processing flow
+            'filters': ['require_debug_true'],  # Log filtering for the current log processing flow
+            'class': 'logging.StreamHandler',  # Core class for the current log processing flow; StreamHandler helps output log info to the terminal
+            'formatter': 'simple'  # Log format for the current log processing flow
         },
         # 'mail_admins': {
-        #     'level': 'ERROR',                  # 设置当前日志处理流程中的日志最低等级
-        #     'class': 'django.utils.log.AdminEmailHandler',  # AdminEmailHandler可以帮我们把日志信息输出到管理员邮箱中。
-        #     'filters': ['special']             # 当前日志处理流程的日志过滤
+        #     'level': 'ERROR',                  # Set the minimum log level for the current log processing flow
+        #     'class': 'django.utils.log.AdminEmailHandler',  # AdminEmailHandler can help output log info to the administrator's email.
+        #     'filters': ['special']             # Log filtering for the current log processing flow
         # }
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            # 日志位置,日志文件名，日志保存目录logs必须手动创建
+            # Log path, log file name; the logs directory must be created manually
             'filename': '%s/django.log' % LOGS_DIRS,
-            # TimedRotatingFileHandler的参数
-            # 目前设定每天一个日志文件
-            # 'S'         |  秒
-            # 'M'         |  分
-            # 'H'         |  时
-            # 'D'         |  天
-            # 'W0'-'W6'   |  周一至周日
-            # 'midnight'  |  每天的凌晨
-            'when': 'S',  # 间间隔的类型，指定秒就不要在Windows上运行测试
-            'interval': 5,  # 时间间隔
-            'backupCount': 5,  # 能留几个日志文件;过数量就会丢弃掉老的日志文件
-            'encoding': 'utf-8',  # 日志文本编码
+            # TimedRotatingFileHandler parameters
+            # Currently set to one log file per day
+            # 'S'         |  sec
+            # 'M'         |  min
+            # 'H'         |  hour
+            # 'D'         |  day
+            # 'W0'-'W6'   |  Mon-Sun
+            # 'midnight'  |  midnight
+            'when': 'S',  # Interval type; do not run tests on Windows if set to seconds
+            'interval': 5,  # Time interval
+            'backupCount': 5,  # How many log files to keep; old ones will be discarded if exceeded
+            'encoding': 'utf-8',  # Log text encoding
         },
     },
-    'loggers': {  # 日志处理的命名空间
+    'loggers': {  # Log processing namespace
         'django': {
-            'handlers': ['console', 'file'],  # 当基于django命名空间写入日志时，调用那几个日志处理流程
-            'propagate': True,  # 是否在django命名空间对应的日志处理流程结束以后，冒泡通知其他的日志功能。True表示允许
+            'handlers': ['console', 'file'],  # Which log processing flows to call when writing logs under the django namespace
+            'propagate': True,  # Whether to bubble up and notify other logging functions after the django namespace log processing flow ends. True means allowed
         },
     }
 }

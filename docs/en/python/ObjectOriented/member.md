@@ -28,7 +28,7 @@ When programming with object orientation, you will encounter many situations and
 
 ```python
 class Person(object):
-    country = "中国"
+    country = "China"
 
     def __init__(self, name, age):
         self.name = name
@@ -39,15 +39,15 @@ class Person(object):
         message = "{}-{}-{}".format(self.country, self.name, self.age)
         print(message)
 
-print(Person.country) # 中国
+print(Person.country) # China
 
 
 p1 = Person("wilson",20)
 print(p1.name)
 print(p1.age)
-print(p1.country) # 中国
+print(p1.country) # China
 
-p1.show() # 中国-wilson-20
+p1.show() # China-wilson-20
 ```
 
 Tip: When the same instance variable exists in every object, you can choose to move it into a class variable instead, so that objects do not maintain multiple copies of identical data.
@@ -62,7 +62,7 @@ Question 1: Note the difference between reading and writing.
 
 ```python
 class Person(object):
-    country = "中国"
+    country = "China"
 
     def __init__(self, name, age):
         self.name = name
@@ -72,25 +72,25 @@ class Person(object):
         message = "{}-{}-{}".format(self.country, self.name, self.age)
         print(message)
 
-print(Person.country) # 中国
+print(Person.country) # China
 
 p1 = Person("wilson",20)
 print(p1.name) # wilson
 print(p1.age) # 20
-print(p1.country) # 中国
-p1.show() # 中国-wilson-20
+print(p1.country) # China
+p1.show() # China-wilson-20
 
-p1.name = "root"     # 在对象p1中讲name重置为root
-p1.num = 19          # 在对象p1中新增实例变量 num=19
-p1.country = "china" # 在对象p1中新增实例变量 country="china"
+p1.name = "root"     # Reset name to 'root' in object p1
+p1.num = 19          # Add instance variable num=19 to object p1
+p1.country = "china" # Add instance variable country="china" to object p1
 
 print(p1.country)   # china
-print(Person.country) # 中国
+print(Person.country) # China
 ```
 
 ```python
 class Person(object):
-    country = "中国"
+    country = "China"
 
     def __init__(self, name, age):
         self.name = name
@@ -100,15 +100,15 @@ class Person(object):
         message = "{}-{}-{}".format(self.country, self.name, self.age)
         print(message)
 
-print(Person.country) # 中国
+print(Person.country) # China
 
-Person.country = "美国"
+Person.country = "USA"
 
 
 p1 = Person("wilson",20)
 print(p1.name) # wilson
 print(p1.age) # 20
-print(p1.country) # 美国
+print(p1.country) # USA
 ```
 
 
@@ -121,7 +121,7 @@ Question 2: Reading and writing in an inheritance relationship
 
 ```python
 class Base(object):
-    country = "中国"
+    country = "China"
 
 
 class Person(Base):
@@ -136,17 +136,17 @@ class Person(Base):
         print(message)
 
 
-# 读
-print(Base.country) # 中国
-print(Person.country) # 中国
+# Read
+print(Base.country) # China
+print(Person.country) # China
 
 obj = Person("wilson",19)
-print(obj.country) # 中国
+print(obj.country) # China
 
-# 写
+# Write
 Base.country = "china"
-Person.country = "泰国"
-obj.country = "日本"
+Person.country = "Thailand"
+obj.country = "Japan"
 ```
 
 Interview question
@@ -191,29 +191,29 @@ class Foo(object):
         self.age = age
 
     def f1(self):
-        print("绑定方法", self.name)
+        print("Bound method", self.name)
 
     @classmethod
     def f2(cls):
-        print("类方法", cls)
+        print("Class method", cls)
 
     @staticmethod
     def f3():
-        print("静态方法")
+        print("Static method")
         
-# 绑定方法（对象）
+# Bound method (object)
 obj = Foo("wilson",20)
 obj.f1() # Foo.f1(obj)
 
 
-# 类方法
-Foo.f2()  # cls就是当前调用这个方法的类。（类）
-obj.f2()  # cls就是当前调用这个方法的对象的类。
+# Class method
+Foo.f2()  # cls is the class that is currently calling this method. (class)
+obj.f2()  # cls is the class of the object that is currently calling this method.
 
 
-# 静态方法
-Foo.f3()  # 类执行执行方法（类）
-obj.f3()  # 对象执行执行方法
+# Static method
+Foo.f3()  # Class executes the method (class)
+obj.f3()  # Object executes the method
 ```
 
 Python is quite flexible here — methods can be called through both objects and classes. In languages like Java and C#, however, bound methods can only be called by objects, while class methods and static methods can only be called by classes.
@@ -230,14 +230,14 @@ class Download(object):
 
     @staticmethod
     def download_dou_yin():
-        # 下载抖音
+        # Download from DouYin
         res = requests.get('.....')
 
         with open("xxx.mp4", mode='wb') as f:
             f.write(res.content)
 
     def download_dou_yin_2(self):
-        # 下载抖音
+        # Download from DouYin
         res = requests.get('.....')
         path = os.path.join(self.folder_path, 'xxx.mp4')
         with open(path, mode='wb') as f:
@@ -307,15 +307,15 @@ class Pagination:
         return self.current_page * self.per_page_num
 
 
-user_list = ["用户-{}".format(i) for i in range(1, 3000)]
+user_list = ["User-{}".format(i) for i in range(1, 3000)]
 
-# 分页显示，每页显示10条
+# Paginated display, 10 items per page
 while True:
-    page = input("请输入页码：")
+    page = input("Please enter page number: ")
 	
-    # page，当前访问的页码
-    # 10，每页显示10条数据
-	# 内部执行Pagination类的init方法。
+    # page: the current page being visited
+    # 10: display 10 items per page
+	# Internally executes the __init__ method of the Pagination class.
     pg_object = Pagination(page, 20)
     
     page_data_list = user_list[ pg_object.start() : pg_object.end() ]
@@ -346,11 +346,11 @@ class Pagination:
         return self.current_page * self.per_page_num
 
 
-user_list = ["用户-{}".format(i) for i in range(1, 3000)]
+user_list = ["User-{}".format(i) for i in range(1, 3000)]
 
-# 分页显示，每页显示10条
+# Paginated display, 10 items per page
 while True:
-    page = input("请输入页码：")
+    page = input("Please enter page number: ")
 
     pg_object = Pagination(page, 20)
     page_data_list = user_list[ pg_object.start : pg_object.end ]
@@ -366,7 +366,7 @@ In fact, apart from the examples we wrote, properties can also be found in the s
 ```python
 import requests
 
-# 内部下载视频，并将下载好的数据分装到Response对象中。
+# Internally downloads the video and packages the downloaded data into a Response object.
 res = requests.get(
     url="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg",
     headers={
@@ -374,7 +374,7 @@ res = requests.get(
     }
 )
 
-# 去对象中获取text，其实需要读取原始文本字节并转换为字符串
+# Get text from the object; this actually reads the raw text bytes and converts them to a string.
 res.text
 ```
 
@@ -512,7 +512,7 @@ If the names do conflict, errors may occur.
 class Foo(object):
 
     def __init__(self, name, age):
-        self.name = name  # 报错，错认为你想要调用 @name.setter 装饰的方法。
+        self.name = name  # Error: mistakenly treated as calling the method decorated by @name.setter
         self.age = age
 
     @property
@@ -534,7 +534,7 @@ class Foo(object):
 
     @property
     def name(self):
-        return "{}-{}".format(self.name, self.age) # 报错，循环调用自己（直到层级太深报错）
+        return "{}-{}".format(self.name, self.age) # Error: recursive call to itself (until too deep and raises an error)
 
     @name.setter
     def name(self, value):
@@ -597,13 +597,13 @@ class Foo(object):
 obj = Foo("wilson", 123)
 
 
-# 公有成员
+# Public member
 print(obj.age)
 v1 = self.get_age()
 print(v1)
 
-# 私有成员
-# print(obj.__name) # 错误，由于是私有成员，只能在类中进行使用。
+# Private member
+# print(obj.__name) # Error: it is a private member, can only be used inside the class.
 v2 = obj.get_data()
 print(v2)
 ```
@@ -616,13 +616,13 @@ Example 2:
 class Foo(object):
 
     def get_age(self):
-        print("公有的get_age")
+        print("Public get_age")
 
     def __get_data(self):
-        print("私有的__get_data方法")
+        print("Private __get_data method")
 
     def proxy(self):
-        print("公有的proxy")
+        print("Public proxy")
         self.__get_data()
 
 
@@ -641,11 +641,11 @@ class Foo(object):
 
     @property
     def __name(self):
-        print("公有的get_age")
+        print("Public get_age")
 
     @property
     def proxy(self):
-        print("公有的proxy")
+        print("Public proxy")
         self.__name
         return 1
 
@@ -674,7 +674,7 @@ class Foo(Base):
 
     def func(self):
         self.num()
-        self.__data() # # 不允许执行父类中的私有方法
+        self.__data() # # Not allowed to execute private method of parent class
 
 
 obj = Foo()
@@ -690,7 +690,7 @@ class Base(object):
 
     def num(self):
         print("base.num")
-        self.__data()  # 不允许执行父类中的私有方法
+        self.__data()  # Not allowed to execute private method of parent class
 
 
 class Foo(Base):

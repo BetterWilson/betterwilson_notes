@@ -5,73 +5,73 @@
 Commands that apply to all data types.
 
 ```bash
-# 高危命令，生产禁用！返回所有的redis中所有的key，尽量避免在生产中使用
+# Dangerous command, disabled in production! Returns all keys in Redis; avoid using in production whenever possible
 KEYS *
 
-# 查询以k2开头的所有KEYS
+# Query all keys starting with k2
 KEYS k2*
 
-# 返回指定key的值
+# Return the value of the specified key
 KEYS k1
 
-# 返回当前数据库中key的总数，这个先相当于是个计数器，生产中可以用
+# Return total number of keys in current database; acts like a counter, safe for production
 DBSIZE
 
-# 返回指定key的value值的类型
+# Return the type of the specified key value
 TYPE k1
 
-# 删除一个key，key存在并且删除成功，返回1，否则返回0
-# 删除n个key，并且都删除成功，返回删除成功的key的个数
+# Delete a key; returns 1 if key exists and deletion succeeds, otherwise returns 0
+# Delete n keys; returns the count of successfully deleted keys
 DEL k1
 DEL k1 k2 ...kn
 
-# 判断 key 是否存在,如果返回0，表示key不存在，如果判断多个key，例如，EXISTS k1 k2 k3，如果都存在，返回3
-# 如果返回0表示都不存在，返回1,2的话，就表示只有这一两个key存在
+# Check if key exists; returns 0 if key does not exist. For multiple keys e.g. EXISTS k1 k2 k3, returns 3 if all exist
+# Returns 0 if none exist; returns 1 or 2 if only one or two keys exist
 EXISTS k1
 EXISTS k1 k2 ... kn
 
-# 重命名
+# Rename
 RENAME k1 k11
 
-# 查看所有的配置项
-CONFIG GET *                  # 以键值对的形式返回所有的配置项
-CONFIG GET appendonly         # 查看指定配置项
-CONFIG SET requirepass 1234   # 临时动态的设置某个设置，重启redis失效，想要永久的，还是要手动的写入到配置文件中
-CONFIG REWRITE                # 将临时动态设置的某个设置，刷写到配置文件中
+# View all configuration items
+CONFIG GET *                  # Return all configuration items as key-value pairs
+CONFIG GET appendonly         # View specified configuration item
+CONFIG SET requirepass 1234   # Temporarily set a configuration dynamically; lost after Redis restart. For permanent settings, manually write to config file
+CONFIG REWRITE                # Flush a temporarily set configuration to the config file
 
 
-# 高危命令，生产禁用！清空redis中所有的key，找都找不回来的那种清空，如果用了，请尽早买好跑路的高铁票
+# Dangerous command, disabled in production! Clears all keys in Redis irreversibly. If used, buy your escape train ticket early
 FLUSHALL
 
-# 查看服务端，此时此刻的客户端连接数
+# View current client connections on the server
 INFO CLIENTS
-# 查看服务端支持的最大的客户端连接数
+# View maximum client connections supported by the server
 CONFIG GET maxclients
 ```
 
 Set the time-to-live (TTL) for a key-value pair:
 
 ```bash
-# 以秒/毫秒为单位设置生存时间
+# Set TTL in seconds/milliseconds
 EXPIRE/PEXPIRE    
-# 以秒/毫秒为单位返回剩余的生存时间
+# Return remaining TTL in seconds/milliseconds
 TTL/PTTL   
-# 即在生存时间内，取消生存时间设置
+# Cancel TTL setting within the lifetime
 PERSIST              
 
 
-# 为 k2 设置生存时间为20秒，关于返回值
-# 0 表示key不存在
-# 1 表示key存在，且设置过期时间成功
+# Set TTL for k2 to 20 seconds; about return value
+# 0 means key does not exist
+# 1 means key exists and expiration was set successfully
 EXPIRE k2 20
 
-# 返回 k2 剩余的生存时间，关于返回值
-# -1 表示key存在且永不过期
-# -2 表示key不存在
-# n  表示key存在，还有n秒后过期
+# Return remaining TTL for k2; about return values
+# -1 means key exists and never expires
+# -2 means key does not exist
+# n means key exists and will expire in n seconds
 TTL k2
 
-# 取消过期时间设置，或者你可以重新 set k2 v2 当然，set这种方法不好
+# Cancel expiration setting, or you can re-set k2 v2 (though this method is not ideal)
 PERSIST k2
 ```
 
@@ -92,8 +92,8 @@ The size limit of a Redis database: each Redis database can store up to 2^32 key
 Open the `redis.conf` file
 
 ```bash
-# 为某个命令赋值为空字符串，就先当于禁用掉这个命令了
-# 你也可以为某个命令重命名，防止自己也没得用
+# Assigning an empty string to a command effectively disables it
+# You can also rename a command to prevent yourself from using it
 rename-command KEYS ""
 # rename-command KEYS "KEYSSS"
 rename-command SHUTDOWN ""
@@ -104,34 +104,34 @@ rename-command FLUSHALL ""
 ## String
 
 ```bash
-# 如果key存在，则覆盖原来的value值，若key不存在，就设置key和value
+# If key exists, overwrite original value; if key does not exist, set key and value
 127.0.0.1:6379> SET k1 v1
 OK
 
-# set key的时候，同时指定过期时间		SETEX key time value
+# When setting key, also specify expiration time		SETEX key time value
 127.0.0.1:6379> SETEX k1 10 v1
 
 
-# 查看单个key值
+# View single key value
 127.0.0.1:6379> GET k1
 "v1"
 
-# 同时set多个key的值
+# Set multiple keys at once
 127.0.0.1:6379> MSET k1 v1 k2 v2 k3 v3
 OK
 
-# 同时查看多个key的值
+# View multiple key values at once
 127.0.0.1:6379> MGET k1 k2 k3
 1) "v1"
 2) "v2"
 3) "v3"
 
-# 先GET再set, 先GET，如果k1不存在，返回空nil，然后在设置一个值v1
-# 如果key存在，先将原有的value给你返回，再把新的value给你设置上
+# GET then SET: GET first; if k1 does not exist, return nil, then set a value v1
+# If key exists, first return the original value, then set the new value
 127.0.0.1:6379> GETSET k1 v1111
 "v1"
 
-# 在set的时候指定超时时间，在存活时间内，可以获取到该值
+# Specify timeout when setting; value can be retrieved within lifetime
 127.0.0.1:6379> SET k1 v1 ex 100
 OK
 127.0.0.1:6379> SETEX k2 100 v1
@@ -141,19 +141,19 @@ OK
 127.0.0.1:6379> TTL k2
 (integer) 94
 
-# 如果key不存在，就设置一个key:value，如果key存在则什么都不做
-# 返回 0 表示key存在，啥也不做
-# 返回 1 表示key不存在，设置键值对成功
+# If key does not exist, set a key:value; if key exists, do nothing
+# Returns 0 means key exists, does nothing
+# Returns 1 means key does not exist, key-value pair set successfully
 127.0.0.1:6379> SETNX k1 v1
 (integer) 0
 
-# 删除单个key，删除多个key(返回删除key的个数)
+# Delete single key, delete multiple keys (returns count of deleted keys)
 127.0.0.1:6379> DEL k1
 (integer) 1
 127.0.0.1:6379> DEL k1 k2 k3
 (integer) 2
 
-# 追加值，若key不存在，相当于set键值对，若key存在，将append的value拼接到原来key的value的后面
+# Append value; if key does not exist, equivalent to SET; if key exists, append value to original value
 127.0.0.1:6379> APPEND k1 v1
 (integer) 2
 127.0.0.1:6379> GET k1
@@ -163,37 +163,37 @@ OK
 127.0.0.1:6379> GET k1
 "v1111"
 
-# SETRANGE为指定字节位置的元素替换为指定值
+# SETRANGE replaces element at specified byte position with specified value
 127.0.0.1:6379> SET k7 0123456789
-127.0.0.1:6379> SETRANGE k7 5 A   # 将第5个字节位置的值替换为 A
+127.0.0.1:6379> SETRANGE k7 5 A   # Replace value at byte position 5 with A
 (integer) 10
-127.0.0.1:6379> GET k7  # 替换后的结果
+127.0.0.1:6379> GET k7  # Result after replacement
 "01234A6789"
-127.0.0.1:6379> SETRANGE k7 12 BC  # 如果指定的字节数超出字符串长度，就补零
+127.0.0.1:6379> SETRANGE k7 12 BC  # If specified byte exceeds string length, pad with zeros
 (integer) 14
 127.0.0.1:6379> GET k7 
 "01234A6789\x00\x00BC"
-127.0.0.1:6379> SETRANGE k7 6 7 BC   # 不允许这种将第6~7字节位置的元素替换为指定值
+127.0.0.1:6379> SETRANGE k7 6 7 BC   # Not allowed to replace elements at byte positions 6~7 with specified value
 (error) ERR wrong number of arguments for 'setrange' command
 
-# 判断key是否存在，存在返回1，否则返回0
+# Check if key exists; return 1 if exists, otherwise 0
 127.0.0.1:6379> EXISTS k1
 (integer) 1
 
-# 如果key存在，返回值的长度，否则返回0
+# If key exists, return value length, otherwise 0
 127.0.0.1:6379> STRLEN k1
 (integer) 2
-127.0.0.1:6379> STRLEN k222   # k222不存在
+127.0.0.1:6379> STRLEN k222   # k222 does not exist
 (integer) 0
 
-# 返回字符串指定字节范围的值
+# Return value of string within specified byte range
 127.0.0.1:6379> SET k7 0123456789
 OK
-127.0.0.1:6379> GETRANGE k7 1 5   # 第1~5个字节范围内的值，注意，索引从0开始
+127.0.0.1:6379> GETRANGE k7 1 5   # Value within byte range 1~5; note: index starts from 0
 "12345"
-127.0.0.1:6379> GETRANGE k7 5 15  # 第5~15个字节范围内的值，如果字符串长度不够，以起始位置开始，有多少返回多少
+127.0.0.1:6379> GETRANGE k7 5 15  # Value within byte range 5~15; if string is not long enough, return as much as available from start position
 "56789"
-127.0.0.1:6379> GETRANGE k7 15 20  # 起始和结束范围都不在字符串范围内，返回空
+127.0.0.1:6379> GETRANGE k7 15 20  # If both start and end are out of string range, return empty
 ""
 ```
 
@@ -202,25 +202,25 @@ OK
 Counter functionality:
 
 ```bash
-127.0.0.1:6379> INCR num		 # 每次调用INCR命令，num值自加一，num提前可以不存在
+127.0.0.1:6379> INCR num		 # Each INCR call increments num by one; num may not exist beforehand
 (integer) 1
 127.0.0.1:6379> INCR num
 (integer) 2
-127.0.0.1:6379> INCRBY num 10	  # 一次性加n
+127.0.0.1:6379> INCRBY num 10	  # Add n at once
 (integer) 12
 127.0.0.1:6379> INCRBY num 100
 (integer) 112
-127.0.0.1:6379> DECR num          # DECR 使num自减一
+127.0.0.1:6379> DECR num          # DECR decrements num by one
 (integer) 111
-127.0.0.1:6379> decrby num 10	  # 一次性减n
+127.0.0.1:6379> decrby num 10	  # Subtract n at once
 (integer) 101
-127.0.0.1:6379> DECR num1		  # 如果num1这个key不存在，则先设置为0，再减一
+127.0.0.1:6379> DECR num1		  # If key num1 does not exist, first set to 0 then decrement
 (integer) -1
-127.0.0.1:6379> GET num           # 可以通过GET获取该计数器的值
+127.0.0.1:6379> GET num           # Can retrieve counter value via GET
 "101"
 127.0.0.1:6379> GET num1
 "-1"
-127.0.0.1:6379> TYPE num		  # 注意，值仍然是字符串
+127.0.0.1:6379> TYPE num		  # Note: the value is still a string
 string
 ```
 
@@ -233,33 +233,33 @@ Characteristics of lists:
 - Elements in a list can be duplicated.
 
 ```bash
-# 增
-LPUSH l1 a b                         # 如果 l1 不存在就创建，然后将 a b 插入到 l1 中，如果 l1 存在，直接将 a b 插入到 l1 中
-LPUSHX l1 c                          # 如果 key 存在则插入，不存在则什么也不做
-LINSERT l1 before a a1               # 在元素 a 前面插入 a1
-LINSERT l1 after a a2                # 在元素 a 后插入 a2
-RPUSH l1 1                           # 在列表尾部追加 元素 1
-RPUSH l1 2 3                         # 在列表尾部先追加 2 再追加 3
-RPUSHX l1 4                          # 如果列表 l1 存在就将元素4追加到列表尾部，如果列表不存在则什么也不做
+# Add
+LPUSH l1 a b                         # If l1 does not exist, create it and insert a b; if l1 exists, insert a b directly
+LPUSHX l1 c                          # If key exists then insert, otherwise do nothing
+LINSERT l1 before a a1               # Insert a1 before element a
+LINSERT l1 after a a2                # Insert a2 after element a
+RPUSH l1 1                           # Append element 1 to tail of list
+RPUSH l1 2 3                         # First append 2 then append 3 to tail
+RPUSHX l1 4                          # If list l1 exists, append element 4 to tail; otherwise do nothing
 
-# 查，根据索引下标取值
-LRANGE l1 0 -1                       # 从索引0开始取到-1，也就是从头取到尾，获取列表中的所有元素
-LRANGE l1 0 2                        # 取索引 0 1 2 三个索引对应的元素
-LRANGE l1 0 0                        # 取索引 0 对应的元素
-LRANGE l1 10 15                      # 如果索引不在合法范围内，则取空
-LINDEX l1 1                          # 根据索引下标返回元素
+# Query, get value by index
+LRANGE l1 0 -1                       # From index 0 to -1, i.e. from head to tail, get all elements in list
+LRANGE l1 0 2                        # Get elements at indexes 0 1 2
+LRANGE l1 0 0                        # Get element at index 0
+LRANGE l1 10 15                      # If index is out of range, return empty
+LINDEX l1 1                          # Return element by index
 
 
-# 删除
-DEL	l1								 # 删除整个列表
-LPOP l1                              # 抛出列表头部元素
-RPOP l1                              # 抛出列表尾部元素
-RPOPLPUSH l1 l2                      # 将列表 l1 尾部的元素抛出并且添加到列表 l2 中
-LREM l1 2 a1                         # 从左到右，删除指定个数的元素 a1 ，本示例中，若 a1 有 1 个，就删一个，若 a1  有 3 个或者更多，也就删除 2 个
-LTRIM l1 2 4                         # 保留索引2-4的元素，其余删除
+# Delete
+DEL	l1								 # Delete entire list
+LPOP l1                              # Pop head element from list
+RPOP l1                              # Pop tail element from list
+RPOPLPUSH l1 l2                      # Pop tail element from l1 and add to l2
+LREM l1 2 a1                         # From left to right, delete specified count of element a1. In this example, if there is 1 a1, delete one; if there are 3 or more, still delete 2
+LTRIM l1 2 4                         # Keep elements at indexes 2-4, delete the rest
 
-# 改
-LSET l1 0 a                          # 将列表索引为0的元素修改为指定值，如果索引位置不存在则报错
+# Update
+LSET l1 0 a                          # Modify element at index 0 to specified value; error if index does not exist
 ```
 
 ## Hash
@@ -267,43 +267,43 @@ LSET l1 0 a                          # 将列表索引为0的元素修改为指�
 Mapping:
 
 ```bash
-mysql数据格式：
-user表
+MySQL data format:
+user table
 id	 name	job	  age
 1    zhang  it    18
 2 	 wang   it    24
 3    zhao   it    20
 
-对应hash类型存储格式：
+Corresponding hash storage format:
 key 	field1 	value 	field2 	value 	field3 	value
 user:1 	name 	zhang 	job 	it 		age 	18
 user:2 	name 	wang 	job 	it 		age 	18
 user:3 	name 	zhao 	job 	it 		age 	18
 
-user对应MySQL的表，n和MySQL中user表的id一一对应
+user corresponds to MySQL table, n corresponds to id in MySQL user table
 user:n
 ```
 
 Operations:
 
 ```bash
-# 增
+# Add
 127.0.0.1:6379> HMSET user:1 name zhangsan age 18 gender m
 OK
 127.0.0.1:6379> HMSET user:2 name lisi age 18 gender m
 OK
 
-# 查
-# 获取指定字段的值，相当于 select name from user where id=1;
+# Query
+# Get value of specified field, equivalent to select name from user where id=1;
 127.0.0.1:6379> HGET user:1 name
 "zhangsan"
 
-# 获取多个指定字段的值，相当于 select name,age from user where id=1;
+# Get values of multiple specified fields, equivalent to select name,age from user where id=1;
 127.0.0.1:6379> HMGET user:1 name age
 1) "zhangsan"
 2) "18"
 
-# 获取所有键值对，相当于 select * from user;
+# Get all key-value pairs, equivalent to select * from user;
 127.0.0.1:6379> HGETALL user:1
 1) "name"
 2) "zhangsan"
@@ -312,17 +312,17 @@ OK
 5) "gender"
 6) "m"
 
-# 判断指定字段是否存在，存在返回1，否则返回0
+# Check if specified field exists; return 1 if exists, otherwise 0
 127.0.0.1:6379> HEXISTS user:1 name
 (integer) 1
 
-# 返回key中所有字段的数量
+# Return count of all fields in key
 127.0.0.1:6379> HLEN user:1
 (integer) 3
 
-# 改
-127.0.0.1:6379> HINCRBY user:1 age 8			# 为整型字段的值加固定数字
-127.0.0.1:6379> HSET user:1 name zhangsan2		# 为指定字段重新赋值
+# Update
+127.0.0.1:6379> HINCRBY user:1 age 8			# Add fixed number to integer field value
+127.0.0.1:6379> HSET user:1 name zhangsan2		# Reassign value to specified field
 ```
 
 ## Set
@@ -330,16 +330,16 @@ OK
 Basic operations:
 
 ```bash
-# 增
-127.0.0.1:6379> SADD s1 a b c		# 声明key并添加 a b c 三个元素
+# Add
+127.0.0.1:6379> SADD s1 a b c		# Declare key and add three elements a b c
 (integer) 3
-127.0.0.1:6379> SMEMBERS s1			# 返回 s1 中所有元素
+127.0.0.1:6379> SMEMBERS s1			# Return all elements in s1
 1) "c"
 2) "b"
 3) "a"
-127.0.0.1:6379> SCARD s1			# 返回 s1 中元素的个数
+127.0.0.1:6379> SCARD s1			# Return count of elements in s1
 (integer) 3
-127.0.0.1:6379> SRANDMEMBER s1		# 随机返回集合中的1个元素
+127.0.0.1:6379> SRANDMEMBER s1		# Randomly return 1 element from set
 "a"
 127.0.0.1:6379> SRANDMEMBER s1
 "a"
@@ -347,27 +347,27 @@ Basic operations:
 "c"
 127.0.0.1:6379> SRANDMEMBER s1
 "b"
-127.0.0.1:6379> SRANDMEMBER s1 2    # 随机返回指定个数的元素
+127.0.0.1:6379> SRANDMEMBER s1 2    # Randomly return specified number of elements
 1) "b"
 2) "c"
 
-127.0.0.1:6379> SISMEMBER s1 a		# 判断元素 a 是否存在	sismember
+127.0.0.1:6379> SISMEMBER s1 a		# Check if element a exists	sismember
 (integer) 1
 
 
-# 删除
-127.0.0.1:6379> SPOP s1				# 随机删除一个元素，并将这个元素返回
+# Delete
+127.0.0.1:6379> SPOP s1				# Randomly delete an element and return it
 "c"
-127.0.0.1:6379> SPOP s1	2			# 随机删除指定个数的元素，并将多个元素返回
+127.0.0.1:6379> SPOP s1	2			# Randomly delete specified number of elements and return them
 1) "d"
 2) "a"
-127.0.0.1:6379> DEL s1				# 删除集合
+127.0.0.1:6379> DEL s1				# Delete set
 (integer) 1
 
-# 移动
-127.0.0.1:6379> SADD s1 a b c		# 将元素 a 从s1移动到s2中，如果s2不存在，就先创建再移动
+# Move
+127.0.0.1:6379> SADD s1 a b c		# Move element a from s1 to s2; if s2 does not exist, create it first then move
 (integer) 3
-127.0.0.1:6379> SMOVE s1 s2 a       # 注意，一次只能移动一个，不支持多个，比如：SMOVE s1 s2 a b c
+127.0.0.1:6379> SMOVE s1 s2 a       # Note: can only move one at a time, multiple not supported, e.g. SMOVE s1 s2 a b c
 (integer) 1
 127.0.0.1:6379> SMEMBERS s1
 1) "c"
@@ -379,17 +379,17 @@ Basic operations:
 ## Sorted Set (zset)
 
 ```bash
-# 增加
+# Add
 127.0.0.1:6379> ZADD top 0 xuwei 0 zhoujielun
 (integer) 2
 
-# 查, withscores是可选参数，表示同时返回其成员和其得分
-127.0.0.1:6379> ZSCORE top xuwei				# 返回top中，指定成员的分数，如果指定成员不存在则返回nil
+# Query, withscores is optional, indicates returning both member and its score
+127.0.0.1:6379> ZSCORE top xuwei				# Return score of specified member in top; return nil if member does not exist
 "0"
 127.0.0.1:6379> ZSCORE top zhangsan  		
 (nil)
 
-# 返回top中所有成员，默认以分数大小升序排序，分值相同按ASCII编码排序
+# Return all members in top, default ascending by score; same score sorted by ASCII
 127.0.0.1:6379> ZRANGE top 0 -1
 1) "xuwei"
 2) "zhoujielun"
@@ -399,17 +399,17 @@ Basic operations:
 3) "zhoujielun"
 4) "0"
 
-# 返回成员在有序集合中的索引下标，如果成员不存在返回nil    
+# Return index of member in sorted set; return nil if member does not exist    
 127.0.0.1:6379> ZRANK top xuwei
 (integer) 0
 127.0.0.1:6379> ZRANK top zhangsan
 (nil)
 
-# 返回top中成员的数量
+# Return count of members in top
 127.0.0.1:6379> ZCARD top
 (integer) 2
 
-# 返回top中所有成员，-inf表示第一个成员，+inf表示最后一个成员，结果默认以其分数的大小排序
+# Return all members in top; -inf means first member, +inf means last member; results default sorted by score
 127.0.0.1:6379> ZRANGEBYSCORE top -inf +inf
 1) "xuwei"
 2) "zhoujielun"
@@ -419,7 +419,7 @@ Basic operations:
 3) "zhoujielun"
 4) "0"
 
-# 返回top中所有成员，并且以索引从大到小排序
+# Return all members in top sorted by index from large to small
 127.0.0.1:6379> ZREVRANGE top 0 -1
 1) "zhoujielun"
 2) "xuwei"
@@ -429,7 +429,7 @@ Basic operations:
 3) "xuwei"
 4) "0"
 
-# 返回top中 0 <= index <= 2 索引范围内的成员，不在范围内返回空
+# Return members in top within index range 0 <= index <= 2; return empty if out of range
 127.0.0.1:6379> ZREVRANGE top 0 2
 1) "zhoujielun"
 2) "xuwei"
@@ -441,12 +441,12 @@ Basic operations:
 127.0.0.1:6379> ZREVRANGE top 3 5 WITHSCORES
 (empty list or set)
 
-# 返回top中分数在 20 <= 分数 <= 200 这个范围内的成员的数量
-127.0.0.1:6379> ZADD top 20 xuwei 80 zhoujielun 100 daolang 120 zhaolei   # 先搞个数据
+# Return count of members in top with score in range 20 <= score <= 200
+127.0.0.1:6379> ZADD top 20 xuwei 80 zhoujielun 100 daolang 120 zhaolei   # First create some data
 127.0.0.1:6379> ZCOUNT top 20 200
 (integer) 4
 
-# 返回top中分数在 20 <= 分数 <= 200 这个范围内的成员
+# Return members in top with score in range 20 <= score <= 200
 127.0.0.1:6379> ZRANGEBYSCORE top 20 200
 1) "xuwei"
 2) "zhoujielun"
@@ -462,7 +462,7 @@ Basic operations:
 7) "zhaolei"
 8) "120"
 
-# 返回top中分数范围在 100 <= 的 <= 20 范围内的成员，并以的的大小降序排序
+# Return members in top with score range 100 >= score >= 20, sorted descending by score
 127.0.0.1:6379> ZREVRANGEBYSCORE top 100 20
 1) "daolang"
 2) "zhoujielun"
@@ -476,26 +476,26 @@ Basic operations:
 6) "20"
 
 
-# 改
-# 为指定成员重新赋值
+# Update
+# Reassign value to specified member
 127.0.0.1:6379> ZADD top 30 xuwei
 (integer) 0
 
-# 为指定成员增加指定分数，并返回增加后的分数
+# Add specified score to member and return new score
 127.0.0.1:6379> ZINCRBY top 10 xuwei
 "40"
 
 
-# 删除
-# 删除分数在指定范围内的成员，并返回删除成员的数量
+# Delete
+# Delete members with scores in specified range and return count of deleted members
 127.0.0.1:6379> ZREMRANGEBYSCORE top 80 100
 (integer) 2
 
-# 删除top中指定索引范围内 0 <= index <= 1 的成员
+# Delete members in top within specified index range 0 <= index <= 1
 127.0.0.1:6379> ZREMRANGEBYRANK top 0 1
 (integer) 2
 
-# 删除top中一个或者多个成员，返回实际删除的个数，没有找到key返回0
+# Delete one or more members in top, return actual count deleted; return 0 if key not found
 127.0.0.1:6379> ZREMRANGEBYRANK top 0 1
 (integer) 2
 

@@ -32,7 +32,7 @@ Background saving started
 For a temporary effect, directly execute the `SLAVEOF` command.
 
 ```bash
-# SLAVEOF 主库IP 端口
+# SLAVEOF <master IP> <port>
 cat /dev/null > /opt/redis6379/logs/redis6379.log
 du -sh /opt/redis6379/logs/redis6379.log
 redis-cli flushall
@@ -64,9 +64,9 @@ cat /opt/redis6379/conf/redis6379.conf
 Other commands:
 
 ```bash
-# 查看主从状态的各种信息
+# View master-slave replication status
 INFO REPLICATION
-# 查看自己的角色
+# Check own role
 ROLE
 
 [root@cs ~]# redis-cli INFO REPLICATION
@@ -102,7 +102,7 @@ repl_backlog_histlen:196
 Redis Replication is a simple, easy-to-use master-slave replication mechanism. It allows a slave node to become an exact copy of the master node. Every time the connection to the master node is interrupted, the slave node automatically reconnects, and no matter what happens to the master node, the slave node always tries to reach a state consistent with the master node. Redis takes a series of auxiliary measures to ensure data safety.
 
 ```
-Redis主从复制技术有两个版本：在2.8版本之前，每次slave节点断线重联后，只能进行全量同步。在2.8版本之后进行了重新设计，引入了部分同步的概念。本文将以Redis 5.0.7版本为基础对主从复制原理进行介绍。
+Redis master-slave replication has gone through two major versions: before version 2.8, every time a slave node reconnected after a disconnection, it could only perform a full synchronization. After version 2.8, the mechanism was redesigned and partial synchronization was introduced. This article introduces the master-slave replication principles based on Redis 5.0.7.
 ```
 
 The old version of master-slave replication used a "full synchronization + command propagation" mechanism to synchronize data between master and slave. The hard problem here is that after a slave reconnects, even if only a small amount of data is inconsistent between master and slave, an expensive, resource-consuming full synchronization must be performed to achieve consistency. To this end, the Redis team introduced several mechanisms to ensure that when only a small amount of data is inconsistent, the lower-cost partial synchronization can be used to complete the replication. So the current master-slave replication mechanism consists of three parts: full synchronization, partial synchronization, and command propagation.
@@ -125,16 +125,16 @@ In master-slave replication mode, Redis uses a pair of `Replication ID, offset` 
 We can also verify this from the logs. Below I have sorted the process by the chronological order of the printed logs (some key logs):
 
 ```bash
-从库：
-# 从库向主库发送主从同步请求
+Replica:
+# Replica sends master-slave sync request to master
 54340:S 03 Aug 2023 23:20:30.274 * REPLICAOF 192.168.10.150:6379 enabled (user request from 'id=10 addr=127.0.0.1:33956 fd=7 name= age=0 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=48 qbuf-free=32720 obl=0 oll=0 omem=0 events=r cmd=slaveof')
 
 
-主库：
-# 主库接收到了主库的请求
+Master:
+# Master received the replica's sync request
 21566:M 03 Aug 2023 15:20:30.667 * Replica 192.168.10.151:6379 asks for synchronization
 21566:M 03 Aug 2023 15:20:30.667 * Partial resynchronization not accepted: Replication ID mismatch (Replica asked for '6dd2fe7d7518ca1547f387d5158fd2015c9b39f5', my replication IDs are '113f5106075b494c44df2ff79ac68e7044a6a59b' and '0000000000000000000000000000000000000000')
-# 主库立即执行bgsave，拍个最新的快照保存到本地并向从库发送rdb数据
+# Master immediately executes bgsave, takes a latest snapshot and saves it locally, then sends RDB data to the replica
 21566:M 03 Aug 2023 15:20:30.667 * Starting BGSAVE for SYNC with target: disk
 21566:M 03 Aug 2023 15:20:30.667 * Background saving started by pid 42854
 42854:C 03 Aug 2023 15:20:30.672 * DB saved on disk
@@ -142,8 +142,8 @@ We can also verify this from the logs. Below I have sorted the process by the ch
 21566:M 03 Aug 2023 15:20:30.774 * Background saving terminated with success
 21566:M 03 Aug 2023 15:20:30.779 * Synchronization with replica 192.168.10.151:6379 succeeded
 
-从库：
-# 从库接受主库发来的rdb数据
+Replica:
+# Replica accepts RDB data sent from the master
 54340:S 03 Aug 2023 23:20:30.834 * Connecting to MASTER 192.168.10.150:6379
 54340:S 03 Aug 2023 23:20:30.834 * MASTER <-> REPLICA sync started
 54340:S 03 Aug 2023 23:20:30.834 * Non blocking connect for SYNC fired the event.
@@ -151,13 +151,13 @@ We can also verify this from the logs. Below I have sorted the process by the ch
 54340:S 03 Aug 2023 23:20:30.851 * Trying a partial resynchronization (request 6dd2fe7d7518ca1547f387d5158fd2015c9b39f5:329).
 54340:S 03 Aug 2023 23:20:30.899 * Full resync from master: 113f5106075b494c44df2ff79ac68e7044a6a59b:835852
 54340:S 03 Aug 2023 23:20:30.899 * Discarding previously cached master state.
-# 接收到了来自主库的168951 bytes
+# Received 168951 bytes from the master
 54340:S 03 Aug 2023 23:20:31.004 * MASTER <-> REPLICA sync: receiving 168951 bytes from master
-# 重要动作：清空从库自己老的数据，然后加载主库同步过来的rdb数据到内存中
+# Important action: flush the replica's own old data, then load the RDB data synced from the master into memory
 54340:S 03 Aug 2023 23:20:31.010 * MASTER <-> REPLICA sync: Flushing old data
 54340:S 03 Aug 2023 23:20:31.010 * MASTER <-> REPLICA sync: Loading DB in memory
 54340:S 03 Aug 2023 23:20:31.013 * MASTER <-> REPLICA sync: Finished with success
-# 上面已经同步成功了rdb数据，接下来就是同步aof了，执行aof重写机制处理aof文件
+# RDB data has been successfully synced above, next is to sync AOF by executing the AOF rewrite mechanism to process the AOF file
 54340:S 03 Aug 2023 23:20:31.014 * Background append only file rewriting started by pid 54450
 54340:S 03 Aug 2023 23:20:31.092 * AOF rewrite child asks to stop sending diffs.
 54450:C 03 Aug 2023 23:20:31.093 * Parent agreed to stop sending diffs. Finalizing AOF...
@@ -167,8 +167,8 @@ We can also verify this from the logs. Below I have sorted the process by the ch
 54340:S 03 Aug 2023 23:20:31.142 * Background AOF rewrite terminated with success
 54340:S 03 Aug 2023 23:20:31.142 * Residual parent diff successfully flushed to the rewritten AOF (0.00 MB)
 54340:S 03 Aug 2023 23:20:31.142 * Background AOF rewrite finished successfully
-# aof搞定之后，主从同步也正式完毕了
-# 后续只要在主库的修改操作，都会实时同步到从库
+# After AOF is done, master-replica synchronization is officially complete
+# Subsequently, any modifications on the master will be synced to the replica in real time
 ```
 
 ## Other Issues Related to Replication
@@ -187,7 +187,7 @@ By default, the slave works in read-only mode, i.e., write commands cannot be ex
 To change this mode, you can modify the following option in the configuration file.
 
 ```bash
-# 默认是yes-只读，no-可写
+# Default is yes (read-only), no (writable)
 slave-read-only yes/no
 ```
 

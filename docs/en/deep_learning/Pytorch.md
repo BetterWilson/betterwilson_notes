@@ -664,7 +664,7 @@ from torch.utils.data import Dataset
 class MyDataset(Dataset):
     def __init__(self):
         # Initialize data, e.g., read from a file
-        self.data = ['李云龙', '楚云飞', '赵刚', '丁伟', '孔捷', '常乃超', '魏大勇', '秀芹']
+        self.data = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Henry']
         self.total = len(self.data)
 
     def __getitem__(self, index):
@@ -697,7 +697,7 @@ from torch.utils.data import Dataset
 class MyDataset(Dataset):
     def __init__(self):
         # 1. Initialize data, e.g., read from a file
-        self.data = ['李云龙', '楚云飞', '赵刚', '丁伟', '孔捷', '常乃超', '魏大勇', '秀芹']
+        self.data = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Henry']
         self.total = len(self.data)
 
     def __getitem__(self, index):

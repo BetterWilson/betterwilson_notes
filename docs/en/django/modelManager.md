@@ -29,8 +29,8 @@ class MyManager(models.Manager):
 
 
 class Depart(models.Model):
-    title = models.CharField(verbose_name="标题", max_length=32)
-    count = models.IntegerField(verbose_name="数量")
+    title = models.CharField(verbose_name="Title", max_length=32)
+    count = models.IntegerField(verbose_name="Count")
 
     objects = MyManager()
 ```

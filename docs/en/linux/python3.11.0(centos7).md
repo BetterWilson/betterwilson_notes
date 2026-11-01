@@ -27,9 +27,9 @@ tar xvf Python-3.11.0.tgz
 [root@cs opt]# wget https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tgz
 [root@cs opt]# tar xvf Python-3.11.0.tgz
 [root@cs opt]# ls
-Python-3.11.0					# 解压包解压后的安装包
-Python-3.11.0.tgz			    # 最初的从官网上下载的压缩包
-python311                       # 将来Python3.11.4版本的解释器最终的安装目录
+Python-3.11.0					# Extracted installation package
+Python-3.11.0.tgz			    # Original compressed archive downloaded from the official website
+python311                       # Final installation directory for the Python 3.11 interpreter
 ```
 
 ## 4 Compile and Install
@@ -54,7 +54,7 @@ ln -s /opt/python311/bin/python3 /usr/bin/python3
 ln -s /opt/python311/bin/pip3 /usr/bin/pip3
 
 
-# 删除可能存在一些其他版本的遗留的软连，然后重新建立软连接
+# Remove any leftover symlinks from other versions, then recreate the symlinks
 [root@cs opt]# rm -rf /usr/bin/python3
 [root@cs opt]# rm -rf /usr/bin/pip3
 [root@cs opt]# ln -s /opt/python311/bin/python3 /usr/bin/python3

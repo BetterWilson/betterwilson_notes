@@ -4,7 +4,7 @@
 
 ### 1.1 Objects and self
 
-Each class can define a special `__init__ 初始化方法 `, which is executed automatically when a class is instantiated to create an object, i.e., `对象=类()`.
+Each class can define a special `__init__ initialization method`, which is executed automatically when a class is instantiated to create an object, i.e., `object = Class()`.
 
 ```python
 class Message:
@@ -13,21 +13,21 @@ class Message:
         self.data = content
 
     def send_email(self, email):
-        data = "给{}发邮件，内容是：{}".format(email, self.data)
+        data = "Send email to {}, content: {}".format(email, self.data)
         print(data)
 
     def send_wechat(self, vid):
-        data = "给{}发微信，内容是：{}".format(vid, self.data)
+        data = "Send WeChat to {}, content: {}".format(vid, self.data)
         print(data)
 
-# 对象 = 类名() # 自动执行类中的 __init__ 方法。
+# object = ClassName()  # automatically executes the __init__ method in the class.
 
-# 1. 根据类型创建一个对象，内存的一块 区域 。
-# 2. 执行__init__方法，模块会将创建的那块区域的内存地址当self参数传递进去。    往区域中(data="注册成功")
-msg_object = Message("注册成功")
+# 1. Create an object based on the type, a region of memory.
+# 2. Execute the __init__ method; the module passes the memory address of the created region as the self parameter.    Store data in the region (data="Registration successful")
+msg_object = Message("Registration successful")
 
-msg_object.send_email("wupeiqi@live.com") # 给wupeiqi@live.com发邮件，内容是：注册成功
-msg_object.send_wechat("武沛齐") # 给武沛齐发微信，内容是：注册成功
+msg_object.send_email("wupeiqi@live.com")  # Send email to wupeiqi@live.com, content: Registration successful
+msg_object.send_wechat("Wu Peiqi")  # Send WeChat to Wu Peiqi, content: Registration successful
 ```
 
 ![image-20210123195714019](assets/image-20210123195714019.png)
@@ -50,22 +50,22 @@ class Message:
         self.data = content
 
     def send_email(self, email):
-        data = "给{}发邮件，内容是：{}".format(email, self.data)
+        data = "Send email to {}, content: {}".format(email, self.data)
         print(data)
 
     def send_wechat(self, vid):
-        data = "给{}发微信，内容是：{}".format(vid, self.data)
+        data = "Send WeChat to {}, content: {}".format(vid, self.data)
         print(data)
 
 
-msg_object = Message("注册成功")
-msg_object.send_email("wupeiqi@live.com") # 给wupeiqi@live.com发邮件，内容是：注册成功
-msg_object.send_wechat("武沛齐")
+msg_object = Message("Registration successful")
+msg_object.send_email("wupeiqi@live.com")  # Send email to wupeiqi@live.com, content: Registration successful
+msg_object.send_wechat("Wu Peiqi")
 
 
-login_object = Message("登录成功")
-login_object.send_email("wupeiqi@live.com") # 给wupeiqi@live.com发邮件，内容是：登录成功
-login_object.send_wechat("武沛齐")
+login_object = Message("Login successful")
+login_object.send_email("wupeiqi@live.com")  # Send email to wupeiqi@live.com, content: Login successful
+login_object.send_wechat("Wu Peiqi")
 ```
 
 ![image-20210123195714019](assets/image-20210123195714019.png)
@@ -100,35 +100,35 @@ Note: there are many other members, which will be introduced later.
 class Person:
 
     def __init__(self, n1, n2):
-        # 实例变量
+        # Instance variables
         self.name = n1
         self.age = n2
 	
-    # 绑定方法
+    # Bound method
     def show(self):
-        msg = "我叫{}，今年{}岁。".format(self.name, self.age)
+        msg = "My name is {}, I am {} years old.".format(self.name, self.age)
         print(msg)
 
     def all_message(self):
-        msg = "我是{}人，我叫{}，今年{}岁。".format(Person.country, self.name, self.age)
+        msg = "I am from {}, my name is {}, I am {} years old.".format(Person.country, self.name, self.age)
         print(msg)
 
     def total_message(self):
-        msg = "我是{}人，我叫{}，今年{}岁。".format(self.country, self.name, self.age)
+        msg = "I am from {}, my name is {}, I am {} years old.".format(self.country, self.name, self.age)
         print(msg)
 ```
 
 ```python
-# 执行绑定方法
-p1 = Person("武沛齐",20)
+# Execute bound method
+p1 = Person("WuPeiqi", 20)
 p1.show()
-# 或
-# p1 = Person("武沛齐",20)
+# or
+# p1 = Person("WuPeiqi", 20)
 # Person.show(p1)
 
 
-# 初始化，实例化了Person类的对象叫p1
-p1 = Person("武沛齐",20)
+# Initialize, instantiate an object of the Person class called p1
+p1 = Person("WuPeiqi", 20)
 ```
 
 
@@ -147,27 +147,27 @@ p1 = Person("武沛齐",20)
    
    def run():
        user_object_list = []
-       # 用户注册
+       # User registration
        while True:
-           user = input("用户名：")
+           user = input("Username: ")
            if user.upper() == "Q":
                break
-           pwd = input("密码")
+           pwd = input("Password")
            
-           # user_object对象中有：name/password
+           # user_object contains: name/password
            user_object = UserInfo(user, pwd,19)
            # user_dict = {"name":user,"password":pwd}
            
            user_object_list.append(user_object)
            # user_object_list.append(user_dict)
    
-       # 展示用户信息
+       # Display user information
        for obj in user_object_list:
            print(obj.name, obj.password)
            
-   总结：
-   	- 数据封装到对象，以后再去获取。
-       - 规范数据（约束）
+   Summary:
+   	- Encapsulate data into the object, and retrieve it later.
+       - Standardize data (constraints)
    ```
    
    Note: a dictionary can also be used to achieve encapsulation, but with a dictionary you still need to write the key yourself when accessing a value; with object-oriented programming you only need `.` to get the data encapsulated in the object.
@@ -175,11 +175,11 @@ p1 = Person("武沛齐",20)
 2. Encapsulate data into an object, and process the raw data within methods.
 
    ```python
-   user_list = ["用户-{}".format(i) for i in range(1,3000)]
+   user_list = ["User-{}".format(i) for i in range(1, 3000)]
    
-   # 分页显示，每页显示10条
+   # Paging display, 10 items per page
    while True:
-       page = int(input("请输入页码："))
+       page = int(input("Please enter page number: "))
    
        start_index = (page - 1) * 10
        end_index = page * 10
@@ -210,15 +210,15 @@ p1 = Person("武沛齐",20)
            return self.current_page * self.per_page_num
    
    
-   user_list = ["用户-{}".format(i) for i in range(1, 3000)]
+   user_list = ["User-{}".format(i) for i in range(1, 3000)]
    
-   # 分页显示，每页显示10条
+   # Paging display, 10 items per page
    while True:
-       page = input("请输入页码：")
+       page = input("Please enter page number: ")
    	
-       # page，当前访问的页码
-       # 10，每页显示10条数据
-   	# 内部执行Pagination类的init方法。
+       # page, the currently accessed page number
+       # 10, display 10 items of data per page
+   	# Internally execute the __init__ method of the Pagination class.
        pg_object = Pagination(page, 20)
        page_data_list = user_list[ pg_object.start() : pg_object.end() ]
        for item in page_data_list:
@@ -238,8 +238,8 @@ p1 = Person("武沛齐",20)
        def __init__(self, folder_path):
            self.folder_path = folder_path
            
-           if not os.path.exists(folder_path):    # 判断文件夹是否存在
-               os.makedirs(folder_path)    # 不存在，则创建文件夹
+           if not os.path.exists(folder_path):    # Check if folder exists
+               os.makedirs(folder_path)    # If it does not exist, create the folder
                
    
        def download(self, file_name, url):
@@ -263,7 +263,7 @@ p1 = Person("武沛齐",20)
        douyin_object = DouYin("videos")
    
        douyin_object.download(
-           "罗斯.mp4",
+           "Rose.mp4",
            "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg"
        )
    
@@ -281,93 +281,93 @@ p1 = Person("武沛齐",20)
 
    ```python
    class Police:
-       """警察"""
+       """Police"""
    
        def __init__(self, name, role):
            self.name = name
            self.role = role
-           if role == "队员":
+           if role == "team_member":
                self.hit_points = 200
            else:
                self.hit_points = 500
    
        def show_status(self):
-           """ 查看警察状态 """
-           message = "警察{}的生命值为:{}".format(self.name, self.hit_points)
+           """ Check police status """
+           message = "Police {}'s hit points: {}".format(self.name, self.hit_points)
            print(message)
    
        def bomb(self, terrorist_list):
-           """ 投炸弹，炸掉恐怖分子 """
+           """ Throw bomb, blow up terrorists """
            for terrorist in terrorist_list:
                terrorist.blood -= 200
                terrorist.show_status()
    
    """
-   p1 = Police("武沛齐","队员")
+   p1 = Police("WuPeiqi","team_member")
    p1.show_status()
-   p1.bomb(["alex","李杰"])
+   p1.bomb(["alex","LiJie"])
    
-   p2 = Police("日天","队长")
+   p2 = Police("RiTian","captain")
    p2.show_status()
-   p2.bomb(["alex","李杰"])
+   p2.bomb(["alex","LiJie"])
    """
    
    
    
    class Terrorist:
-       """ 恐怖分子 """
+       """ Terrorist """
    
        def __init__(self, name, blood=300):
            self.name = name
            self.blood = blood
    
        def shoot(self, police_object):
-           """ 开枪射击某个警察 """
+           """ Shoot at a police officer """
            police_object.hit_points -= 5
            police_object.show_status()
            
            self.blood -= 2
    
        def strafe(self, police_object_list):
-           """ 扫射某些警察 """
+           """ Strafe some police officers """
            for police_object in police_object_list:
                police_object.hit_points -= 8
                police_object.show_status()
    
        def show_status(self):
-           """ 查看恐怖分子状态 """
-           message = "恐怖分子{}的血量值为:{}".format(self.name, self.blood)
+           """ Check terrorist status """
+           message = "Terrorist {}'s blood value: {}".format(self.name, self.blood)
            print(message)
    
    """
    t1 = Terrorist('alex')
-   t2 = Terrorist('李杰',200)
+   t2 = Terrorist('LiJie', 200)
    """
            
    def run():
-       # 1.创建3个警察
-       p1 = Police("武沛齐", "队员")
-       p2 = Police("苑昊", "队员")
-       p3 = Police("于超", "队长")
+       # 1. Create 3 police officers
+       p1 = Police("WuPeiqi", "team_member")
+       p2 = Police("YuanHao", "team_member")
+       p3 = Police("YuChao", "captain")
    
-       # 2.创建2个匪徒
+       # 2. Create 2 terrorists
        t1 = Terrorist("alex")
        t2 = Terrorist("eric")
        
    
-       # alex匪徒射击于超警察
+       # Terrorist alex shoots police officer YuChao
        t1.shoot(p3)
    
-       # alex扫射
+       # alex strafes
        t1.strafe([p1, p2, p3])
    
-       # eric射击苑昊
+       # eric shoots YuanHao
        t2.shoot(p2)
    
-       # 武沛齐炸了那群匪徒王八蛋
+       # WuPeiqi bombs those terrorist bastards
        p1.bomb([t1, t2])
        
-       # 武沛齐又炸了一次alex
+       # WuPeiqi bombs alex again
        p1.bomb([t1])
    
    
@@ -411,11 +411,11 @@ There is a traditional notion that a son can inherit his father's property.
 Object-oriented programming has the same idea: a subclass can inherit the methods and class variables of a parent class (this is not making a copy; what belongs to the parent still belongs to the parent — the subclass merely inherits it).
 
 ```
-父类
-子类
+Parent class
+Child class
 
-基类
-派生类
+Base class
+Derived class
 ```
 
 
@@ -435,7 +435,7 @@ class Son(Base):
         
 s1 = Son()
 s1.show()
-s1.func() # 优先在自己的类中找，自己没有才去父类。
+s1.func() # Look in its own class first; if not found, go to the parent class.
 
 s2 = Base()
 s2.func()
@@ -491,7 +491,7 @@ class Base:
 class Foo(Base):
     def f2(self):
         print('before')
-        self.f1() # 调用了f1方法   obj.f1()
+        self.f1() # Called f1 method   obj.f1()
         print('foo.f2')
         
 obj = Foo()
@@ -512,13 +512,13 @@ class Base:
 class Foo(Base):
     def f2(self):
         print("before")
-        self.f1() # obj,Foo类创建出来的对象。 obj.f1
+        self.f1() # obj, object created by Foo class. obj.f1
         print('foo.f2')
 	def f1(self):
         print('foo.f1')
         
 obj = Foo()
-obj.f1() # obj对象到底是谁？优先就会先去谁里面找。
+obj.f1() # Who exactly is the obj object? It will look in whoever it belongs to first.
 obj.f2()
 
 >>> before
@@ -532,7 +532,7 @@ obj.f2()
 class Base:
     def f1(self):
         print('before')
-        self.f2() # slef是obj对象（Foo类创建的对象） obj.f2
+        self.f2() # self is the obj object (object created by Foo class) obj.f2
         print('base.f1')
         
 	def f2(self):
@@ -543,7 +543,7 @@ class Foo(Base):
         print('foo.f2')
         
 obj = Foo()
-obj.f1() # 优先去Foo类中找f1，因为调用f1的那个对象是Foo类创建出来的。
+obj.f1() # Look in Foo class for f1 first, because the object calling f1 was created by Foo class.
 
 
 >>> before
@@ -635,16 +635,16 @@ In other programming languages, code written this way is not allowed, for exampl
 ```java
 class Cat{  
     public void eat() {  
-        System.out.println("吃鱼");  
+        System.out.println("Eat fish");  
     }  
 }
 
 class Dog {  
     public void eat() {  
-        System.out.println("吃骨头");  
+        System.out.println("Eat bones");  
     }  
     public void work() {  
-        System.out.println("看家");  
+        System.out.println("Guard house");  
     }  
 }
 
@@ -673,16 +673,16 @@ abstract class Animal {
 
 class Cat extends Animal {  
     public void eat() {  
-        System.out.println("吃鱼");  
+        System.out.println("Eat fish");  
     }  
 }
 
 class Dog extends Animal {  
     public void eat() {  
-        System.out.println("吃骨头");  
+        System.out.println("Eat bones");  
     }  
     public void work() {  
-        System.out.println("看家");  
+        System.out.println("Guard house");  
     }  
 }
 
@@ -710,22 +710,22 @@ Python is different. Because Python places no restrictions on data types, it nat
 
 ```python
 def func(arg):
-    v1 = arg.copy() # 浅拷贝
+    v1 = arg.copy() # Shallow copy
     print(v1)
     
-func("武沛齐")
+func("WuPeiqi")
 func([11,22,33,44])
 ```
 
 ```python
 class Email(object):
     def send(self):
-        print("发邮件")
+        print("Send email")
 
         
 class Message(object):
     def send(self):
-        print("发短信")
+        print("Send message")
         
         
         
@@ -755,10 +755,10 @@ Summary:
 
   ```python
   def func(arg):
-      v1 = arg.copy() # 浅拷贝
+      v1 = arg.copy() # Shallow copy
       print(v1)
       
-  func("武沛齐")
+  func("WuPeiqi")
   func([11,22,33,44])
   ```
 
@@ -775,10 +775,10 @@ Now that we have a preliminary understanding of object-oriented programming, let
 
 
 ```python
-# 实例化一个str类的对象v1
-v1 = str("武沛齐") 
+# Instantiate an object v1 of the str class
+v1 = str("WuPeiqi") 
 
-# 通过对象执行str类中的upper方法。
+# Execute the upper method in the str class through the object.
 data = v1.upper()
 
 print(data)
@@ -797,7 +797,7 @@ Regarding inheritance in Python's object-oriented programming, we have already l
 - How to write inheritance:
 
   ```python
-  # 继承
+  # Inheritance
   class Base(object):
       pass
   
@@ -806,7 +806,7 @@ Regarding inheritance in Python's object-oriented programming, we have already l
   ```
 
   ```python
-  # 多继承
+  # Multiple inheritance
   class Base(object):
       pass
   
@@ -1000,7 +1000,7 @@ Example 5:
 ![image-20210129142756667](assets/image-20210129142756667.png)
 
 ```python
-简写为：A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object
+Abbreviated as: A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object
 ```
 
 
@@ -1084,7 +1084,7 @@ class A(B, C, P):
     pass
 
 
-print(A.mro()) # 简写为：A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object
+print(A.mro()) # Abbreviated as: A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object
 ```
 
 
@@ -1098,7 +1098,7 @@ So, based on my own experience, I have summarized a single sentence to share wit
 ![image-20210129142756667](assets/image-20210129142756667.png)
 
 ```
-简写为：A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object
+Abbreviated as: A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object
 ```
 
 
@@ -1139,7 +1139,7 @@ Overview:
 
 
 ```
-详细文档：
+Detailed documentation:
 	https://www.python.org/dev/peps/pep-0253/#mro-method-resolution-order-the-lookup-rule
 	https://www.python.org/download/releases/2.3/mro/
 

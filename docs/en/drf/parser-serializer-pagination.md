@@ -75,9 +75,9 @@ class UserView(APIView):
 from django.db import models
 
 class Depart(models.Model):
-    """部门表"""
-    title = models.CharField(verbose_name="标题", max_length=32)
-    number = models.CharField(verbose_name="代号", max_length=16, default=1)
+    """Department table"""
+    title = models.CharField(verbose_name="Title", max_length=32)
+    number = models.CharField(verbose_name="Code", max_length=16, default=1)
 ```
 
 ```python
@@ -96,11 +96,11 @@ class DemoSerializer(serializers.Serializer):
 
 class DemoView(APIView):
     def get(self, request):
-        # 1.数据库获取多条数据
+        # 1. Retrieve multiple records from the database
         # queryset = models.Depart.objects.all()
-        # ser = DemoSerializer(instance=queryset, many=True) 内部会循环queryset的每一个对象，再返回
+        # ser = DemoSerializer(instance=queryset, many=True) internally loops over each object in queryset and returns
 
-        # 2.数据库获取单条数据
+        # 2. Retrieve a single record from the database
         instance = models.Depart.objects.filter(id=1).first()
         ser = DemoSerializer(instance=instance, many=False)
         
@@ -117,9 +117,9 @@ from django.db import models
 
 
 class Depart(models.Model):
-    """部门表"""
-    title = models.CharField(verbose_name="标题", max_length=32)
-    number = models.CharField(verbose_name="代号", max_length=16, default=1)
+    """Department table"""
+    title = models.CharField(verbose_name="Title", max_length=32)
+    number = models.CharField(verbose_name="Code", max_length=16, default=1)
 ```
 
 ```python
@@ -132,18 +132,18 @@ from api import models
 class DemoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Depart
-        # fields = "__all__"	# 所有字段
-        # fields = ['id', 'title', 'number']	# 指定字段
-        exclude = ["id"]	# 剔除某个字段
+        # fields = "__all__"	# All fields
+        # fields = ['id', 'title', 'number']	# Specify fields
+        exclude = ["id"]	# Exclude a certain field
 
 
 class DemoView(APIView):
     def get(self, request):
-        # 1.数据库获取多条数据
+        # 1. Retrieve multiple records from the database
         # queryset = models.Depart.objects.all()
         # ser = InfoSerializer(instance=queryset, many=True)
 
-        # 2.数据库获取单条数据
+        # 2. Retrieve a single record from the database
         instance = models.Depart.objects.filter(id=1).first()
         ser = InfoSerializer(instance=instance, many=False)
 
@@ -164,16 +164,16 @@ from django.db import models
 
 
 class Depart(models.Model):
-    """部门表"""
-    title = models.CharField(verbose_name="标题", max_length=32)
-    number = models.CharField(verbose_name="代号", max_length=16, default=1)
+    """Department table"""
+    title = models.CharField(verbose_name="Title", max_length=32)
+    number = models.CharField(verbose_name="Code", max_length=16, default=1)
 
 
 class UserInfo(models.Model):
-    name = models.CharField(verbose_name="姓名", max_length=32)
-    gender = models.SmallIntegerField(verbose_name="性别", choices=((1, "男"), (2, "女")))
-    role = models.ForeignKey(verbose_name="角色", to="Role", on_delete=models.CASCADE)
-    ctime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    name = models.CharField(verbose_name="Name", max_length=32)
+    gender = models.SmallIntegerField(verbose_name="Gender", choices=((1, "Male"), (2, "Female")))
+    role = models.ForeignKey(verbose_name="Role", to="Role", on_delete=models.CASCADE)
+    ctime = models.DateTimeField(verbose_name="Creation time", auto_now_add=True)
 ```
 
 ```python
@@ -221,21 +221,21 @@ from django.db import models
 
 
 class Role(models.Model):
-    title = models.CharField(verbose_name="标题", max_length=32)
-    order = models.IntegerField(verbose_name="顺序")
+    title = models.CharField(verbose_name="Title", max_length=32)
+    order = models.IntegerField(verbose_name="Order")
 
 
 class Tag(models.Model):
-    caption = models.CharField(verbose_name="名称", max_length=32)
+    caption = models.CharField(verbose_name="Name", max_length=32)
 
 
 class UserInfo(models.Model):
-    name = models.CharField(verbose_name="姓名", max_length=32)
-    gender = models.SmallIntegerField(verbose_name="性别", choices=((1, "男"), (2, "女")))
-    role = models.ForeignKey(verbose_name="角色", to="Role", on_delete=models.CASCADE)
-    ctime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    name = models.CharField(verbose_name="Name", max_length=32)
+    gender = models.SmallIntegerField(verbose_name="Gender", choices=((1, "Male"), (2, "Female")))
+    role = models.ForeignKey(verbose_name="Role", to="Role", on_delete=models.CASCADE)
+    ctime = models.DateTimeField(verbose_name="Creation time", auto_now_add=True)
 
-    tags = models.ManyToManyField(verbose_name="标签", to="Tag")
+    tags = models.ManyToManyField(verbose_name="Tag", to="Tag")
 ```
 
 ```python
@@ -322,8 +322,8 @@ Objects are instantiated from classes.
 class Foo(object):
     pass
 
-# 第1步：调用Foo的__new__方法创建空对象。
-# 第2步：调用Foo的__init__方法对对象进行初始化。
+# Step 1: Call Foo's __new__ method to create an empty object.
+# Step 2: Call Foo's __init__ method to initialize the object.
 obj = Foo()
 ```
 
@@ -342,26 +342,26 @@ Foo = type("Foo",(object,),{ "v1":123, "func":lambda self:666 })
 ```
 
 ```
-执行逻辑是:
-	先创建参数，如上文的v1=123和方法func，再创建类
+Execution logic is:
+	First create the parameters, such as v1=123 and the func method above, then create the class
 ```
 
 ```python
-# type创建类的格式
-# 类名 = type("类名", (父类), {成员})
+# Format for creating a class with type
+# ClassName = type("ClassName", (ParentClass), {members})
 ```
 
 When defining a class, you can add `metaclass` to specify the creator of the current class.
 
 ```python
-# 由type创建Foo类型
+# Create Foo type by type
 class Foo(object):
     pass
 ```
 
 ```python
-# 由`东西` 创建Foo类型
-class Foo(object,metaclass=东西):
+# Create Foo type by `thing`
+class Foo(object,metaclass=thing):
     pass
 ```
 
@@ -371,7 +371,7 @@ Specify a metaclass to create the class.
 class MyType(type):
     def __new__(cls, *args, **kwargs):
         new_cls = super().__new__(cls, *args, **kwargs)
-        print("创建类：", new_cls)
+        print("Creating class:", new_cls)
         return new_cls
 
 class Foo(metaclass=MyType):
@@ -381,12 +381,12 @@ class Foo(metaclass=MyType):
 ```python
 class MyType(type):
     def __init__(self, *args, **kwargs):
-        print("第2步：初始化类成员：", args, **kwargs)
+        print("Step 2: Initialize class members:", args, **kwargs)
         super().__init__(*args, **kwargs)
 
     def __new__(cls, *args, **kwargs):
         new_cls = super().__new__(cls, *args, **kwargs)
-        print("第1步：创建类：", new_cls)
+        print("Step 1: Create class:", new_cls)
         return new_cls
 
 
@@ -400,21 +400,21 @@ class Foo(metaclass=MyType):
 ```python
 class MyType(type):
     def __init__(cls, *args, **kwargs):
-        print("第2步：初始化类成员：", args, **kwargs)
+        print("Step 2: Initialize class members:", args, **kwargs)
         super().__init__(*args, **kwargs)
 
     def __new__(cls, *args, **kwargs):
         new_cls = super().__new__(cls, *args, **kwargs)
-        print("第1步：创建类：", new_cls)
+        print("Step 1: Create class:", new_cls)
         return new_cls
 
     def __call__(cls, *args, **kwargs):
-        print("第3步：创建对象&初始化对象", cls)
+        print("Step 3: Create and initialize object", cls)
 
-        # 1.调用自己那个类的 __new__ 方法去创建对象
+        # 1. Call the __new__ method of your own class to create the object
         new_object = cls.__new__(cls, *args, **kwargs)
 
-        # 2.调用你自己那个类 __init__放发去初始化
+        # 2. Call the __init__ method of your own class to initialize
         cls.__init__(new_object, *args, **kwargs)
         return new_object
 
@@ -492,9 +492,9 @@ from api import models
 
 
 class InfoSerializer(serializers.Serializer):
-    id = serializers.IntegerField()  # 对象，内部_creation_counter=0
-    title = serializers.CharField()  # 对象，内部_creation_counter=1
-    order = serializers.IntegerField # 对象，内部_creation_counter=2
+    id = serializers.IntegerField()  # object, internal _creation_counter=0
+    title = serializers.CharField()  # object, internal _creation_counter=1
+    order = serializers.IntegerField # object, internal _creation_counter=2
 ```
 
 Note: this counter is later used for sorting, in order to control the execution order of fields.
@@ -536,14 +536,14 @@ Before the class is created, the metaclass's `__new__` method adds a `_declared_
 class SerializerMetaclass(type):
     @classmethod
     def _get_declared_fields(cls, bases, attrs):
-        # 1.循环获取类中定义所有的成员（类变量、方法），筛选出继承自Fields的类的字段对象。
-        # 注意：同时会将字段在当前类成员中移除
+        # 1. Loop through all members defined in the class (class variables, methods) and filter out field objects that inherit from Field.
+        # Note: This also removes the field from the current class members
         fields = [
             (field_name, attrs.pop(field_name)) 
             for field_name, obj in list(attrs.items())
             if isinstance(obj, Field)
         ]
-        # 2.根据字段的_creation_counter排序
+        # 2. Sort by the field's _creation_counter
         fields.sort(key=lambda x: x[1]._creation_counter)
 
         # Ensures a base class field doesn't override cls attrs, and maintains
@@ -555,14 +555,14 @@ class SerializerMetaclass(type):
             known.add(name)
             return name
 		
-        # 3.读取父类中的_declared_fields字段（父类先于子类创建、序列化类支持继承）
+        # 3. Read _declared_fields from parent classes (parent classes are created before child classes, serializer classes support inheritance)
         base_fields = [
             (visit(name), f)
             for base in bases if hasattr(base, '_declared_fields')
             for name, f in base._declared_fields.items() if name not in known
         ]
 		
-        # 4.将父类和子类中的字段打包返回，赋值给当前类的_declared_fields
+        # 4. Pack and return fields from parent and child classes, assign to the current class's _declared_fields
         return OrderedDict(base_fields + fields)
 
     def __new__(cls, name, bases, attrs):
@@ -589,14 +589,14 @@ Therefore, after the serializer class has finished loading, the class members ar
 - Removed: the field objects.
 
   ```python
-  RoleSerializer.gender   不存在
+  RoleSerializer.gender   does not exist
   ```
 
 - Added: `_declared_fields`, which is of type `OrderedDict` and contains all fields.
 
   ```python
   RoleSerializer._declared_fields = {
-      "gender": CharField对象
+      "gender": CharField object
   }
   ```
 
@@ -632,10 +632,10 @@ class BaseSerializer(Field):
 
     def __new__(cls, *args, **kwargs):
         if kwargs.pop('many', False):
-            # 调用 many_init 方法获取其他对象，返回
+            # Call many_init method to get other objects and return
             return cls.many_init(*args, **kwargs)
 
-        # 创建当前类的空对象，返回
+        # Create an empty object of the current class and return
         return super().__new__(cls, *args, **kwargs)
 
 
@@ -666,15 +666,15 @@ class RoleSerializer(serializers.ModelSerializer):
 ```python
 instance = models.UserInfo.objects.all().first()
 
-# 实例化对象，内部会：先执行__new__、再执行__init__
-# 第1步：__new__
-# 	默认：many=True，返回ListSerializer对象； many=False，返回当前类InfoSerializer的对象。
-# 第2步：__init__
-#   此处就要根据__new__返回的不同对象，执行不同对象的__init__方法。
-# =====> 思考题：你觉得他为什么要这么设计？ <======
+# Instantiate object; internally: first execute __new__, then __init__
+# Step 1: __new__
+# 	By default: many=True returns a ListSerializer object; many=False returns an object of the current class InfoSerializer.
+# Step 2: __init__
+#   Here, execute the __init__ method of the different object returned by __new__.
+# =====> Think about it: Why do you think it was designed this way? <======
 ser = InfoSerializer(instance=instance, many=False)
 
-# 获取序列化后的值
+# Get the serialized value
 ser.data
 ```
 
@@ -685,7 +685,7 @@ ser.data
 ```python
 class Field:
     def get_attribute(self, instance):
-        # source_attrs=[]  或 source_attrs=["xx","xx","xxx"]
+        # source_attrs=[]  or source_attrs=["xx","xx","xxx"]
 		return get_attribute(instance, self.source_attrs)
     
 class CharField(Field):
@@ -697,37 +697,37 @@ class CharField(Field):
 class BaseSerializer(Field):
     @property
     def data(self):
-        # 第2步
+        # Step 2
         if not hasattr(self, '_data'):
             if self.instance is not None and not getattr(self, '_errors', None):
-                # 第3步：用于序列化给对象进行初始化用的。
+                # Step 3: Used for serializing and initializing the object.
                 self._data = self.to_representation(self.instance)
             elif hasattr(self, '_validated_data') and not getattr(self, '_errors', None):
-                # 这里是用于对请求校验时，才触发执行的。
+                # This is triggered only when validating the request.
                 self._data = self.to_representation(self.validated_data)
             else:
-                # 这个是用于给Serializer，不传对象而传入initial_data参数用的。
+                # This is used for Serializer when no object is passed but initial_data is passed.
                 self._data = self.get_initial()
         return self._data
 
 class Serializer(BaseSerializer, metaclass=SerializerMetaclass):
     @property
     def data(self):
-        # 第1步
+        # Step 1
         ret = super().data
         return ReturnDict(ret, serializer=self)
 	
     def to_representation(self, instance):
-        # 第4步
+        # Step 4
         ret = OrderedDict()
         
-        # 第5步：获取 _declared_fields 中所有非write_only字段，即：用于序列化的字段。
-        #       如果是ModelSerializer，也会去寻找其Meta中定义的字段 + 字段的bind方法
+        # Step 5: Get all non-write_only fields from _declared_fields, i.e., fields used for serialization.
+        #       If it is a ModelSerializer, it will also look for fields defined in its Meta + the field's bind method
         fields = self._readable_fields
 
         for field in fields:
             try:
-                # 第5步：调用字段对象中的 get_attribute 方法
+                # Step 5: Call the get_attribute method of the field object
                 attribute = field.get_attribute(instance)
             except SkipField:
                 continue
@@ -736,7 +736,7 @@ class Serializer(BaseSerializer, metaclass=SerializerMetaclass):
             if check_for_none is None:
                 ret[field.field_name] = None
             else:
-                # 第6步：调用字段对象中的 to_representation 方法
+                # Step 6: Call the to_representation method of the field object
                 ret[field.field_name] = field.to_representation(attribute)
 
         return ret
@@ -755,7 +755,7 @@ class RoleSerializer(serializers.ModelSerializer):
 instance = models.UserInfo.objects.all().first()
 ser = InfoSerializer(instance=instance, many=False)
 
-# 创建InfoSerializer类的对象，获取序列化后的值
+# Create an object of the InfoSerializer class and get the serialized value
 ser.data
 ```
 
@@ -769,7 +769,7 @@ class BaseSerializer(Field):
     def data(self):
         if not hasattr(self, '_data'):
             if self.instance is not None and not getattr(self, '_errors', None):
-                # 这里
+                # Here
                 self._data = self.to_representation(self.instance)
             elif hasattr(self, '_validated_data') and not getattr(self, '_errors', None):
                 self._data = self.to_representation(self.validated_data)
@@ -787,7 +787,7 @@ class ListSerializer(BaseSerializer):
         iterable = data.all() if isinstance(data, models.Manager) else data
         
         return [
-            # 循环，利用序列化类去处理每个对象
+            # Loop, use the serializer class to process each object
             self.child.to_representation(item) for item in iterable
         ]
 ```
@@ -801,9 +801,9 @@ class ListSerializer(BaseSerializer):
 Validate and save the request data sent by the user.
 
 ```
-GET请求	-> 获取数据(列表)
-POST请求  -> 新增数据
-PUT请求   -> 更新数据
+GET request	-> Retrieve data (list)
+POST request  -> Create data
+PUT request   -> Update data
 ```
 
 
@@ -819,7 +819,7 @@ from rest_framework import serializers
 class InfoSerializer(serializers.Serializer):
     title = serializers.CharField(required=True, max_length=20, min_length=6)
     order = serializers.IntegerField(required=False, max_value=100, min_value=10)
-    level = serializers.ChoiceField(choices=[("1", "高级"), (2, "中级")])
+    level = serializers.ChoiceField(choices=[("1", "Senior"), (2, "Intermediate")])
 
 
 class InfoView(APIView):
@@ -832,7 +832,7 @@ class InfoView(APIView):
         
     # def post(self, request):
     #     ser = InfoSerializer(data=request.data)
-    #     ser.is_valid(raise_exception=True)	如果校验失败，则返回错误；校验成功，继续向后走(本质与上文一样)
+    #     ser.is_valid(raise_exception=True)	If validation fails, return an error; if successful, continue (same in essence as above)
     #     return Response(ser.validated_data)
 ```
 
@@ -850,12 +850,12 @@ from django.core.validators import RegexValidator, EmailValidator
 class InfoSerializer(serializers.Serializer):
     title = serializers.CharField(required=True, max_length=20, min_length=6)
     order = serializers.IntegerField(required=False, max_value=100, min_value=10)
-    level = serializers.ChoiceField(choices=[("1", "高级"), (2, "中级")])
+    level = serializers.ChoiceField(choices=[("1", "Senior"), (2, "Intermediate")])
 
     # email = serializers.EmailField()
-    email = serializers.CharField(validators=[EmailValidator(message="邮箱格式错误")])
+    email = serializers.CharField(validators=[EmailValidator(message="Invalid email format")])
 
-    more = serializers.CharField(validators=[RegexValidator(r"\d+", message="格式错误")])
+    more = serializers.CharField(validators=[RegexValidator(r"\d+", message="Format error")])
 
     code = serializers.CharField()
 
@@ -888,14 +888,14 @@ class InfoSerializer(serializers.Serializer):
     def validate_code(self, value):
         print(value)
         if len(value) > 6:
-            raise exceptions.ValidationError("字段钩子校验失败")
+            raise exceptions.ValidationError("Field hook validation failed")
         return value
 
-    # 上面所有字段全部校验成功之后再执行validate
+    # validate is executed after all fields above pass validation
     def validate(self, attrs):
         print("validate=", attrs)
-        # api_settings.NON_FIELD_ERRORS_KEY		全局配置错误信息(遇到错误时non_field_errors替换为相应的字段)
-        # raise exceptions.ValidationError("全局钩子校验失败")
+        # api_settings.NON_FIELD_ERRORS_KEY		Global configuration for error info (when an error occurs, replace non_field_errors with the corresponding field)
+        # raise exceptions.ValidationError("Global hook validation failed")
         return attrs
 
 
@@ -924,7 +924,7 @@ class VipSerializer(serializers.ModelSerializer):
             return value
         exists = models.VIP.objects.filter(delete_time=None).filter(username=value).exists()
         if exists:
-            raise ValidationError("姓名已存在")
+            raise ValidationError("Name already exists")
         return value
 ```
 
@@ -950,7 +950,7 @@ class RoleSerializer(serializers.ModelSerializer):
         model = models.Role
         fields = ["title", "order", "more"]
         extra_kwargs = {
-            "title": {"validators": [RegexValidator(r"\d+", message="格式错误")]},
+            "title": {"validators": [RegexValidator(r"\d+", message="Format error")]},
             "order": {"min_value": 5},
         }
 
@@ -992,7 +992,7 @@ class RoleSerializer(serializers.ModelSerializer):
         model = models.Role
         fields = ["title", "order", "more"]
         extra_kwargs = {
-            "title": {"validators": [RegexValidator(r"\d+", message="格式错误")]},
+            "title": {"validators": [RegexValidator(r"\d+", message="Format error")]},
             "order": {"min_value": 5},
         }
 
@@ -1029,21 +1029,21 @@ class InfoView(APIView):
 from django.db import models
 
 class Role(models.Model):
-    title = models.CharField(verbose_name="标题", max_length=32)
-    order = models.IntegerField(verbose_name="顺序")
+    title = models.CharField(verbose_name="Title", max_length=32)
+    order = models.IntegerField(verbose_name="Order")
 
 
 class Tag(models.Model):
-    caption = models.CharField(verbose_name="名称", max_length=32)
+    caption = models.CharField(verbose_name="Name", max_length=32)
 
 
 class UserInfo(models.Model):
-    name = models.CharField(verbose_name="姓名", max_length=32)
-    gender = models.SmallIntegerField(verbose_name="性别", choices=((1, "男"), (2, "女")))
-    role = models.ForeignKey(verbose_name="角色", to="Role", on_delete=models.CASCADE)
-    ctime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    name = models.CharField(verbose_name="Name", max_length=32)
+    gender = models.SmallIntegerField(verbose_name="Gender", choices=((1, "Male"), (2, "Female")))
+    role = models.ForeignKey(verbose_name="Role", to="Role", on_delete=models.CASCADE)
+    ctime = models.DateTimeField(verbose_name="Creation time", auto_now_add=True)
 
-    tags = models.ManyToManyField(verbose_name="标签", to="Tag")
+    tags = models.ManyToManyField(verbose_name="Tag", to="Tag")
 ```
 
 ```python
@@ -1064,7 +1064,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
         model = models.UserInfo
         fields = ["name", "gender", "role", "tags", "more"]
         extra_kwargs = {
-            "name": {"validators": [RegexValidator(r"n-\d+", message="格式错误")]},
+            "name": {"validators": [RegexValidator(r"n-\d+", message="Format error")]},
         }
 
     def validate_more(self, value):
@@ -1081,7 +1081,7 @@ class InfoView(APIView):
             ser.validated_data.pop("more")
             ser.save(ctime=datetime.datetime.now())
             # return Response(ser.validated_data)
-            return Response("成功")
+            return Response("Success")
         else:
             return Response(ser.errors)
 ```
@@ -1129,28 +1129,28 @@ from django.db import models
 
 
 class Role(models.Model):
-    """ 角色表 """
-    title = models.CharField(verbose_name="名称", max_length=32)
+    """ Role table """
+    title = models.CharField(verbose_name="Name", max_length=32)
 
 
 class Department(models.Model):
-    """ 部门表 """
-    title = models.CharField(verbose_name="名称", max_length=32)
+    """ Department table """
+    title = models.CharField(verbose_name="Name", max_length=32)
 
 
 class UserInfo(models.Model):
-    """ 用户表 """
-    level_choices = ((1, "普通会员"), (2, "VIP"), (3, "SVIP"),)
-    level = models.IntegerField(verbose_name="级别", choices=level_choices, default=1)
+    """ User table """
+    level_choices = ((1, "Regular member"), (2, "VIP"), (3, "SVIP"),)
+    level = models.IntegerField(verbose_name="Level", choices=level_choices, default=1)
 
-    username = models.CharField(verbose_name="用户名", max_length=32)
-    password = models.CharField(verbose_name="密码", max_length=64)
-    age = models.IntegerField(verbose_name="年龄", default=0)
-    email = models.CharField(verbose_name="邮箱", max_length=64, null=True, blank=True)
+    username = models.CharField(verbose_name="Username", max_length=32)
+    password = models.CharField(verbose_name="Password", max_length=64)
+    age = models.IntegerField(verbose_name="Age", default=0)
+    email = models.CharField(verbose_name="Email", max_length=64, null=True, blank=True)
     token = models.CharField(verbose_name="TOKEN", max_length=64, null=True, blank=True)
 
-    depart = models.ForeignKey(verbose_name="部门", to="Department", on_delete=models.CASCADE, null=True, 		blank=True)
-    roles = models.ManyToManyField(verbose_name="角色", to="Role")
+    depart = models.ForeignKey(verbose_name="Department", to="Department", on_delete=models.CASCADE, null=True, 		blank=True)
+    roles = models.ManyToManyField(verbose_name="Role", to="Role")
 
 ```
 
@@ -1182,8 +1182,8 @@ class DepartModelSerializer(serializers.ModelSerializer):
         model = models.Department
         fields = ['id', "title"]
         extra_kwargs = {
-            "id": {"read_only": False},  # 数据验证
-            "title": {"read_only": True}  # 序列化
+            "id": {"read_only": False},  # Data validation
+            "title": {"read_only": True}  # Serialization
         }
 
 
@@ -1192,22 +1192,22 @@ class RoleModelSerializer(serializers.ModelSerializer):
         model = models.Role
         fields = ['id', "title"]
         extra_kwargs = {
-            "id": {"read_only": False},  # 数据验证
-            "title": {"read_only": True}  # 序列化
+            "id": {"read_only": False},  # Data validation
+            "title": {"read_only": True}  # Serialization
         }
 
 
 class UserModelSerializer(serializers.ModelSerializer):
     level_text = serializers.CharField(source="get_level_display", read_only=True)
 
-    # Serializer嵌套，不是read_only，一定要自定义create和update，自定义新增和更新的逻辑。
+    # Serializer nesting, not read_only, must customize create and update, custom logic for create and update.
     depart = DepartModelSerializer(many=False)
     roles = RoleModelSerializer(many=True)
 
     extra = serializers.SerializerMethodField(read_only=True)
     email2 = serializers.EmailField(write_only=True)
 
-    # 数据校验：username、email、email2、部门、角色信息
+    # Data validation: username, email, email2, department, role info
     class Meta:
         model = models.UserInfo
         fields = [
@@ -1224,38 +1224,38 @@ class UserModelSerializer(serializers.ModelSerializer):
     def validate_username(self, value):
         return value
 
-    # 新增加数据时
+    # When creating new data
     def create(self, validated_data):
-        """ 如果有嵌套的Serializer，在进行数据校验时，只有两种选择：
-              1. 将嵌套的序列化设置成 read_only
-              2. 自定义create和update方法，自定义新建和更新的逻辑
-            注意：用户端提交数据的格式。
+        """ If there are nested Serializers, during data validation there are only two choices:
+              1. Set the nested serializer to read_only
+              2. Customize create and update methods, custom logic for creation and update
+            Note: The format of data submitted by the client.
         """
         depart_id = validated_data.pop('depart')['id']
 
         role_id_list = [ele['id'] for ele in validated_data.pop('roles')]
 
-        # 新增用户表
+        # Create user table
         validated_data['depart_id'] = depart_id
         user_object = models.UserInfo.objects.create(**validated_data)
 
-        # 在用户表和角色表的关联表中添加对应关系
+        # Add corresponding relationships in the association table between users and roles
         user_object.roles.add(*role_id_list)
 
         return user_object
 
 
 class UserView(APIView):
-    """ 用户管理 """
+    """ User management """
 
     def get(self, request):
-        """ 添加用户 """
+        """ Add user """
         queryset = models.UserInfo.objects.all()
         ser = UserModelSerializer(instance=queryset, many=True)
         return Response({"code": 0, 'data': ser.data})
 
     def post(self, request):
-        """ 添加用户 """
+        """ Add user """
         ser = UserModelSerializer(data=request.data)
         if not ser.is_valid():
             return Response({'code': 1006, 'data': ser.errors})
@@ -1264,7 +1264,7 @@ class UserView(APIView):
 
         instance = ser.save(age=18, password="123", depart_id=1)
 
-        # 新增之后的一个对象（内部调用UserModelSerializer进行序列化）
+        # An object after creation (internally calls UserModelSerializer for serialization)
         print(instance)
         # ser = UserModelSerializer(instance=instance, many=False)
         # ser.data
@@ -1313,9 +1313,9 @@ In an API that returns a data list, if the amount of data is large, you certainl
 DRF provides us with some pagination-related classes:
 
 ```
-BasePagination，基类
-PageNumberPagination(BasePagination)	支持 /accounts/?page=4&page_size=100 格式的分页
-LimitOffsetPagination(BasePagination)	支持 ?offset=100&limit=10 格式的分页
+BasePagination, base class
+PageNumberPagination(BasePagination)	Supports /accounts/?page=4&page_size=100 style pagination
+LimitOffsetPagination(BasePagination)	Supports ?offset=100&limit=10 style pagination
 ```
 
 

@@ -72,7 +72,7 @@ def create_class(name):
 
 class BaseClass:
     def answer(self):
-        return "基类"
+        return "base class"
 
 
 if __name__ == "__main__":
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     my_obj = User()
     print(my_obj.name)			# user
     print(my_obj.func())		# wilson
-    print(my_obj.answer())		# 基类
+    print(my_obj.answer())		# base class
 ```
 
 

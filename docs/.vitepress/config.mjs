@@ -53,6 +53,10 @@ export default defineConfig({
 	},
 
 	head: [
+		// 网站图标：SVG 优先（搜索引擎 SERP 与高清屏首选），再按 ICO / PNG 回退
+		['link', {rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'}],
+		['link', {rel: 'shortcut icon', type: 'image/x-icon', href: '/favicon.ico'}],
+		['link', {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}],
 		['link', {rel: 'icon', type: 'image/png', href: '/favicon.png'}],
 		['link', {rel: 'apple-touch-icon', href: '/apple-touch-icon.png'}],
 		['meta', {name: 'author', content: 'BetterWilson'}],

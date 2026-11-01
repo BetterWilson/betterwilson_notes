@@ -188,17 +188,17 @@ where $F(x) = \sum_{t} \alpha_t h_t(x)$ is the weighted sum of all classifiers. 
 **Pseudocode of the algorithm flow**:
 
  ```
- 输入: 训练集 {(x₁,y₁), ..., (x_N,y_N)}, 基分类器类型, 迭代轮数 T
- 输出: 强分类器 F(x) = Sign(Σ α_t · h_t(x))
+ Input: Training set {(x₁,y₁), ..., (x_N,y_N)}, base classifier type, number of iterations T
+ Output: Strong classifier F(x) = Sign(Σ α_t · h_t(x))
 
- ① 初始化: D₁(i) = 1/N  （所有样本权重相等）
+ ① Initialize: D₁(i) = 1/N  (all sample weights are equal)
  ② for t = 1 to T:
-    ③ 用权重分布 D_t 训练基分类器 h_t(x)
-    ④ 计算加权错误率: ε_t = Σ D_t(i) · 1[h_t(x_i) ≠ y_i]
-    ⑤ 计算分类器权重: α_t = ½ ln((1-ε_t)/ε_t)
-    ⑥ 更新样本权重: D_{t+1}(i) ∝ D_t(i) · exp(-α_t · y_i · h_t(x_i))
-    ⑦ 归一化使 Σ D_{t+1}(i) = 1
- ⑧ 返回 F(x) = Sign(Σ α_t · h_t(x))
+    ③ Train base classifier h_t(x) with weight distribution D_t
+    ④ Compute weighted error rate: ε_t = Σ D_t(i) · 1[h_t(x_i) ≠ y_i]
+    ⑤ Compute classifier weight: α_t = ½ ln((1-ε_t)/ε_t)
+    ⑥ Update sample weights: D_{t+1}(i) ∝ D_t(i) · exp(-α_t · y_i · h_t(x_i))
+    ⑦ Normalize so that Σ D_{t+1}(i) = 1
+ ⑧ Return F(x) = Sign(Σ α_t · h_t(x))
  ```
 
 📖 **Detailed explanation of AdaBoost formula parameters**
@@ -257,55 +257,55 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
-# x是特征，y是标签
-x, y = datasets.make_moons(n_samples=50000, noise=0.3, random_state=42)  # 随机50000个样本，2个标签0 1
+# x is features, y is labels
+x, y = datasets.make_moons(n_samples=50000, noise=0.3, random_state=42)  # 50000 random samples, 2 labels 0 and 1
 print(x.shape)
 print(y.shape)
 print(np.unique(y))
 
-# 划分训练集和测试集
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
-# 导入AdaBoost分类器
+# Import AdaBoost classifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 import matplotlib.pyplot as plt
 
-# 创建基分类器 - 使用决策树作为AdaBoost的基分类器
+# Create base classifier - use decision tree as AdaBoost base classifier
 base_clf = DecisionTreeClassifier(
-    max_depth=1,  # 决策树桩(深度为1的决策树)
-    criterion='gini',  # 基尼决策树
-    random_state=42,  # 随机种子，确保结果可复现
+    max_depth=1,  # Decision stump (decision tree of depth 1)
+    criterion='gini',  # Gini decision tree
+    random_state=42,  # Random seed for reproducibility
 )
 
-# 创建AdaBoost分类器
+# Create AdaBoost classifier
 ada_clf = AdaBoostClassifier(
-    estimator=base_clf,  # 基分类器
-    n_estimators=50,  # 弱分类器的数量
-    learning_rate=1.0,  # 学习率
-    random_state=42  # 随机种子，确保结果可复现
+    estimator=base_clf,  # Base classifier
+    n_estimators=50,  # Number of weak classifiers
+    learning_rate=1.0,  # Learning rate
+    random_state=42  # Random seed for reproducibility
 )
 
-# 训练AdaBoost分类器
+# Train AdaBoost classifier
 ada_clf.fit(X_train, y_train)
 
-# 预测
+# Predict
 ada_pred = ada_clf.predict(X_test)
 ada_accuracy = accuracy_score(y_test, ada_pred)
 
-print("AdaBoost集成准确率:", ada_accuracy)
+print("AdaBoost ensemble accuracy:", ada_accuracy)
 
-# 可视化AdaBoost的权重和准确率变化
+# Visualize AdaBoost weights and accuracy changes
 
-# 获取每个弱分类器的权重
+# Get weight of each weak classifier
 estimator_weights = ada_clf.estimator_weights_
 
-# 创建一个新的AdaBoost分类器来跟踪不同数量弱分类器的准确率
-n_estimators_range = range(1, 51)  # 从1到50个弱分类器
+# Create a new AdaBoost classifier to track accuracy with different numbers of weak classifiers
+n_estimators_range = range(1, 51)  # From 1 to 50 weak classifiers
 accuracies = []
 
 for n in n_estimators_range:
-    # 创建具有n个弱分类器的AdaBoost
+    # Create AdaBoost with n weak classifiers
     temp_ada = AdaBoostClassifier(
         estimator=base_clf,
         n_estimators=n,
@@ -316,25 +316,25 @@ for n in n_estimators_range:
     temp_pred = temp_ada.predict(X_test)
     accuracies.append(accuracy_score(y_test, temp_pred))
 
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+plt.rcParams['font.sans-serif'] = ['SimHei']  # For proper Chinese label display
+plt.rcParams['axes.unicode_minus'] = False  # For proper minus sign display
 
-# 绘制权重分布
+# Plot weight distribution
 plt.figure(figsize=(10, 6))
 plt.bar(range(1, len(estimator_weights) + 1), estimator_weights)
-plt.xlabel('弱分类器索引')
-plt.ylabel('权重')
-plt.title('AdaBoost中各弱分类器的权重分布')
-plt.savefig("AdaBoost中各弱分类器的权重分布", dpi=200)
+plt.xlabel('Weak classifier index')
+plt.ylabel('Weight')
+plt.title('Weight distribution of weak classifiers in AdaBoost')
+plt.savefig("AdaBoost_weight_distribution", dpi=200)
 plt.grid(True)
 
-# 绘制准确率变化曲线
+# Plot accuracy curve
 plt.figure(figsize=(10, 6))
 plt.plot(n_estimators_range, accuracies, 'b-', marker='o')
-plt.xlabel('弱分类器数量')
-plt.ylabel('测试集准确率')
-plt.title('AdaBoost中弱分类器数量与准确率的关系')
-plt.savefig("AdaBoost中弱分类器数量与准确率的关系", dpi=200)
+plt.xlabel('Number of weak classifiers')
+plt.ylabel('Test set accuracy')
+plt.title('Relationship between number of weak classifiers and accuracy in AdaBoost')
+plt.savefig("AdaBoost_accuracy_curve", dpi=200)
 plt.grid(True)
 ```
 
@@ -433,30 +433,30 @@ That is: **the newly added tree $h_m(x)$ should approximate the negative gradien
 **Question 3: Detailed algorithm flow**
 
 ```
-输入: 训练集 {(x₁,y₁), ..., (x_N,y_N)}, 损失函数 L, 迭代轮数 M, 学习率 ν
-输出: 强模型 F_M(x)
+Input: Training set {(x₁,y₁), ..., (x_N,y_N)}, loss function L, number of iterations M, learning rate ν
+Output: Strong model F_M(x)
 
-① 初始化: F₀(x) = argmin_γ Σ L(y_i, γ)
-   （回归：γ = y 的均值；分类：γ = log(正例比例/负例比例)）
+① Initialize: F₀(x) = argmin_γ Σ L(y_i, γ)
+   (Regression: γ = mean of y; Classification: γ = log(positive ratio / negative ratio))
 
 ② for m = 1 to M:
-   ③ 计算负梯度（伪残差）:
+   ③ Compute negative gradient (pseudo-residual):
       r_{im} = -∂L(y_i, F(x_i)) / ∂F(x_i) |_{F=F_{m-1}}
-      对每个样本 i = 1, ..., N
+      For each sample i = 1, ..., N
 
-   ④ 用 {(x_i, r_{im})}_{i=1}^N 训练一棵 CART 回归树 h_m(x)
-      （注意：始终是回归树，即使是分类任务——因为拟合的是连续值的梯度）
-      树将特征空间划分为 J 个叶节点区域 R_{jm}
+   ④ Train a CART regression tree h_m(x) on {(x_i, r_{im})}_{i=1}^N
+      (Note: always a regression tree, even for classification tasks — because the gradient being fitted is continuous)
+      The tree partitions the feature space into J leaf node regions R_{jm}
 
-   ⑤ 对每个叶节点区域 j = 1, ..., J，计算最优输出值:
+   ⑤ For each leaf node region j = 1, ..., J, compute optimal output value:
       γ_{jm} = argmin_γ Σ_{x_i∈R_{jm}} L(y_i, F_{m-1}(x_i) + γ)
-      （回归+平方损失时：γ_{jm} = 该区域内残差的均值）
+      (Regression + squared loss: γ_{jm} = mean of residuals in this region)
 
-   ⑥ 更新模型:
+   ⑥ Update model:
       F_m(x) = F_{m-1}(x) + ν · Σ_{j=1}^J γ_{jm} · 1[x ∈ R_{jm}]
-      其中 ν 是学习率，控制每棵树的贡献
+      where ν is the learning rate, controlling each tree's contribution
 
-⑦ 返回 F_M(x)
+⑦ Return F_M(x)
 ```
 
 **Key details**:
@@ -636,52 +636,52 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
-# x是特征，y是标签
-x, y = datasets.make_moons(n_samples=50000, noise=0.3, random_state=42)  # 随机50000个样本，2个标签0 1
+# x is features, y is labels
+x, y = datasets.make_moons(n_samples=50000, noise=0.3, random_state=42)  # 50000 random samples, 2 labels 0 and 1
 print(x.shape)
 print(y.shape)
 print(np.unique(y))
 
-# 划分训练集和测试集
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
-# 导入梯度提升决策树分类器
+# Import gradient boosting decision tree classifier
 from sklearn.ensemble import GradientBoostingClassifier
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 创建GBDT分类器
+# Create GBDT classifier
 gbdt_clf = GradientBoostingClassifier(
-    n_estimators=100,  # 弱分类器的数量
-    learning_rate=0.1,  # 学习率
-    max_depth=3,  # 决策树的最大深度
-    min_samples_split=2,  # 分裂内部节点所需的最小样本数
-    min_samples_leaf=1,  # 叶节点所需的最小样本数
-    subsample=1.0,  # 用于拟合各个基础学习器的样本比例
-    random_state=42  # 随机种子，确保结果可复现
+    n_estimators=100,  # Number of weak classifiers
+    learning_rate=0.1,  # Learning rate
+    max_depth=3,  # Maximum depth of decision tree
+    min_samples_split=2,  # Minimum samples required to split an internal node
+    min_samples_leaf=1,  # Minimum samples required in a leaf node
+    subsample=1.0,  # Fraction of samples used for fitting each base learner
+    random_state=42  # Random seed for reproducibility
 )
 
-# 训练GBDT分类器
+# Train GBDT classifier
 gbdt_clf.fit(X_train, y_train)
 
-# 预测
+# Predict
 gbdt_pred = gbdt_clf.predict(X_test)
 gbdt_accuracy = accuracy_score(y_test, gbdt_pred)
 
-print("GBDT集成准确率:", gbdt_accuracy)
+print("GBDT ensemble accuracy:", gbdt_accuracy)
 
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+plt.rcParams['font.sans-serif'] = ['SimHei']  # For proper Chinese label display
+plt.rcParams['axes.unicode_minus'] = False  # For proper minus sign display
 
-# 绘制GBDT的训练过程中的损失函数变化
+# Plot loss function change during GBDT training
 plt.figure(figsize=(10, 6))
-plt.plot(np.arange(1, len(gbdt_clf.train_score_) + 1), gbdt_clf.train_score_, 'b-', label='训练集得分')
-plt.xlabel('迭代次数')
-plt.ylabel('得分')
-plt.title('GBDT训练过程中的得分变化')
+plt.plot(np.arange(1, len(gbdt_clf.train_score_) + 1), gbdt_clf.train_score_, 'b-', label='Training set score')
+plt.xlabel('Iterations')
+plt.ylabel('Score')
+plt.title('Score change during GBDT training')
 plt.legend()
 plt.grid(True)
-plt.savefig('GBDT训练过程中的得分变化', dpi=200)
+plt.savefig('GBDT_training_score_change', dpi=200)
 ```
 
 ![GBDT训练过程中的得分变化](assets/GBDT训练过程中的得分变化.png)

@@ -986,20 +986,20 @@ print(f"Contrastive Loss: {loss.item():.4f}")
 Imagine you are **constructing a building**:
 
 ```
-	 自定义损失函数   ←  「验收标准」
-      定义"什么是好、什么是坏"。
-      离验收标准越近 → loss 越小 → 训练目标。
-      继承 nn.Module 或直接用函数，只算数值不碰梯度。
+	 Custom Loss Function   ←  "Acceptance Criteria"
+      Defines "what is good, what is bad".
+      Closer to the criteria → smaller loss → training objective.
+      Inherit nn.Module or use a function directly; only computes values, doesn't touch gradients.
                                                       
-     自定义层         ←  「建筑材料」
-      搭积木——Linear、Conv、BN、激活函数。
-      继承 nn.Module，管理权重/偏置这些可学习参数。
-      用现有算子拼出新结构，反向传播 PyTorch 自动搞定。
+     Custom Layer         ←  "Building Materials"
+      Building blocks — Linear, Conv, BN, activation functions.
+      Inherit nn.Module to manage learnable parameters like weights/biases.
+      Combine existing operators into new structures; PyTorch handles backpropagation automatically.
                                                      
-     自定义求导       ←  「烧制砖头的配方」
-      当市面上没有你要的砖（算子），自己烧。
-      继承 autograd.Function，手写 forward + backward。
-      这是最底层——你直接告诉 PyTorch 梯度怎么流。
+     Custom Autograd      ←  "Recipe for Firing Bricks"
+      When the bricks (operators) you need aren't available on the market, make your own.
+      Inherit autograd.Function, write forward + backward by hand.
+      This is the lowest level — you directly tell PyTorch how gradients flow.
 ```
 
 | Dimension | Custom loss function | Custom layer | Custom differentiation |

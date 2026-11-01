@@ -139,7 +139,7 @@ This section explains 8 built-in functions, all of which relate to object-orient
 
   ```python
   info = dict() # {}
-  info['name'] = "武沛齐"
+  info['name'] = "WuPeiqi"
   info["age"] = 18
   
   value = info.get("age")
@@ -151,12 +151,12 @@ This section explains 8 built-in functions, all of which relate to object-orient
   class MyDict(dict):
   
       def get(self, k):
-          print("自定义功能")
+          print("Custom functionality")
           return super().get(k)
   
   
   info = MyDict()
-  info['name'] = "武沛齐" # __setitem__
+  info['name'] = "WuPeiqi" # __setitem__
   info["age"] = 18       # __setitem__
   print(info)
   
@@ -172,13 +172,13 @@ This section explains 8 built-in functions, all of which relate to object-orient
 - type, gets the type of an object.
 
   ```python
-  v1 = "武沛齐"
+  v1 = "WuPeiqi"
   result = type(v1)
   print(result) # <class 'str'>
   ```
 
   ```python
-  v2 = "武沛齐"
+  v2 = "WuPeiqi"
   print( type(v2) == str )  # True
   
   v3 = [11, 22, 33] # list(...)
@@ -211,9 +211,9 @@ This section explains 8 built-in functions, all of which relate to object-orient
   
   v1 = Foo()
   
-  print( isinstance(v1, Foo) )   # True，对象v1是Foo类的实例
-  print( isinstance(v1, Base) )  # True，对象v1的Base子类的实例。
-  print( isinstance(v1, Top) )   # True，对象v1的Top子类的实例。
+  print( isinstance(v1, Foo) )   # True, object v1 is an instance of class Foo
+  print( isinstance(v1, Base) )  # True, object v1 is an instance of a subclass of Base
+  print( isinstance(v1, Top) )   # True, object v1 is an instance of a subclass of Top
   ```
 
   ```python
@@ -282,7 +282,7 @@ During development, when you encounter some `unpredictable` errors, or when you 
 import requests
 
 while True:
-    url = input("请输入要下载网页地址：")
+    url = input("Please enter the URL of the webpage to download: ")
     res = requests.get(url=url)
     with open('content.txt', mode='wb') as f:
         f.write(res.content)
@@ -294,20 +294,20 @@ The code above for downloading a video runs normally under normal conditions, bu
 try:
     res = requests.get(url=url)
 except Exception as e:
-    代码块，上述代码出异常待执行。
-print("结束")
+    # Code block to execute when the above code raises an exception
+print("Done")
 ```
 
 ```python
 import requests
 
 while True:
-    url = input("请输入要下载网页地址：")
+    url = input("Please enter the URL of the webpage to download: ")
     
     try:
         res = requests.get(url=url)
     except Exception as e:
-        print("请求失败，原因：{}".format(str(e)))
+        print("Request failed, reason: {}".format(str(e)))
         continue
         
     with open('content.txt', mode='wb') as f:
@@ -315,15 +315,15 @@ while True:
 ```
 
 ```python
-num1 = input("请输入数字：")
-num2 = input("请输入数字：")
+num1 = input("Please enter a number: ")
+num2 = input("Please enter a number: ")
 try:
     num1 = int(num1)
     num2 = int(num2)
     result = num1 + num2
     print(result)
 except Exception as e:
-    print("输入错误")
+    print("Input error")
 ```
 
 Common application scenarios going forward:
@@ -344,18 +344,18 @@ Basic format of exception handling:
 
 ```python
 try:
-    # 逻辑代码
+    # Logic code
 except Exception as e:
-    # try中的代码如果有异常，则此代码块中的代码会执行。
+    # If the code in try raises an exception, the code in this block will execute.
 ```
 
 ```python
 try:
-    # 逻辑代码
+    # Logic code
 except Exception as e:
-    # try中的代码如果有异常，则此代码块中的代码会执行。
+    # If the code in try raises an exception, the code in this block will execute.
 finally:
-    # try中的代码无论是否报错，finally中的代码都会执行，一般用于释放资源。
+    # Whether the code in try raises an error or not, the code in finally will execute, generally used for releasing resources.
 
 print("end")
 
@@ -364,9 +364,9 @@ try:
     file_object = open("xxx.log")
     # ....
 except Exception as e:
-    # 异常处理
+    # Exception handling
 finally:
-    file_object.close()  # try中没异常，最后执行finally关闭文件；try有异常，执行except中的逻辑，最后再执行finally关闭文件。
+    file_object.close()  # If there is no exception in try, finally closes the file at the end; if there is an exception in try, execute the logic in except, and finally execute finally to close the file.
 """    
 ```
 
@@ -382,12 +382,12 @@ finally:
 import requests
 
 while True:
-    url = input("请输入要下载网页地址：")
+    url = input("Please enter the URL of the webpage to download: ")
     
     try:
         res = requests.get(url=url)
     except Exception as e:
-        print("请求失败，原因：{}".format(str(e)))
+        print("Request failed, reason: {}".format(str(e)))
         continue
         
     with open('content.txt', mode='wb') as f:
@@ -401,22 +401,22 @@ import requests
 from requests import exceptions
 
 while True:
-    url = input("请输入要下载网页地址：")
+    url = input("Please enter the URL of the webpage to download: ")
     try:
         res = requests.get(url=url)
         print(res)    
     except exceptions.MissingSchema as e:
-        print("URL架构不存在")
+        print("URL schema does not exist")
     except exceptions.InvalidSchema as e:
-        print("URL架构错误")
+        print("URL schema error")
     except exceptions.InvalidURL as e:
-        print("URL地址格式错误")
+        print("URL address format error")
     except exceptions.ConnectionError as e:
-        print("网络连接错误")
+        print("Network connection error")
     except Exception as e:
-        print("代码出现错误", e)
+        print("Code error", e)
         
-# 提示：如果想要写的简单一点，其实只写一个Exception捕获错误就可以了。
+# Tip: If you want to keep it simple, you can just write one Exception to catch the error.
 ```
 
 
@@ -427,42 +427,42 @@ Basic format:
 
 ```python
 try:
-    # 逻辑代码
+    # Logic code
     pass
 
 except KeyError as e:
-    # 小兵，只捕获try代码中发现了键不存在的异常，例如：去字典 info_dict["n1"] 中获取数据时，键不存在。
+    # Only catches KeyError exceptions in try, e.g., when accessing info_dict["n1"] and the key does not exist.
     print("KeyError")
 
 except ValueError as e:
-    # 小兵，只捕获try代码中发现了值相关错误，例如：把字符串转整型 int("无诶器")
+    # Only catches ValueError exceptions in try, e.g., converting a string to int int("invalid")
     print("ValueError")
 
 except Exception as e:
-    # 王者，处理上面except捕获不了的错误（可以捕获所有的错误）。
+    # Handles errors that the above except blocks cannot catch (can catch all errors).
     print("Exception")
 ```
 
 Python provides many fine-grained built-in exceptions for you to choose from.
 
 ```python
-常见异常：
+Common exceptions:
 """
-AttributeError 试图访问一个对象没有的树形，比如foo.x，但是foo没有属性x
-IOError 输入/输出异常；基本上是无法打开文件
-ImportError 无法引入模块或包；基本上是路径问题或名称错误
-IndentationError 语法错误（的子类） ；代码没有正确对齐
-IndexError 下标索引超出序列边界，比如当x只有三个元素，却试图访问n x[5]
-KeyError 试图访问字典里不存在的键 inf['xx']
-KeyboardInterrupt Ctrl+C被按下
-NameError 使用一个还未被赋予对象的变量
-SyntaxError Python代码非法，代码不能编译(个人认为这是语法错误，写错了）
-TypeError 传入对象类型与要求的不符合
-UnboundLocalError 试图访问一个还未被设置的局部变量，基本上是由于另有一个同名的全局变量，
-导致你以为正在访问它
-ValueError 传入一个调用者不期望的值，即使值的类型是正确的
+AttributeError: attempting to access an attribute that the object does not have, e.g., foo.x, but foo has no attribute x
+IOError: input/output exception; basically unable to open file
+ImportError: unable to import module or package; basically a path issue or name error
+IndentationError: syntax error (subclass); code is not properly aligned
+IndexError: subscript index out of sequence bounds, e.g., when x has only three elements, but trying to access x[5]
+KeyError: attempting to access a key that does not exist in the dictionary inf['xx']
+KeyboardInterrupt: Ctrl+C was pressed
+NameError: using a variable that has not been assigned an object
+SyntaxError: illegal Python code, code cannot compile (personally think this is a syntax error, written incorrectly)
+TypeError: the type of the passed object does not match the requirement
+UnboundLocalError: attempting to access a local variable that has not been set, basically because there is another global variable with the same name,
+causing you to think you are accessing it
+ValueError: passing a value that the caller does not expect, even if the type of the value is correct
 """
-更多异常：
+More exceptions:
 """
 ArithmeticError
 AssertionError
@@ -532,7 +532,7 @@ class MyException(Exception):
 try:
     pass
 except MyException as e:
-    print("MyException异常被触发了", e)
+    print("MyException was triggered", e)
 except Exception as e:
     print("Exception", e)
 ```
@@ -551,7 +551,7 @@ try:
     raise MyException()
     # 。。。
 except MyException as e:
-    print("MyException异常被触发了", e)
+    print("MyException was triggered", e)
 except Exception as e:
     print("Exception", e)
 ```
@@ -564,22 +564,22 @@ class MyException(Exception):
 
 
 try:
-    raise MyException("xxx失败了")
+    raise MyException("xxx failed")
 except MyException as e:
-    print("MyException异常被触发了", e.msg)
+    print("MyException was triggered", e.msg)
 except Exception as e:
     print("Exception", e)
 ```
 
 ```python
 class MyException(Exception):
-    title = "请求错误"
+    title = "Request error"
 
 
 try:
     raise MyException()
 except MyException as e:
-    print("MyException异常被触发了", e.title)
+    print("MyException was triggered", e.title)
 except Exception as e:
     print("Exception", e)
 ```
@@ -592,17 +592,17 @@ except Exception as e:
 
   ```python
   class EmailValidError(Exception):
-      title = "邮箱格式错误"
+      title = "Email format error"
   
   class ContentRequiredError(Exception):
-      title = "文本不能为空错误"
+      title = "Content cannot be empty error"
       
   def send_email(email,content):
       if not re.match("\w+@live.com",email):
           raise EmailValidError()
   	if len(content) == 0 :
           raise ContentRequiredError()
-  	# 发送邮件代码...
+  	# Send email code...
       # ...
   ```
 
@@ -610,7 +610,7 @@ except Exception as e:
 
   ```python
   def execute():
-      # 其他代码
+      # Other code
       # ...
       
   	try:
@@ -620,11 +620,11 @@ except Exception as e:
       except ContentRequiredError as e:
           pass
       except Exception as e:
-          print("发送失败")
+          print("Send failed")
   
   execute()
   
-  # 提示：如果想要写的简单一点，其实只写一个Exception捕获错误就可以了。
+  # Tip: If you want to keep it simple, you can just write one Exception to catch the error.
   ```
 
   
@@ -636,22 +636,22 @@ import requests
 from requests import exceptions
 
 while True:
-    url = input("请输入要下载网页地址：")
+    url = input("Please enter the URL of the webpage to download: ")
     try:
         res = requests.get(url=url)
         print(res)    
     except exceptions.MissingSchema as e:
-        print("URL架构不存在")
+        print("URL schema does not exist")
     except exceptions.InvalidSchema as e:
-        print("URL架构错误")
+        print("URL schema error")
     except exceptions.InvalidURL as e:
-        print("URL地址格式错误")
+        print("URL address format error")
     except exceptions.ConnectionError as e:
-        print("网络连接错误")
+        print("Network connection error")
     except Exception as e:
-        print("代码出现错误", e)
+        print("Code error", e)
         
-# 提示：如果想要写的简单一点，其实只写一个Exception捕获错误就可以了。
+# Tip: If you want to keep it simple, you can just write one Exception to catch the error.
 ```
 
 
@@ -670,11 +670,11 @@ while True:
 
 ```python
 try:
-    # 逻辑代码
+    # Logic code
 except Exception as e:
-    # try中的代码如果有异常，则此代码块中的代码会执行。
+    # If the code in try raises an exception, the code in this block will execute.
 finally:
-    # try中的代码无论是否报错，finally中的代码都会执行，一般用于释放资源。
+    # Whether the code in try raises an error or not, the code in finally will execute, generally used for releasing resources.
 
 print("end")
 ```
@@ -702,7 +702,7 @@ Even if return is defined in try or except, the code in the final finally block 
 1. Fill in the code to catch errors in the program.
 
    ```python
-   # 迭代器
+   # Iterator
    class IterRange(object):
        def __init__(self, num):
            self.num = num
@@ -724,7 +724,7 @@ Even if return is defined in try or except, the code in the final finally block 
        try:
        	ele = next(obj)
    	except StopIteration as e:
-           print("数据获取完毕")
+           print("Data retrieval complete")
            break
        print(ele)
        
@@ -763,7 +763,7 @@ Even if return is defined in try or except, the code in the final finally block 
        try:
        	ele = next(obj_iter)
    	except StopIteration as e:
-           print("数据获取完毕")
+            print("Data retrieval complete")
            break
        print(ele)
    ```
@@ -781,7 +781,7 @@ Even if return is defined in try or except, the code in the final finally block 
        try:
        	ele = next(gen)
    	except StopIteration as e:
-           print("数据获取完毕")
+            print("Data retrieval complete")
            break
        print(ele)
    ```
@@ -789,14 +789,14 @@ Even if return is defined in try or except, the code in the final finally block 
 4. Fill in the code to catch errors in the program. (Note: this case is for practice only; in real development, it is recommended to handle this situation with your own checks rather than using exceptions)
 
    ```python
-   num = int("武沛齐")
+   num = int("WuPeiqi")
    ```
 
    ```python
    try:
-       num = int("武沛齐")
+       num = int("WuPeiqi")
    except ValueError as e:
-       print("转换失败")
+       print("Conversion failed")
    ```
 
 5. Fill in the code to catch errors in the program. (Note: this case is for practice only; in real development, it is recommended to handle this situation with your own checks rather than using exceptions)
@@ -811,7 +811,7 @@ Even if return is defined in try or except, the code in the final finally block 
        data = [11,22,33,44,55]
    	data[1000]
    except IndexError as e:
-       print("转换失败")
+        print("Conversion failed")
    ```
 
    
@@ -828,7 +828,7 @@ Even if return is defined in try or except, the code in the final finally block 
        data = {"k1":123,"k2":456}
    	data["xxxx"]
    except KyeError as e:
-       print("转换失败")
+        print("Conversion failed")
    ```
 
 7. Analyze the code and write the result
@@ -844,7 +844,7 @@ Even if return is defined in try or except, the code in the final finally block 
    
    
    info = MyDict()
-   info['name'] = "武沛齐"
+   info['name'] = "WuPeiqi"
    info['wx'] = "wupeiq666"
    
    print(info['wx'])     # info['wx']  -> __getitem__
@@ -858,13 +858,13 @@ Even if return is defined in try or except, the code in the final finally block 
        try:
            num = handler()
            print(num)
-           return "成功"
+           return "Success"
        except Exception as e:
-           return "错误"
+           return "Error"
        finally:
            print("END")
    
-       print("结束")
+       print("End")
    
    
    res = run(lambda: 123) 
@@ -874,13 +874,13 @@ Even if return is defined in try or except, the code in the final finally block 
    ```python
    >>> 123
    >>> END
-   >>> 成功
+   >>> Success
    ```
 
    ```python
    def func():
        print(666)
-       return "成功"
+       return "Success"
    
    def run(handler):
        try:
@@ -888,11 +888,11 @@ Even if return is defined in try or except, the code in the final finally block 
            print(num)
            return func()
        except Exception as e:
-           return "错误"
+           return "Error"
        finally:
            print("END")
    
-       print("结束")
+       print("End")
    
    
    res = run(lambda: 123) 
@@ -903,7 +903,7 @@ Even if return is defined in try or except, the code in the final finally block 
    >>> 123
    >>> 666
    >>> END
-   >>> 成功
+   >>> Success
    ```
 
 
@@ -920,36 +920,36 @@ class Person(object):
         self.wx = wx
 	
     def show(self):
-        message = "姓名{}，微信：{}".format(self.name,self.wx)
+        message = "Name: {}, WeChat: {}".format(self.name, self.wx)
         
         
-user_object = Person("武沛齐","wupeiqi666")
+user_object = Person("WuPeiqi","wupeiqi666")
 
 
-# 对象.成员 的格式去获取数据
+# Use object.member format to get data
 user_object.name
 user_object.wx
 user_object.show()
 
-# 对象.成员 的格式无设置数据
-user_object.name = "吴培期"
+# Use object.member format to set data
+user_object.name = "WuPeiqi"
 ```
 
 ```python
-user = Person("武沛齐","wupeiqi666")
+user = Person("WuPeiqi","wupeiqi666")
 
-# getattr 获取成员
+# getattr: get member
 getattr(user,"name") # user.name
 getattr(user,"wx")   # user.wx
 
 
 method = getattr(user,"show") # user.show
 method()
-# 或
+# or
 getattr(user,"show")()
 
-# setattr 设置成员
-setattr(user, "name", "吴培期") # user.name = "吴培期"
+# setattr: set member
+setattr(user, "name", "WuPeiqi") # user.name = "WuPeiqi"
 ```
 
 Python provides 4 built-in functions to support reflection:
@@ -957,26 +957,26 @@ Python provides 4 built-in functions to support reflection:
 - getattr, gets a member from an object
 
   ```
-  v1 = getattr(对象,"成员名称")
-  v2 = getattr(对象,"成员名称", 不存在时的默认值)
+  v1 = getattr(object, "member_name")
+  v2 = getattr(object, "member_name", default_value_if_not_exist)
   ```
 
 - setattr, sets a member on an object
 
   ```
-  setattr(对象,"成员名称",值)
+  setattr(object, "member_name", value)
   ```
 
 - hasattr, whether the object contains a member
 
   ```
-  v1 = hasattr(对象,"成员名称") # True/False
+  v1 = hasattr(object, "member_name") # True/False
   ```
 
 - delattr, deletes a member from an object
 
   ```
-  delattr(对象,"成员名称")
+  delattr(object, "member_name")
   ```
 
 From now on, whenever you come across this object.member style of writing, it can all be implemented based on reflection.
@@ -997,13 +997,13 @@ class Account(object):
 
     
 def run(self):
-    name = input("请输入要执行的方法名称：") # index register login xx run ..
+    name = input("Please enter the method name to execute: ") # index register login xx run ..
     
     account_object = Account()
     method = getattr(account_object, name,None) # index = getattr(account_object,"index")
     
     if not method:
-        print("输入错误")
+        print("Input error")
         return 
     method()
 ```
@@ -1024,10 +1024,10 @@ There is a saying in Python: `everything is an object`. Every object maintains i
           self.wx = wx
   	
       def show(self):
-          message = "姓名{}，微信：{}".format(self.name,self.wx)
+          message = "Name: {}, WeChat: {}".format(self.name, self.wx)
           
           
-  user_object = Person("武沛齐","wupeiqi666")
+  user_object = Person("WuPeiqi","wupeiqi666")
   user_object.name
   ```
 
@@ -1035,10 +1035,10 @@ There is a saying in Python: `everything is an object`. Every object maintains i
 
   ```python
   class Person(object):
-      title = "武沛齐"
+      title = "WuPeiqi"
   
   Person.title
-  # Person类也是一个对象（平时不这么称呼）
+  # Person class is also an object (not usually called that way)
   ```
 
 - Modules are objects
@@ -1047,7 +1047,7 @@ There is a saying in Python: `everything is an object`. Every object maintains i
   import re
   
   re.match
-  # re模块也是一个对象（平时不这么称呼）。
+  # The re module is also an object (not usually called that way).
   ```
 
   
@@ -1058,7 +1058,7 @@ Simply put: as long as you see xx.oo, it can be implemented with reflection.
 
 ```python
 class Person(object):
-    title = "武沛齐"
+    title = "WuPeiqi"
 
 v1 = Person.title
 print(v1)
@@ -1086,14 +1086,14 @@ In Python, if you want to import a module, you can use the import syntax; you ca
 Example 1:
 
 ```python
-# 导入模块
+# Import module
 import random
 
 v1 = random.randint(1,100)
 ```
 
 ```python
-# 导入模块
+# Import module
 from importlib import import_module
 
 m = import_module("random")
@@ -1104,12 +1104,12 @@ v1 = m.randint(1,100)
 Example 2:
 
 ```python
-# 导入模块exceptions
+# Import module exceptions
 from requests import exceptions as m
 ```
 
 ```python
-# 导入模块exceptions
+# Import module exceptions
 from importlib import import_module
 m = import_module("requests.exceptions")
 ```
@@ -1117,21 +1117,21 @@ m = import_module("requests.exceptions")
 Example 3:
 
 ```python
-# 导入模块exceptions，获取exceptions中的InvalidURL类。
+# Import module exceptions, get the InvalidURL class from exceptions.
 from requests.exceptions import InvalidURL
 ```
 
 ```python
-# 错误方式
+# Wrong way
 from importlib import import_module
-m = import_module("requests.exceptions.InvalidURL") # 报错，import_module只能导入到模块级别。
+m = import_module("requests.exceptions.InvalidURL") # Error, import_module can only import up to the module level.
 ```
 
 ```python
-# 导入模块
+# Import module
 from importlib import import_module
 m = import_module("requests.exceptions")
-# 去模块中获取类
+# Get class from module
 cls = m.InvalidURL
 ```
 

@@ -118,8 +118,8 @@ win11
 vmware workstation 16 pro
 centos7.9 
 	4C2G 
-	4台
-xshell7免费版
+	4 units
+xshell7 free version
 redis5.0.7
 
 [root@cs ~]# cat /etc/redhat-release 
@@ -141,11 +141,11 @@ On each server, the master node listens on port 6380 and the replica node listen
 **Directory planning**
 
 ```bash
-/opt/redis{6380,6381}/{conf,logs,pid}   # 主节点是redis6380，从节点是redis6381，里面的conf，logs,pid分别是配置目录，日志目录，pid目录
+/opt/redis{6380,6381}/{conf,logs,pid}   # Master node is redis6380, replica node is redis6381; conf, logs, pid are the config directory, log directory, and pid directory respectively
 
-/data/redis{6380,6381}					# 主从节点的数据目录
+/data/redis{6380,6381}					# Data directory for master and replica nodes
 
-# 配置主从节点的systemctl管理
+# Configure systemctl management for master and replica nodes
 /usr/lib/systemd/system/redis-master.service
 /usr/lib/systemd/system/redis-slave.service
 ```
@@ -160,7 +160,7 @@ On each server, the master node listens on port 6380 and the replica node listen
 ### Manually Building a Cluster
 
 ```bash
-# 关闭防火墙和下载一些可能用到的工具
+# Disable the firewall and install some potentially useful tools
 systemctl stop firewalld.service
 systemctl disable firewalld.service
 systemctl status firewalld.service
@@ -177,10 +177,10 @@ yum -y install net-tools vim wget lrzsz
 First set up SSH authentication to make later transfers convenient.
 
 ```bash
-# 一路回车
+# Press Enter for all prompts
 ssh-keygen
 
-# 将公钥拷贝到其它三台服务器，按照提示输入yes和目标服务器的密码
+# Copy the public key to the other three servers; enter yes and the target server password when prompted
 ssh-copy-id 192.168.10.151
 ssh-copy-id 192.168.10.152
 ssh-copy-id 192.168.10.153
@@ -189,16 +189,16 @@ ssh-copy-id 192.168.10.153
 Configure the two instances on ports 6380 and 6381.
 
 ```bash
-# 可以先杀掉所有的redis实例
+# You can first kill all redis instances
 pkill -9 redis
 
-# 1. 创建目录
+# 1. Create directories
 mkdir -p /opt/redis{6380,6381}/{conf,logs,pid}
 mkdir -p /data/redis{6380,6381}
 
-# 2. 生成主节点配置文件
+# 2. Generate master node config file
 cat >/opt/redis6380/conf/redis6380.conf <<EOF
-# 注意，bind后面先跟本机ip就行了，这样集群发现时，能根据服务器ip进行发现，不要跟127.0.0.1了
+# Note: just put the local IP after bind, so cluster discovery can find by server IP; do not use 127.0.0.1
 bind $(ifconfig ens33|awk 'NR==2{print $2}')
 port 6380
 daemonize yes
@@ -217,16 +217,16 @@ cluster-config-file nodes6380.conf
 cluster-node-timeout 15000
 EOF
 
-# 3. 复制主节点的配置文件到从节点，并更改端口号
+# 3. Copy master node config to replica node and change port number
 cp /opt/redis6380/conf/redis6380.conf /opt/redis6381/conf/redis6381.conf
 sed -i 's#6380#6381#g' /opt/redis6381/conf/redis6381.conf
 
-# 4. 更改授权为Redis
-# 添加用户报错也正常，因为我这台测试机器，添加过这个用户和组， 
-# -u和-g选项表示同时添加具有特定UID和GID的用户
-# -M创建一个没有主目录的用户
-# -s表示当前创建的当前用户无法用来登录系统
-# chown -R redis:redis表示指定目录以及内部的文件所有用户属组归于redis:redis
+# 4. Change ownership to Redis
+# It is normal to get errors adding user, because this test machine already has this user and group, 
+# -u and -g options mean adding a user with specific UID and GID simultaneously
+# -M creates a user without a home directory
+# -s means the currently created user cannot be used to log in to the system
+# chown -R redis:redis means specifying that all users and groups of the directory and its internal files belong to redis:redis
 # groupdel redis
 # cat /etc/group |grep redis
 groupadd redis -g 1000
@@ -236,7 +236,7 @@ useradd redis -u 1000 -g 1000 -M -s /sbin/nologin
 chown -R redis:redis /opt/redis*
 chown -R redis:redis /data/redis*
 
-# 5. 生成主节点的systemd启动文件
+# 5. Generate master node systemd startup file
 cat >/usr/lib/systemd/system/redis-master.service<<EOF
 [Unit]
 Description=Redis persistent key-value database
@@ -257,21 +257,21 @@ RuntimeDirectoryMode=0755
 WantedBy=multi-user.target
 EOF
 
-# 6. 复制master节点的启动⽂件给slave节点并修改端⼝号
+# 6. Copy master startup file to slave node and change port number
 cp /usr/lib/systemd/system/redis-master.service /usr/lib/systemd/system/redis-slave.service
 sed -i 's#6380#6381#g' /usr/lib/systemd/system/redis-slave.service
 
-# 7. 重载systemd相关文件，并启动集群节点
+# 7. Reload systemd files and start cluster nodes
 systemctl daemon-reload
-# Redis是6379的
+# Redis is 6379
 systemctl start redis
-# redis-master是将来在集群中充当主节点的
+# redis-master will act as master node in the cluster
 systemctl start redis-master
-# redis-slave是将来在集群中充当从节点的
+# redis-slave will act as replica node in the cluster
 systemctl start redis-slave
 ps -ef|grep redis
 
-# 8. 把创建好的⽬录和启动⽂件发送给db02、db03、db04
+# 8. Send created directories and startup files to db02, db03, db04
 rsync -avz /opt/redis638* 192.168.10.151:/opt/
 rsync -avz /opt/redis638* 192.168.10.152:/opt/
 rsync -avz /opt/redis638* 192.168.10.153:/opt/
@@ -292,8 +292,8 @@ redis-cli -h 192.168.10.150 -p 6379 ping
 redis-cli -h 192.168.10.150 -p 6380 ping
 redis-cli -h 192.168.10.150 -p 6381 ping
 
-# 6379是咱们原来Redis，集群搭建和学习各种套路先不用它
-# 6380和6381才是集群中用到的
+# 6379 is our original Redis; do not use it for cluster setup and learning for now
+# 6380 and 6381 are what the cluster uses
 [root@cs ~]# ps -ef|grep redis
 redis      2727      1  0 03:16 ?        00:00:00 /usr/local/bin/redis-server 192.168.10.150:6379
 redis      2737      1  0 03:16 ?        00:00:00 /usr/local/bin/redis-server 192.168.10.150:6380 [cluster]
@@ -374,35 +374,35 @@ redis-cli -h 192.168.10.153 -p 6381 ping
 If the above steps all went fine, you can run the following on any terminal.
 
 ```bash
-# db01的两个节点测试
+# Test two nodes on db01
 redis-cli -h 192.168.10.150 -p 6380 PING
 redis-cli -h 192.168.10.150 -p 6381 PING
-# db02的两个节点测试
+# Test two nodes on db02
 redis-cli -h 192.168.10.151 -p 6380 PING
 redis-cli -h 192.168.10.151 -p 6381 PING
-# db03的两个节点测试
+# Test two nodes on db03
 redis-cli -h 192.168.10.152 -p 6380 PING
 redis-cli -h 192.168.10.152 -p 6381 PING
-# db04的两个节点测试
+# Test two nodes on db04
 redis-cli -h 192.168.10.153 -p 6380 PING
 redis-cli -h 192.168.10.153 -p 6381 PING
 
-[root@cs ~]# # db01的两个节点测试
+[root@cs ~]# # Test two nodes on db01
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 6380 PING
 PONG
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 6381 PING
 PONG
-[root@cs ~]# # db02的两个节点测试
+[root@cs ~]# # Test two nodes on db02
 [root@cs ~]# redis-cli -h 192.168.10.151 -p 6380 PING
 PONG
 [root@cs ~]# redis-cli -h 192.168.10.151 -p 6381 PING
 PONG
-[root@cs ~]# # db03的两个节点测试
+[root@cs ~]# # Test two nodes on db03
 [root@cs ~]# redis-cli -h 192.168.10.152 -p 6380 PING
 PONG
 [root@cs ~]# redis-cli -h 192.168.10.152 -p 6381 PING
 PONG
-[root@cs ~]# # db04的两个节点测试
+[root@cs ~]# # Test two nodes on db04
 [root@cs ~]# redis-cli -h 192.168.10.153 -p 6380 PING
 PONG
 [root@cs ~]# redis-cli -h 192.168.10.153 -p 6381 PING
@@ -423,7 +423,7 @@ Note that the redis on the 4 servers is indeed all fine now, but what needs to b
 The command to configure cluster discovery is:
 
 ```bash
-CLUSTER MEET 目标服务器的IP 目标服务器的端口
+CLUSTER MEET target_server_IP target_server_port
 ```
 
 In a cluster, all configuration information is shared. The cluster configuration file of each redis instance is in its own data directory. For example, for db01, you can find it in this directory:
@@ -443,13 +443,13 @@ In addition, the cluster configuration information is maintained by the cluster 
 When configuring cluster discovery, since the cluster information is shared, we can perform cluster operations on any server.
 
 ```bash
-# 通过一个节点，不断的meet其它的节点，就能把"所有好友邀请进群"
+# Through one node, continuously meet other nodes to "invite all friends into the group"
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER MEET 192.168.10.150 6381
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER MEET 192.168.10.151 6380
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER MEET 192.168.10.151 6381
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER MEET 192.168.10.152 6380
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER MEET 192.168.10.152 6381
-# 查看集群各节点信息
+# View cluster node information
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER NODES
 
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 6380 CLUSTER MEET 192.168.10.151 6380
@@ -475,7 +475,7 @@ Although all nodes have now discovered each other and got to know one another, t
 
 ```bash
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 6380 CLUSTER INFO
-cluster_state:fail		# fail，集群状态是fail的，不正常的
+cluster_state:fail		# fail, cluster state is fail, abnormal
 cluster_slots_assigned:0
 cluster_slots_ok:0
 cluster_slots_pfail:0
@@ -500,11 +500,11 @@ First, when assigning slots, we should only assign them to master nodes. Here we
 So when assigning slots, we just assign them to all the master nodes. In this calculation, we evenly distribute the 16384 slots among the three 6380 nodes.
 
 ```bash
-# 首先，正常的除以3是除不尽的
+# First, dividing normally by 3 does not divide evenly
 >>> 16384 / 3
 5461.333333333333
 
-# 那么，针对除不尽这种情况，集群允许我们槽位可以不用绝对平均，你少俩槽位，我多俩槽位，是没问题的，所以槽位规划如下：
+# For cases that do not divide evenly, the cluster allows slots to not be absolutely even; it is fine if you have two fewer and I have two more. Slot planning is as follows:
 db01:6380	5461		0-5460
 db02:6380	5461		5461-10921
 db03:6380	5462		10922-16383
@@ -535,7 +535,7 @@ Let's check the cluster state again at this point.
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER INFO
 
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 6380 CLUSTER INFO
-cluster_state:ok				# ok啦
+cluster_state:ok				# ok now
 cluster_slots_assigned:16384
 cluster_slots_ok:16384
 cluster_slots_pfail:0
@@ -556,7 +556,7 @@ cluster_stats_messages_received:2502
 Also look at each node; it is different from before the slots were assigned.
 
 ```bash
-# 未分配槽位的节点情况，都不带槽位范围
+# Nodes without assigned slots do not have slot ranges
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 6380 CLUSTER NODES
 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 192.168.10.150:6380@16380 myself,master - 0 1691546523000 1 connected
 967340547d63fd4f09e870b1494b6de720f9d6f4 192.168.10.152:6381@16381 master - 0 1691546525000 3 connected
@@ -565,7 +565,7 @@ a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380@16380 master - 0 16
 e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 1691546524598 0 connected
 4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381@16381 master - 0 1691546524000 7 connected
 
-# 分配好了槽位之后，分配的几个主节点的后面都有自己的槽位范围
+# After slots are assigned, the assigned master nodes each have their own slot range
 [root@cs ~]# redis-cli -h 192.168.10.151 -p 6380 CLUSTER NODES
 967340547d63fd4f09e870b1494b6de720f9d6f4 192.168.10.152:6381@16381 master - 0 1691546718886 3 connected
 a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380@16380 myself,master - 0 1691546718000 2 connected 5461-10921
@@ -587,7 +587,7 @@ In occasional cases, the assignment fails, especially when assigning slots 10920
 If you get this error, you can handle these two slots separately:
 
 ```bash
-# 先添加到10920，再单独添加10921
+# First add up to 10920, then separately add 10921
 [root@cs ~]# redis-cli -h 192.168.10.151 -p 6380 CLUSTER ADDSLOTS {5461..10920}
 [root@cs ~]# redis-cli -h 192.168.10.151 -p 6380 CLUSTER ADDSLOTS 10921
 ```
@@ -621,7 +621,7 @@ The process of establishing master-slave replication relationships:
 - **From the node information above, extract and organize the key data we need**
 
   ```bash
-  # 即把我们规定的所有的6381从节点的信息过滤掉，只保留主节点的ID和IP地址，我这里也加上端口号
+  # Filter out all 6381 replica node info we specified, keeping only master node ID and IP; I also add port number here
   24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 192.168.10.150:6380
   a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380
   e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380
@@ -634,7 +634,7 @@ The process of establishing master-slave replication relationships:
 - **Based on the drawn diagram and the obtained node relationships, execute the commands to establish the master-slave relationships**
 
   ```bash
-  # 集群中建立主从关系的命令是，某个从节点通过CLUSTER REPLICATE，指向主节点的ID，这样就建立了二者的主从关系
+  # The command to establish master-slave relationship in cluster is: a replica node uses CLUSTER REPLICATE pointing to the master node ID, establishing the master-slave relationship
   redis-cli -h 192.168.10.150 -p 6381 CLUSTER REPLICATE a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f
   redis-cli -h 192.168.10.151 -p 6381 CLUSTER REPLICATE e827ae7807b2f04c77702e325db3eb311403b3bb
   redis-cli -h 192.168.10.152 -p 6381 CLUSTER REPLICATE 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6
@@ -658,15 +658,15 @@ The process of establishing master-slave replication relationships:
   
   [root@cs ~]# redis-cli -h 192.168.10.150 -p 6380 CLUSTER NODES
   24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 192.168.10.150:6380@16380 myself,master - 0 1691547015000 1 connected 0-5460							
-  967340547d63fd4f09e870b1494b6de720f9d6f4 192.168.10.152:6381@16381 slave 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 0 1691547017000 3 connected	# 152的6381指向150的6380，建立成功
-  428e2b4090819ae5d181f435461c0970172d748c 192.168.10.150:6381@16381 slave a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 0 1691547018195 6 connected	# 150的6381指向151的6380，建立成功
+  967340547d63fd4f09e870b1494b6de720f9d6f4 192.168.10.152:6381@16381 slave 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 0 1691547017000 3 connected	# 152:6381 points to 150:6380, established successfully
+  428e2b4090819ae5d181f435461c0970172d748c 192.168.10.150:6381@16381 slave a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 0 1691547018195 6 connected	# 150:6381 points to 151:6380, established successfully
   a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380@16380 master - 0 1691547017170 2 connected 5461-10921
   e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 1691547017000 0 connected 10922-16383
-  4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381@16381 slave e827ae7807b2f04c77702e325db3eb311403b3bb 0 1691547014091 7 connected	# 151的6381指向152的6380，建立成功
+  4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381@16381 slave e827ae7807b2f04c77702e325db3eb311403b3bb 0 1691547014091 7 connected	# 151:6381 points to 152:6380, established successfully
   
   
   
-  # 集群状态也是没问题的
+  # Cluster state is also fine
   [root@cs ~]# redis-cli -h 192.168.10.150 -p 6380 CLUSTER INFO
   cluster_state:ok
   cluster_slots_assigned:16384
@@ -841,7 +841,7 @@ With the automated tools, our cluster deployment process is reduced to:
 #### 1. Restoring the Cluster State
 
 ```bash
-# 注意，我们只需要对此时集群中的所有的主节点执行flushall的命令进行清空主节点的数据，而不需要对从节点进行清空数据。因为从节点是只读的节点，不允许flushall的动作。
+# Note: we only need to execute flushall on all master nodes in the cluster at this time to clear master node data; no need to clear replica node data because replica nodes are read-only and do not allow flushall.
 redis-cli -c -h 192.168.10.150 -p 6380 FLUSHALL
 redis-cli -c -h 192.168.10.151 -p 6380 FLUSHALL
 redis-cli -c -h 192.168.10.152 -p 6380 FLUSHALL
@@ -884,20 +884,20 @@ OK
 #### 2. Quickly Deploying the Cluster
 
 ```bash
-# 这个命令还有个交互，提示你输入yes
+# This command also has an interaction, prompting you to enter yes
 redis-cli --cluster create 192.168.10.150:6380 192.168.10.151:6380 192.168.10.152:6380 192.168.10.150:6381 192.168.10.151:6381 192.168.10.152:6381 --cluster-replicas 1
 
-# 我们改造下命令，连交互输入的yes都不要了
+# We modify the command to not even need the interactive yes input
 echo "yes"|redis-cli --cluster create 192.168.10.150:6380 192.168.10.151:6380 192.168.10.152:6380 192.168.10.150:6381 192.168.10.151:6381 192.168.10.152:6381 --cluster-replicas 1
 
 
 [root@cs src]# redis-cli --cluster create --cluster-replicas 1 192.168.10.150:6380 192.168.10.151:6380 192.168.10.152:6380 192.168.10.150:6381 192.168.10.151:6381 192.168.10.152:6381
 >>> Performing hash slots allocation on 6 nodes...
-# 这里提示三个主节点的槽位分布
+# Here it shows the slot distribution of the three master nodes
 Master[0] -> Slots 0 - 5460
 Master[1] -> Slots 5461 - 10922
 Master[2] -> Slots 10923 - 16383
-# 这里告诉我们主从复制关系
+# Here it tells us the master-slave replication relationships
 Adding replica 192.168.10.151:6381 to 192.168.10.150:6380
 Adding replica 192.168.10.152:6381 to 192.168.10.151:6380
 Adding replica 192.168.10.150:6381 to 192.168.10.152:6380
@@ -913,7 +913,7 @@ S: 4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381
    replicates 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6
 S: 967340547d63fd4f09e870b1494b6de720f9d6f4 192.168.10.152:6381
    replicates a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f
-Can I set the above configuration? (type 'yes' to accept): yes			# 还是有个交互的，我们按照提示输入 yes
+Can I set the above configuration? (type 'yes' to accept): yes			# There is still an interaction; we enter yes as prompted
 >>> Nodes configuration updated
 >>> Assign a different config epoch to each node
 >>> Sending CLUSTER MEET messages to join the cluster
@@ -1009,7 +1009,7 @@ root      70754  70714  0 16:24 pts/0    00:00:00 grep --color=auto redis
 #### 2. Invite into the Cluster
 
 ```bash
-# 通过150节点，将153节点的两个小伙伴拉进群
+# Through node 150, invite the two buddies of node 153 into the group
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER MEET 192.168.10.153 6380
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER MEET 192.168.10.153 6381
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER NODES
@@ -1022,11 +1022,11 @@ OK
 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 192.168.10.150:6380@16380 myself,master - 0 1691569492000 1 connected 0-5460
 967340547d63fd4f09e870b1494b6de720f9d6f4 192.168.10.152:6381@16381 slave a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 0 1691569492119 8 connected
 428e2b4090819ae5d181f435461c0970172d748c 192.168.10.150:6381@16381 slave e827ae7807b2f04c77702e325db3eb311403b3bb 0 1691569493140 6 connected
-1ad2341ae07cc084c75c1130ff2b9936d3bea7b7 192.168.10.153:6381@16381 master - 0 1691569492329 0 connected				# 此时处于进群了，但还没有分配槽位，也没配置主从关系，所以都是master
+1ad2341ae07cc084c75c1130ff2b9936d3bea7b7 192.168.10.153:6381@16381 master - 0 1691569492329 0 connected				# At this point it has joined the group, but no slots have been assigned and no master-slave relationship configured, so all are master
 a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380@16380 master - 0 1691569491102 2 connected 5461-10922
 4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381@16381 slave 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 0 1691569492000 7 connected
 e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 1691569489059 3 connected 10923-16383
-8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae 192.168.10.153:6380@16380 master - 0 1691569492329 0 connected				# 此时处于进群了，但还没有分配槽位，也没配置主从关系，所以都是master
+8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae 192.168.10.153:6380@16380 master - 0 1691569492329 0 connected				# At this point it has joined the group, but no slots have been assigned and no master-slave relationship configured, so all are master
 ```
 
 #### 3. Assigning Slots
@@ -1036,24 +1036,24 @@ When assigning slots here, there are two ways: one is troublesome, and one is si
 ##### The Complicated `done` Usage
 
 ```bash
-# 通过任意节点，向集群发送reshard命令，开始进行分配槽位的动作，我们将会进行4次交互
+# Send reshard command to cluster via any node to start slot assignment; we will have 4 interactions
 redis-cli --cluster reshard 192.168.10.150:6380 
 
 
-# 第一次交互：因为接下来的步骤是每个主节点都要向新节点分配部分槽位，那么这里第一次交互就问我们新节点分配槽位的总数是多少？填写4096
+# First interaction: since each master node will allocate some slots to the new node, the first interaction asks the total number of slots to allocate to the new node? Enter 4096
 How many slots do you want to move (from 1 to 16384)? 4096
 
 
-# 第二次交互：问我们接受主节点的ID？我们需要填写新节点153的6380的ID，因为其它节点的槽位分配给它嘛
+# Second interaction: asks for the receiving node ID? We need to enter the ID of new node 153:6380, because other nodes slots are allocated to it
 What is the receiving node ID? 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
 
 
-# 第三次交互：这一步有点麻烦，人家给你两个选择：
-#   1. 填写all，然后回车，集群内部会计算出来每个主节点应该分配出来多少槽位给新节点，这一切都是自动的
-#   2. 直接写每个主节点的ID，你要写所有的主节点的ID，然后输入done，表示填写的这些主节点分配出来槽位给新节点
-#       Source node #1: db01的6380节点的ID
-#       Source node #2: db02的6380节点的ID
-#       Source node #3: db03的6380节点的ID
+# Third interaction: this step is a bit troublesome, you are given two choices:
+#   1. Enter all then press Enter; the cluster will automatically calculate how many slots each master should allocate to the new node
+#   2. Directly write each master node ID, you must write all master node IDs, then enter done, indicating these masters allocate slots to the new node
+#       Source node #1: db01 6380 node ID
+#       Source node #2: db02 6380 node ID
+#       Source node #3: db03 6380 node ID
 #       Source node #4: done
 How many slots do you want to move (from 1 to 16384)? 4096
 What is the receiving node ID? 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
@@ -1066,21 +1066,21 @@ Source node #3: e827ae7807b2f04c77702e325db3eb311403b3bb
 Source node #4: done
 
 
-# 第四次交互：最终确认，输入yes就真正的开始了，如果你想反悔，这里输入no，或者ctrl+c反悔退出交互
-Do you want to proceed with the proposed reshard plan (yes/no)? 我这里直接ctrl+c退出交互，因为我要演示第二种all的用法
+# Fourth interaction: final confirmation, enter yes to really start; if you want to back out, enter no or ctrl+c to exit
+Do you want to proceed with the proposed reshard plan (yes/no)? I directly press ctrl+c to exit the interaction here, because I want to demonstrate the second all usage
 ```
 
 ##### The Simple `all` Usage
 
 ```bash
-# 为了验证分配槽位的过程中，不影响集群的读写，你可以分别在另外两个终端，进行读写测试
-# 151的终端测试写
+# To verify that slot assignment does not affect cluster reads/writes, you can perform read/write tests in two other terminals
+# Terminal 151 tests write
 for i in {1..10000};do redis-cli -c -h 192.168.10.151 -p 6380 set k_${i} v_${i} && echo ${i} is ok;sleep 0.2;done
 
-# 152的终端测试读
+# Terminal 152 tests read
 for i in {1..10000};do redis-cli -c -h 192.168.10.152 -p 6380 get k_${i};sleep 0.2;done
 
-# 上面两个读写让它运行着，我们在150终端进行分配槽位
+# Let the above two read/write operations run; we perform slot assignment in terminal 150
 redis-cli --cluster reshard 192.168.10.150:6380 
 
 [root@cs ~]# redis-cli --cluster reshard 192.168.10.150:6380 
@@ -1111,25 +1111,25 @@ M: 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae 192.168.10.153:6380
 >>> Check for open slots...
 >>> Check slots coverage...
 [OK] All 16384 slots covered.
-How many slots do you want to move (from 1 to 16384)? 4096				# 第一次交互，输入4096
-What is the receiving node ID? 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae	# 第二次交互，输入153这个新节点的ID，在上面能找到，注意别复制粘贴错了
+How many slots do you want to move (from 1 to 16384)? 4096				# First interaction, enter 4096
+What is the receiving node ID? 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae	# Second interaction, enter the ID of this new node 153; can be found above, be careful not to copy-paste wrong
 Please enter all the source node IDs.
   Type 'all' to use all the nodes as source nodes for the hash slots.
   Type 'done' once you entered all the source nodes IDs.
-Source node #1: all														# 第三次交互，直接输入all，然后回车
-	......省略......
+Source node #1: all														# Third interaction, directly enter all then press Enter
+	......omitted......
     Moving slot 12283 from e827ae7807b2f04c77702e325db3eb311403b3bb
     Moving slot 12284 from e827ae7807b2f04c77702e325db3eb311403b3bb
     Moving slot 12285 from e827ae7807b2f04c77702e325db3eb311403b3bb
     Moving slot 12286 from e827ae7807b2f04c77702e325db3eb311403b3bb
     Moving slot 12287 from e827ae7807b2f04c77702e325db3eb311403b3bb
-    ......省略......
-Do you want to proceed with the proposed reshard plan (yes/no)? yes		# 第四次交互，直接输入yes，然后回车
-......省略......
+    ......omitted......
+Do you want to proceed with the proposed reshard plan (yes/no)? yes		# Fourth interaction, directly enter yes then press Enter
+......omitted......
 Moving slot 12286 from 192.168.10.152:6380 to 192.168.10.153:6380: 
 Moving slot 12287 from 192.168.10.152:6380 to 192.168.10.153:6380: .
-......省略......
-[root@cs ~]# 															# 没有啥报错，基本说明槽位分配成功了
+......omitted......
+[root@cs ~]# 															# No errors, basically means slot assignment succeeded
 ```
 
 #### 4. Confirming the Assignment Succeeded
@@ -1169,10 +1169,10 @@ e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 16
 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae 192.168.10.153:6380@16380 master - 0 1691571236000 10 connected 0-1364 5461-6826 10923-12287
 [root@cs ~]# redis-cli  --cluster info 192.168.10.150:6380
 192.168.10.150:6380 (24476f40...) -> 2498 keys | 4096 slots | 1 slaves.
-192.168.10.153:6381 (1ad2341a...) -> 0 keys | 0 slots | 0 slaves.		 # 153的从节点，现在还没有进行主从复制关联，所以，还是这个状态
+192.168.10.153:6381 (1ad2341a...) -> 0 keys | 0 slots | 0 slaves.		 # 153 replica node has not yet established master-slave replication, so it is still in this state
 192.168.10.151:6380 (a8b02756...) -> 2486 keys | 4096 slots | 1 slaves.
 192.168.10.152:6380 (e827ae78...) -> 2501 keys | 4096 slots | 1 slaves.
-192.168.10.153:6380 (8fa4d787...) -> 2515 keys | 4096 slots | 0 slaves.  # 153主节点有了4096个槽位，现在有2515个key
+192.168.10.153:6380 (8fa4d787...) -> 2515 keys | 4096 slots | 0 slaves.  # 153 master node has 4096 slots, now has 2515 keys
 [OK] 10000 keys in 5 masters.
 0.61 keys per slot on average.
 ```
@@ -1188,7 +1188,7 @@ Of course, this is just a schematic diagram. The actual master-slave relationshi
 In production, though, you only need to adjust the involved nodes. In my test environment here, there aren't many keys, so rebuilding them all is fine.
 
 ```bash
-# 过程省略，不会的复习前面手动建立主从复制关系章节
+# Process omitted; review earlier section on manually establishing master-slave replication if needed
 redis-cli -h 192.168.10.150 -p 6381 CLUSTER REPLICATE a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f
 redis-cli -h 192.168.10.151 -p 6381 CLUSTER REPLICATE e827ae7807b2f04c77702e325db3eb311403b3bb
 redis-cli -h 192.168.10.152 -p 6381 CLUSTER REPLICATE 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
@@ -1206,18 +1206,18 @@ OK
 OK
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 6380 CLUSTER NODES
 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 192.168.10.150:6380@16380 myself,master - 0 1691572832000 1 connected 1365-5460
-967340547d63fd4f09e870b1494b6de720f9d6f4 192.168.10.152:6381@16381 slave 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae 0 1691572834409 10 connected  # 152的从复制153的主
-428e2b4090819ae5d181f435461c0970172d748c 192.168.10.150:6381@16381 slave a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 0 1691572833000 6 connected   # 150的从复制151的主
-1ad2341ae07cc084c75c1130ff2b9936d3bea7b7 192.168.10.153:6381@16381 slave 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 0 1691572830324 9 connected   # 153的从复制150的主
+967340547d63fd4f09e870b1494b6de720f9d6f4 192.168.10.152:6381@16381 slave 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae 0 1691572834409 10 connected  # 152 replica replicates 153 master
+428e2b4090819ae5d181f435461c0970172d748c 192.168.10.150:6381@16381 slave a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 0 1691572833000 6 connected   # 150 replica replicates 151 master
+1ad2341ae07cc084c75c1130ff2b9936d3bea7b7 192.168.10.153:6381@16381 slave 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 0 1691572830324 9 connected   # 153 replica replicates 150 master
 a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380@16380 master - 0 1691572835000 2 connected 6827-10922
-4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381@16381 slave e827ae7807b2f04c77702e325db3eb311403b3bb 0 1691572831000 7 connected   # 151的从复制152的主，都符合预期
+4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381@16381 slave e827ae7807b2f04c77702e325db3eb311403b3bb 0 1691572831000 7 connected   # 151 replica replicates 152 master, all as expected
 e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 1691572833387 3 connected 12288-16383
 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae 192.168.10.153:6380@16380 master - 0 1691572835436 10 connected 0-1364 5461-6826 10923-12287
 [root@cs ~]# redis-cli  --cluster info 192.168.10.150:6380
 192.168.10.150:6380 (24476f40...) -> 2498 keys | 4096 slots | 1 slaves.
 192.168.10.151:6380 (a8b02756...) -> 2486 keys | 4096 slots | 1 slaves.
 192.168.10.152:6380 (e827ae78...) -> 2501 keys | 4096 slots | 1 slaves.
-192.168.10.153:6380 (8fa4d787...) -> 2515 keys | 4096 slots | 1 slaves.  # 这几个也都正常，nice
+192.168.10.153:6380 (8fa4d787...) -> 2515 keys | 4096 slots | 1 slaves.  # These are all normal, nice
 [OK] 10000 keys in 4 masters.
 0.61 keys per slot on average.
 ```
@@ -1238,38 +1238,38 @@ e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 16
 Each of the following operations must be repeated for three rounds, because each time you can only migrate slots from the offline node to one target node at a time, not to multiple target nodes at once.
 
 ```bash
-# 通过任意节点，向集群发送reshard命令，开始进行分配槽位的动作，我们将会进行4次交互
+# Send reshard command to cluster via any node to start slot assignment; we will have 4 interactions
 redis-cli --cluster reshard 192.168.10.150:6380 
 
-# 下面的交互要执行三轮，而每轮又有四个交互
+# The following interactions will execute three rounds, and each round has four interactions
 # 1366 + 1365 + 1365 = 4096
 
-# 第一次交互：从要下线的节点迁移出多少个槽位？我第一次按照习惯往150节点迁移，应该迁移的槽位数量是1366，所以填写1366
+# First interaction: how many slots to migrate from the node to be taken offline? I first migrate to node 150 by habit, the number of slots to migrate should be 1366, so enter 1366
 How many slots do you want to move (from 1 to 16384)? 1366
 
 
-# 第二次交互：槽位要迁移到哪个目标节点，我们这里应该填写150节点的ID
+# Second interaction: which target node should the slots migrate to? Here we should enter the ID of node 150
 What is the receiving node ID? 
 
 
-# 第三次交互：哪些节点需要迁移出1366个槽位？而我们只有153节点需要下线，所以这一轮只能填写一个153节点的ID即可
-#       Source node #1: db03的6380节点的ID
+# Third interaction: which nodes need to migrate out 1366 slots? And we only need to take node 153 offline, so this round only needs to enter one 153 node ID
+#       Source node #1: db03 6380 node ID
 #       Source node #2: done
 
-# 第四次交互：最终确认，输入yes就真正的开始了，如果你想反悔，这里输入no，我这里输入yes
+# Fourth interaction: final confirmation, enter yes to really start; if you want to back out, enter no here; I enter yes here
 Do you want to proceed with the proposed reshard plan (yes/no)? yes
 
-# 如果不报错:
-#   第一轮向150的6380节点迁移1366个槽位结束
-#   第二轮应该向151的6380节点迁移1365个槽位
-#   第三轮应该向152的6380节点迁移1365个槽位
+# If no errors:
+#   Round 1: migration of 1366 slots to 150:6380 node completed
+#   Round 2: should migrate 1365 slots to 151:6380 node
+#   Round 3: should migrate 1365 slots to 152:6380 node
 ```
 
 Process:
 
 ```bash
-# 第一轮
-[root@cs ~]# redis-cli --cluster reshard 192.168.10.150:6380                # 每次都可以通过任意主节点访问到集群执行reshard命令
+# Round 1
+[root@cs ~]# redis-cli --cluster reshard 192.168.10.150:6380                # Can access cluster via any master node to execute reshard command each time
 >>> Performing Cluster Check (using node 192.168.10.150:6380)
 M: 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 192.168.10.150:6380
    slots:[1365-5460] (4096 slots) master
@@ -1299,69 +1299,69 @@ M: 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae 192.168.10.153:6380
 >>> Check for open slots...
 >>> Check slots coverage...
 [OK] All 16384 slots covered.
-How many slots do you want to move (from 1 to 16384)? 1366				    # 向目标节点迁移多少个槽位
-What is the receiving node ID? 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6	    # 填写目标节点的ID，我先向150的主节点迁移，所以填写的是150的ID
+How many slots do you want to move (from 1 to 16384)? 1366				    # How many slots to migrate to target node
+What is the receiving node ID? 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6	    # Enter target node ID; I first migrate to 150 master node, so enter 150 ID
 Please enter all the source node IDs.
   Type 'all' to use all the nodes as source nodes for the hash slots.
   Type 'done' once you entered all the source nodes IDs.
-Source node #1: 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae				    # 哪个节点向150节点迁移数据，就填写谁，所以这里填写153主节点的ID
-Source node #2: done													    # 填写done
-	......省略......
+Source node #1: 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae				    # Whichever node migrates data to 150 node, enter that; so here enter 153 master node ID
+Source node #2: done													    # Enter done
+	......omitted......
     Moving slot 1363 from 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
     Moving slot 1364 from 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
     Moving slot 5461 from 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
-    ......省略......
-Do you want to proceed with the proposed reshard plan (yes/no)? yes		    # 第四次交互，直接输入yes，然后回车
-......省略......
+    ......omitted......
+Do you want to proceed with the proposed reshard plan (yes/no)? yes		    # Fourth interaction, directly enter yes then press Enter
+......omitted......
 Moving slot 1364 from 192.168.10.153:6380 to 192.168.10.150:6380: .
 Moving slot 5461 from 192.168.10.153:6380 to 192.168.10.150:6380: 
-......省略......
-[root@cs ~]# 															    # 没有啥报错，基本说明槽位分配成功了
+......omitted......
+[root@cs ~]# 															    # No errors, basically means slot assignment succeeded
 
 
-# 第二轮
-[root@cs ~]# redis-cli --cluster reshard 192.168.10.150:6380                # 每次都可以通过任意主节点访问到集群执行reshard命令
-......省略......
-How many slots do you want to move (from 1 to 16384)? 1365				    # 向目标节点迁移多少个槽位
-What is the receiving node ID? a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f     # 该向151节点迁移槽位了，所以这里填写151主节点的ID
+# Round 2
+[root@cs ~]# redis-cli --cluster reshard 192.168.10.150:6380                # Can access cluster via any master node to execute reshard command each time
+......omitted......
+How many slots do you want to move (from 1 to 16384)? 1365				    # How many slots to migrate to target node
+What is the receiving node ID? a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f     # Should migrate slots to 151 node now, so here enter 151 master node ID
 Please enter all the source node IDs.
   Type 'all' to use all the nodes as source nodes for the hash slots.
   Type 'done' once you entered all the source nodes IDs.
-Source node #1: 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae				    # 哪个节点向150节点迁移数据，就填写谁，所以这里填写153主节点的ID
+Source node #1: 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae				    # Whichever node migrates data to 150 node, enter that; so here enter 153 master node ID
 Source node #2: done
-	......省略......
+	......omitted......
     Moving slot 1363 from 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
     Moving slot 1364 from 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
     Moving slot 5461 from 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
-    ......省略......
-Do you want to proceed with the proposed reshard plan (yes/no)? yes		    # 第四次交互，直接输入yes，然后回车
-......省略......
+    ......omitted......
+Do you want to proceed with the proposed reshard plan (yes/no)? yes		    # Fourth interaction, directly enter yes then press Enter
+......omitted......
 Moving slot 1364 from 192.168.10.153:6380 to 192.168.10.150:6380: .
 Moving slot 5461 from 192.168.10.153:6380 to 192.168.10.150:6380: 
-......省略......
-[root@cs ~]# 															    # 没有啥报错，基本说明槽位分配成功了
+......omitted......
+[root@cs ~]# 															    # No errors, basically means slot assignment succeeded
 
-# 第三轮
-[root@cs ~]# redis-cli --cluster reshard 192.168.10.150:6380                # 每次都可以通过任意主节点访问到集群执行reshard命令
-......省略......
-How many slots do you want to move (from 1 to 16384)? 1365				    # 向目标节点迁移多少个槽位
-What is the receiving node ID? e827ae7807b2f04c77702e325db3eb311403b3bb     # 该向152节点迁移槽位了，所以这里填写151主节点的ID
+# Round 3
+[root@cs ~]# redis-cli --cluster reshard 192.168.10.150:6380                # Can access cluster via any master node to execute reshard command each time
+......omitted......
+How many slots do you want to move (from 1 to 16384)? 1365				    # How many slots to migrate to target node
+What is the receiving node ID? e827ae7807b2f04c77702e325db3eb311403b3bb     # Should migrate slots to 152 node now, so here enter 151 master node ID
 Please enter all the source node IDs.
   Type 'all' to use all the nodes as source nodes for the hash slots.
   Type 'done' once you entered all the source nodes IDs.
-Source node #1: 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae				    # 哪个节点向150节点迁移数据，就填写谁，所以这里填写153主节点的ID
+Source node #1: 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae				    # Whichever node migrates data to 150 node, enter that; so here enter 153 master node ID
 Source node #2: done
-	......省略......
+	......omitted......
     Moving slot 1363 from 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
     Moving slot 1364 from 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
     Moving slot 5461 from 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
-    ......省略......
-Do you want to proceed with the proposed reshard plan (yes/no)? yes		    # 第四次交互，直接输入yes，然后回车
-......省略......
+    ......omitted......
+Do you want to proceed with the proposed reshard plan (yes/no)? yes		    # Fourth interaction, directly enter yes then press Enter
+......omitted......
 Moving slot 1364 from 192.168.10.153:6380 to 192.168.10.150:6380: .
 Moving slot 5461 from 192.168.10.153:6380 to 192.168.10.150:6380: 
-......省略......
-[root@cs ~]# 															    # 没有啥报错，基本说明槽位分配成功了
+......omitted......
+[root@cs ~]# 															    # No errors, basically means slot assignment succeeded
 ```
 
 #### 2. Confirming the Migration Succeeded
@@ -1403,7 +1403,7 @@ e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 16
 192.168.10.150:6380 (24476f40...) -> 3343 keys | 5462 slots | 1 slaves.
 192.168.10.151:6380 (a8b02756...) -> 3316 keys | 5461 slots | 1 slaves.
 192.168.10.152:6380 (e827ae78...) -> 3341 keys | 5461 slots | 2 slaves.
-192.168.10.153:6380 (8fa4d787...) -> 0 keys | 0 slots | 0 slaves.		# 可以看到153的主节点啥都没了，干干净净
+192.168.10.153:6380 (8fa4d787...) -> 0 keys | 0 slots | 0 slaves.		# Can see 153 master node has nothing left, completely clean
 [OK] 10000 keys in 4 masters.
 0.61 keys per slot on average.
 ```
@@ -1411,8 +1411,8 @@ e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 16
 #### 3. Taking Nodes Offline
 
 ```bash
-# 主节点的槽位移走了，从节点就可以直接下线了
-# 下线命令是--cluster del-node后面 是要下线节点的IP和端口，再跟上要下线节点的ID
+# After master node slots are moved away, replica nodes can be taken offline directly
+# The offline command is --cluster del-node followed by the IP and port of the node to be taken offline, then the ID of the node to be taken offline
 redis-cli --cluster del-node 192.168.10.153:6380 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
 redis-cli --cluster del-node 192.168.10.153:6381 1ad2341ae07cc084c75c1130ff2b9936d3bea7b7
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER NODES
@@ -1420,7 +1420,7 @@ redis-cli  --cluster info 192.168.10.150:6380
 
 [root@cs ~]# redis-cli --cluster del-node 192.168.10.153:6380 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae
 >>> Removing node 8fa4d787dcccf9ece2880e7e20848dc6ce67e7ae from cluster 192.168.10.153:6380
->>> Sending CLUSTER FORGET messages to the cluster...													# 直接移出节点，并将该节点直接停机
+>>> Sending CLUSTER FORGET messages to the cluster...													# Directly remove node and shut it down
 >>> SHUTDOWN the node.
 [root@cs ~]# redis-cli --cluster del-node 192.168.10.153:6381 1ad2341ae07cc084c75c1130ff2b9936d3bea7b7
 >>> Removing node 1ad2341ae07cc084c75c1130ff2b9936d3bea7b7 from cluster 192.168.10.153:6381
@@ -1434,9 +1434,9 @@ a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380@16380 master - 0 16
 4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381@16381 slave e827ae7807b2f04c77702e325db3eb311403b3bb 0 1691576655000 13 connected
 e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 1691576656787 13 connected 10923-16383
 [root@cs ~]# redis-cli  --cluster info 192.168.10.150:6380
-192.168.10.150:6380 (24476f40...) -> 3343 keys | 5462 slots | 0 slaves.  # 150的主节点，没有从节点，因为之前的153从节点下线了
+192.168.10.150:6380 (24476f40...) -> 3343 keys | 5462 slots | 0 slaves.  # 150 master node has no replica because previous 153 replica was taken offline
 192.168.10.151:6380 (a8b02756...) -> 3316 keys | 5461 slots | 1 slaves.
-192.168.10.152:6380 (e827ae78...) -> 3341 keys | 5461 slots | 2 slaves.  # 152的主节点有俩从节点，这都是需要我们在处理完下线之后，从新调整的。
+192.168.10.152:6380 (e827ae78...) -> 3341 keys | 5461 slots | 2 slaves.  # 152 master node has two replicas; these need to be adjusted after handling offline.
 [OK] 10000 keys in 3 masters.
 0.61 keys per slot on average.
 ```
@@ -1478,7 +1478,7 @@ redis-cli -c -h 192.168.10.152 -p 6381 CLUSTER RESET
 
 echo "yes"|redis-cli --cluster create 192.168.10.150:6380 192.168.10.151:6380 192.168.10.152:6380 192.168.10.150:6381 192.168.10.151:6381 192.168.10.152:6381 --cluster-replicas 1
 
-# 从新按照最开始的样式调整主从关系  150从->151主；151从->152主；152从->150主
+# Re-adjust master-slave relationships according to original style: 150 replica->151 master; 151 replica->152 master; 152 replica->150 master
 redis-cli -h 192.168.10.150 -p 6381 CLUSTER REPLICATE a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f
 redis-cli -h 192.168.10.151 -p 6381 CLUSTER REPLICATE e827ae7807b2f04c77702e325db3eb311403b3bb
 redis-cli -h 192.168.10.152 -p 6381 CLUSTER REPLICATE 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6
@@ -1501,7 +1501,7 @@ At this moment, the available cluster on my side contains three available nodes:
 ```bash
 redis-cli  --cluster info 192.168.10.150:6380
 
-# 注意观察此时key的分布
+# Observe key distribution at this time
 [root@cs ~]# redis-cli  --cluster info 192.168.10.150:6380
 192.168.10.150:6380 (24476f40...) -> 3343 keys | 5461 slots | 1 slaves.
 192.168.10.152:6380 (e827ae78...) -> 3341 keys | 5461 slots | 1 slaves.
@@ -1586,7 +1586,7 @@ Let's not adjust the master-slave relationships for now; first let's start the d
 ### Failure Recovery
 
 ```bash
-# db3服务器重启之后，手动先启动主节点，再启动从节点，注意，启动主从节点的顺序
+# After db3 server restarts, manually start master node first, then replica node; note the startup order of master and replica nodes
 systemctl start redis-master
 systemctl start redis-slave
 ps -ef|grep redis
@@ -1651,19 +1651,19 @@ According to the master-slave relationship diagram organized from the above figu
 There is a command that can directly swap master-slave relationships.
 
 ```bash
-# 注意这个CLUSTER FAILOVER命令使用时，是这样的，你想让谁的主从关系互换，就去从节点执行CLUSTER FAILOVER，然后从就变成主，主就变成从了
-# 任意终端执行：
+# Note: when using CLUSTER FAILOVER, to swap master-slave relationship for a node, execute CLUSTER FAILOVER on the replica node; then replica becomes master and master becomes replica
+# Execute in any terminal:
 redis-cli -c -h 192.168.10.152 -p 6380 CLUSTER FAILOVER
 redis-cli -h 192.168.10.150 -p 6380 CLUSTER NODES
 
 [root@cs ~]# redis-cli -c -h 192.168.10.152 -p 6380 CLUSTER FAILOVER
 OK
 [root@cs ~]# redis-cli -h 192.168.10.150 -p 6380 CLUSTER NODES
-e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 1691665372760 21 connected 10923-16383   # 152的6380节点变成了主节点
+e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 1691665372760 21 connected 10923-16383   # 152:6380 node became master node
 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 192.168.10.150:6380@16380 myself,master - 0 1691665371000 11 connected 0-5460
 967340547d63fd4f09e870b1494b6de720f9d6f4 192.168.10.152:6381@16381 slave 24476f40244ca37b1c42eb3ba62e39a7ee9e95d6 0 1691665371738 16 connected
 428e2b4090819ae5d181f435461c0970172d748c 192.168.10.150:6381@16381 slave a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 0 1691665370000 17 connected
-4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381@16381 slave e827ae7807b2f04c77702e325db3eb311403b3bb 0 1691665370715 21 connected  #151的6381节点变成了从节点
+4f15e5e2310d87089b92ab7b24960c950b30d195 192.168.10.151:6381@16381 slave e827ae7807b2f04c77702e325db3eb311403b3bb 0 1691665370715 21 connected  #151:6381 node became replica node
 a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380@16380 master - 0 1691665371000 12 connected 5461-10922
 ```
 
@@ -1674,12 +1674,12 @@ a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380@16380 master - 0 16
 This was actually covered before — it's just one command.
 
 ```bash
-# 这俩命令用哪个都行
+# Either of these two commands works
 echo "yes"|redis-cli --cluster create 192.168.10.150:6380 192.168.10.151:6380 192.168.10.152:6380 192.168.10.150:6381 192.168.10.151:6381 192.168.10.152:6381 --cluster-replicas 1
 
 redis-cli --cluster create 192.168.10.150:6380 192.168.10.151:6380 192.168.10.152:6380 192.168.10.150:6381 192.168.10.151:6381 192.168.10.152:6381 --cluster-replicas 1 --cluster-yes
-# --cluster-replicas 1 表示一个主节点有一个从节点
-# --cluster-yes 表示有交互的提示中，自动输入yes
+# --cluster-replicas 1 means one master has one replica
+# --cluster-yes means automatically enter yes in interactive prompts
 ```
 
 ### Automatically Expanding a Cluster
@@ -1689,15 +1689,15 @@ Use `add-node` to add a node. Note that this only adds the new node to the clust
 **1. Add the node to the cluster**
 
 ```bash
-# 添加主节点,192.168.10.153:6380是要添加的节点，后面的192.168.10.150:6380是已经在集群中的节点
+# Add master node; 192.168.10.153:6380 is the node to add, 192.168.10.150:6380 is a node already in the cluster
 redis-cli --cluster add-node 192.168.10.153:6380  192.168.10.150:6380
-# 这一步只是将新节点加入集群，分配槽位啥的，都没有，还需要手动做
-# 如果这个新节点是从来没有加入过集群，直接执行命令就可以了，如果这个节点曾经有过加入集群的经历，可能就会报错
-# 如果报错，就参考本篇博客的最后一部分，就是常见报错中的这个报错解决办法：[ERR] Node 192.168.10.153:6380 is not empty. Either the node already knows other nodes (check with CLUSTER NODES) or contains some key in database 0.，链接：https://www.cnblogs.com/Neeo/articles/10840096.html#err-node-192168101536380-is-not-empty-either-the-node-already-knows-other-nodes-check-with-cluster-nodes-or-contains-some-key-in-database-0
+# This step only adds the new node to the cluster; slot assignment etc. is not done, still needs manual work
+# If this new node has never joined a cluster, just execute the command; if it has previously joined a cluster, it may report an error
+# If error occurs, refer to the last part of this blog post for the solution to this common error: [ERR] Node 192.168.10.153:6380 is not empty. Either the node already knows other nodes (check with CLUSTER NODES) or contains some key in database 0., link: https://www.cnblogs.com/Neeo/articles/10840096.html#err-node-192168101536380-is-not-empty-either-the-node-already-knows-other-nodes-check-with-cluster-nodes-or-contains-some-key-in-database-0
 
 
 [root@cs ~]# redis-cli  --cluster info 192.168.10.150:6380
-192.168.10.153:6380 (7cf4fade...) -> 0 keys | 0 slots | 0 slaves.		# 可以看到这个新节点压根没有槽位
+192.168.10.153:6380 (7cf4fade...) -> 0 keys | 0 slots | 0 slaves.		# Can see this new node has no slots at all
 192.168.10.151:6381 (4f15e5e2...) -> 0 keys | 5461 slots | 1 slaves.
 192.168.10.151:6380 (a8b02756...) -> 0 keys | 5462 slots | 1 slaves.
 192.168.10.152:6380 (e827ae78...) -> 0 keys | 5461 slots | 1 slaves.
@@ -1708,21 +1708,21 @@ redis-cli --cluster add-node 192.168.10.153:6380  192.168.10.150:6380
 **2. Assign slots to the master node that just joined the cluster**
 
 ```bash
-# 先看下shell脚本能不能获取到新节点的ID
+# First check if shell script can get the new node ID
 echo $(redis-cli -c -h 192.168.10.153 -p 6380 cluster nodes|awk '/153:6380/{print $1}') 
 
 [root@cs ~]# echo $(redis-cli -c -h 192.168.10.153 -p 6380 cluster nodes|awk '/153:6380/{print $1}') 
 4d37fc13e16282788199d5d641628aff339802ec
 
-# 能行再往下执行这个命令，二选一就行了，一个是自己填写新节点的ID，一个是shell获取
+# If it works then execute the following command; either one is fine, one is manually entering the new node ID, one is shell retrieval
 redis-cli --cluster reshard 192.168.10.153:6380 --cluster-from all --cluster-slots 4096 --cluster-yes --cluster-to 4d37fc13e16282788199d5d641628aff339802ec
 redis-cli --cluster reshard 192.168.10.153:6380 --cluster-from all --cluster-slots 4096 --cluster-yes --cluster-to $(redis-cli -c -h 192.168.10.153 -p 6380 cluster nodes|awk '/153:6380/{print $1}') 
 
-# --cluster reshard		重新分配槽位，我们之前执行的是redis-cli --cluster reshard 192.168.10.153:6380 这个命令就是重新分配槽位，然后有四次交互动作，而下面的几个参数就是代替那四个交互的操作
-# --cluster-from all 	表示从集群中现有的有槽位的主节点给指定主节点分配槽位
-# --cluster-to       	表示把槽位分配给新的主节点，这里用shell脚本个过滤出来的那个主节点的ID，当然，你可以自己手动写，不用shell
-# --cluster-slots 4096  表示要总共要往新节点迁移的槽位总数
-# --cluster-yes			在迁移槽位过程中免交互输入yes
+# --cluster reshard		Reassign slots; we previously executed redis-cli --cluster reshard 192.168.10.153:6380 which reassigns slots with four interactive steps; the parameters below replace those four interactions
+# --cluster-from all 	Means allocating slots from existing masters with slots in the cluster to the specified master
+# --cluster-to       	Means allocating slots to the new master; here using the master node ID filtered by shell script; of course you can manually write it instead of using shell
+# --cluster-slots 4096  Means the total number of slots to migrate to the new node
+# --cluster-yes			Automatically enter yes during slot migration without interaction
 
 [root@cs ~]# redis-cli  --cluster info 192.168.10.150:6380
 192.168.10.153:6380 (4d37fc13...) -> 0 keys | 4096 slots | 0 slaves.
@@ -1745,13 +1745,13 @@ redis-cli -h 192.168.10.153 -p 6381 CLUSTER REPLICATE $(redis-cli -c -h 192.168.
 Now, we can do it like this.
 
 ```bash
-# 添加从节点同时和集群中的主节点建立主从关系
+# Add replica node and simultaneously establish master-slave relationship with master node in cluster
 redis-cli --cluster add-node 192.168.10.153:6381 192.168.10.150:6380 --cluster-slave --cluster-master-id $(redis-cli -c -h 192.168.10.150 -p 6380 cluster nodes|awk '/150:6380/{print $1}') 
-# --cluster add-node 192.168.10.153:6381 192.168.10.150:6380  # 通过集群中的6380节点邀请153的6381节点进群
-# --cluster-slave 标记当前节点是从节点
-# --cluster-slave --cluster-master-id	# 指定该节点的主节点的ID，
-# 注意，一定要要确认要绑定主节点是主节点，不然会添加节点成功，主从关系绑定失败，而且，还会报错：Node 192.168.10.153:6381 replied with error:ERR I can only replicate a master, not a replica.
-# 最终导致添加的节点变成了没有槽位的主节点了
+# --cluster add-node 192.168.10.153:6381 192.168.10.150:6380  # Invite 153:6381 into the cluster via the 6380 node in the cluster
+# --cluster-slave marks the current node as a replica
+# --cluster-slave --cluster-master-id	# Specify the master node ID of this node,
+# Note: be sure to confirm the bound master is indeed a master; otherwise node addition succeeds but master-slave binding fails, and it will report error: Node 192.168.10.153:6381 replied with error:ERR I can only replicate a master, not a replica.
+# Ultimately the added node becomes a master without slots
 ```
 
 ### Automatically Shrinking a Cluster
@@ -1761,15 +1761,15 @@ redis-cli --cluster add-node 192.168.10.153:6381 192.168.10.150:6380 --cluster-s
 If the current node is a master node with no slots assigned, or the current node is a replica node, it can be taken offline directly with the following command.
 
 ```bash
-# 下线命令            具体命令     要下线的节点       要下线的节点的ID
+# Offline command            specific command     node to be taken offline       ID of node to be taken offline
 redis-cli --cluster del-node 192.168.10.153:6381 03ff463e91f0c42188d5d8e09a36a72794f2602c
 
-# 增加了shell脚本获取节点ID
+# Added shell script to get node ID
 redis-cli --cluster del-node 192.168.10.153:6381 $(redis-cli -c -h 192.168.10.153 -p 6381 cluster nodes|awk '/153:6381/{print $1}')
 
 
 
-# 最终要执行的命令
+# Final command to execute
 echo $(redis-cli -c -h 192.168.10.153 -p 6380 cluster nodes|awk '/153:6380/{print $1}')
 redis-cli --cluster del-node 192.168.10.153:6381 $(redis-cli -c -h 192.168.10.153 -p 6381 cluster nodes|awk '/153:6381/{print $1}')
 
@@ -1786,21 +1786,21 @@ redis-cli --cluster del-node 192.168.10.153:6381 $(redis-cli -c -h 192.168.10.15
 If the node to be taken offline has slots, the offline process must first migrate the slots away, and then perform the offline operation.
 
 ```bash
-# 1. 把槽位迁移走，自动完成
-# 具体命令，通过填写将153的6380的ID，将该节点的槽位平均分配给当前集群中的其它主节点
+# 1. Migrate slots away, automatically completed
+# Specific command: by entering the ID of 153:6380, evenly distribute this node slots to other master nodes in the current cluster
 redis-cli --cluster rebalance 192.168.10.150:6380 --cluster-weight 71c5c7aa11c9c140e72d79ba78fc0c35e73caae6=0
 
 
 
 redis-cli --cluster rebalance 192.168.10.150:6380 --cluster-weight $(redis-cli -c -h 192.168.10.153 -p 6380 cluster nodes|awk '/153:6380/{print $1}')=0
-# --cluster rebalance		# 从新分配槽位
-# --cluster-weight			# 自动的执行将下线节点的槽位，移动到其它的主节点上，执行效果如下：
+# --cluster rebalance		# Reassign slots
+# --cluster-weight			# Automatically execute moving offline node slots to other masters; execution effect is as follows:
 # 	Moving 1366 slots from 192.168.10.153:6380 to 192.168.10.150:6380
 # 	Moving 1365 slots from 192.168.10.153:6380 to 192.168.10.151:6380
 # 	Moving 1365 slots from 192.168.10.153:6380 to 192.168.10.152:6380
 
-# 2. 下线节点
-#                   下线命令    要下线的节点的IP和端口   要下线节点的ID
+# 2. Take node offline
+#                   offline command    IP and port of node to be taken offline   ID of node to be taken offline
 redis-cli --cluster del-node 192.168.10.153:6380 $(redis-cli -c -h 192.168.10.153 -p 6380 cluster nodes|awk '/153:6380/{print $1}')
 ```
 
@@ -1847,13 +1847,13 @@ Next, let's demonstrate using `redis-cli` related commands to migrate data from 
 **Related command parameters**
 
 ```bash
-# 将外部192.168.10.150:6379节点的数据，迁移到集群中，这里import后面可以写任意的集群节点
+# Migrate data from external 192.168.10.150:6379 node to cluster; any cluster node can be written after import
 redis-cli --cluster import 192.168.10.150:6380 --cluster-from 192.168.10.150:6379 --cluster-replace --cluster-copy
-# import 192.168.10.150:6380  # 可以是集群的任意节点
-# --cluster-from 192.168.10.150:6379  # 表示从外部哪个实例迁移数据
-# --cluster-replace  # 添加replace参数，迁移时会覆盖掉同名的key，如果不添加该参数，迁移遇到同名的key会提示冲突，当然如果新集群，没数据，不加这个参数也没事
+# import 192.168.10.150:6380  # Can be any node in the cluster
+# --cluster-from 192.168.10.150:6379  # Indicates which external instance to migrate data from
+# --cluster-replace  # Add replace parameter; migration will overwrite keys with same name. Without this parameter, migration will report conflict when encountering same-name keys. Of course if new cluster has no data, not adding this parameter is fine
 # 	Migrating k_324 to 192.168.10.151:6380: Source 192.168.10.150:6379 replied with error:ERR Target instance replied with error: BUSYKEY Target key name already exists.
-# --cluster-copy	# 迁移命令不加copy参数，相当于是mv动作，迁移完毕，自己的也没了，加了copy就相当于cp操作了
+# --cluster-copy	# Without copy parameter, migration acts like mv; after migration, source data is gone. With copy it acts like cp
 ```
 
 ## Performance Testing
@@ -1865,22 +1865,22 @@ redis-cli --cluster import 192.168.10.150:6380 --cluster-from 192.168.10.150:637
 ```bash
 redis-benchmark --help
 Usage: redis-benchmark [-h <host>] [-p <port>] [-c <clients>] [-n <requests>] [-k <boolean>]
- -h <hostname>          指定redis测试服务器
- -p <port>              指定redis服务的端口
- -s <socket>            指定redis socket文件
- -a <password>          指定redis密码
- -c <clients>           指定测试的并行数
- -n <requests>          指定测试的请求数量
- -d <size>              SET/GET 命令的值bytes单位 默认是2
- --dbnum <db>           指定redis的某个数据库，默认是0数据库
- -k <boolean>           指定是否保持连接 1是保持连接 0是重新连接，默认为 1
- -r <keyspacelen>       指定get/set的随机值的范围。
- -P <numreq>            管道请求测试，默认0没有管道测试
- -e                     如果有错误，输出到标准输出上。
- -q                     静默模式，只显示query/秒的值
- --csv                  指定输出结果到csv文件中
- -l                     指定是否一直运行test
- -t <tests>             指定需要测试的命令，以逗号分隔，
+ -h <hostname>          Specify Redis test server
+ -p <port>              Specify Redis service port
+ -s <socket>            Specify Redis socket file
+ -a <password>          Specify Redis password
+ -c <clients>           Specify test concurrency
+ -n <requests>          Specify number of test requests
+ -d <size>              SET/GET command value in bytes, default is 2
+ --dbnum <db>           Specify a Redis database, default is 0
+ -k <boolean>           Specify whether to keep connection: 1 keep, 0 reconnect, default 1
+ -r <keyspacelen>       Specify random value range for get/set
+ -P <numreq>            Pipeline request test, default 0 means no pipeline test
+ -e                     If there are errors, output to stdout
+ -q                     Quiet mode, only show queries/sec
+ --csv                  Specify output results to CSV file
+ -l                     Specify whether to run test continuously
+ -t <tests>             Specify commands to test, comma-separated,
 
 
 

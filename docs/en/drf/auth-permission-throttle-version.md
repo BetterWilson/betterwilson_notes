@@ -285,7 +285,7 @@ from rest_framework.response import Response
 
 
 class DemoView(APIView):
-    permission_classes = [权限类A, 权限类B, 权限类C]
+    permission_classes = [PermissionClassA, PermissionClassB, PermissionClassC]
 
     def get(self, request: Request):
         return Response({"status": True, "data": "OK"})
@@ -295,7 +295,7 @@ class DemoView(APIView):
 
   ```python
   class PermissionA(BasePermission):
-      message = {"code": 1003, 'data': "无权访问"}	# 自定义错误信息
+      message = {"code": 1003, 'data': "Access denied"}	# Custom error message
   
       def has_permission(self, request, view):
           if request.user.role == 2:
@@ -313,7 +313,7 @@ class DemoView(APIView):
           Raises an appropriate exception if the request is not permitted.
           """
       for permission in self.get_permissions():
-          if permission.has_permission(request, self):	# 只要有一个是Ture，就有权限
+          if permission.has_permission(request, self):	# If any one is True, has permission
               return
           return self.permission_denied(
               request,
@@ -341,7 +341,7 @@ class LoginView(APIView):
         """
         parser_context = self.get_parser_context(request)
 
-        return Request(		# 定义一个类，替换这里的request
+        return Request(		# Define a class to replace request here
             request,
             parsers=self.get_parsers(),
             authenticators=self.get_authenticators(),
@@ -411,7 +411,7 @@ Throttling limits the frequency of user access. For example: a user can access a
 
 ```python
 REST_FRAMEWORK = {
-    "DEFAULT_THROTTLE_CLASSES":["xxx.xxx.xx.限流类", ],
+    "DEFAULT_THROTTLE_CLASSES":["xxx.xxx.xx.ThrottleClass", ],
     "DEFAULT_THROTTLE_RATES": {
         "user": "10/m",
         "xx":"100/h"
@@ -441,8 +441,8 @@ from rest_framework.versioning import QueryParameterVersioning
   # settings.py
   
   REST_FRAMEWORK = {
-      "VERSION_PARAM": "version",	#定义URL中的参数值(一般都叫version)
-      "DEFAULT_VERSION": "v1",	#默认version,可以自定义
+      "VERSION_PARAM": "version",	# Define the URL parameter name (usually called version)
+      "DEFAULT_VERSION": "v1",	# Default version, can be customized
       "ALLOWED_VERSIONS": ["v1", "v2", "v3"],
       "DEFAULT_VERSIONING_CLASS":"rest_framework.versioning.QueryParameterVersioning"
   }

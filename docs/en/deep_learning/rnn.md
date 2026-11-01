@@ -102,20 +102,20 @@ The biggest difference between an RNN and a traditional neural network is: **at 
 4. Walking through forward propagation with concrete numbers (by hand)
 
    ```
-   设 input_size=3, hidden_size=2，输入一句话有两个词（两个时间步）：
-     x_1 = [1, 0, 1],  x_2 = [0, 1, 0]，初始记忆 h_0 = [0, 0]
+   Let input_size=3, hidden_size=2; the input sentence has two words (two time steps):
+     x_1 = [1, 0, 1],  x_2 = [0, 1, 0], initial memory h_0 = [0, 0]
 
      W_xh = [[0.1, 0.2],          W_hh = [[0.5, 0.1],
              [0.3, 0.4],                  [0.2, 0.6]]
              [0.5, 0.6]]
      b_xh = [0.1, 0.1],  b_hh = [0.0, 0.0]
 
-   时间步1：
+   Time step 1:
      z_1 = W_xh·x_1 + b_xh + W_hh·h_0 + b_hh
          = [0.6, 0.8] + [0.1, 0.1] + [0, 0] + [0, 0] = [0.7, 0.9]
      h_1 = tanh([0.7, 0.9]) ≈ [0.604, 0.716]
 
-   时间步2（同一套权重，输入换成 x_2，记忆换成 h_1）：
+   Time step 2 (same weights, input changed to x_2, memory changed to h_1):
      W_hh·h_1 = [0.5×0.604+0.1×0.716, 0.2×0.604+0.6×0.716] = [0.374, 0.550]
      z_2 = W_xh·x_2 + b_xh + W_hh·h_1 + b_hh
          = [0.3, 0.4] + [0.1, 0.1] + [0.374, 0.550] = [0.774, 1.050]
@@ -182,7 +182,7 @@ The biggest difference between an RNN and a traditional neural network is: **at 
 **Once the vocabulary is built, connecting it to the embedding:**
 
 ```
-"i love rnn" → 分词 → ["i","love","rnn"] → 查词典 → [22,183,47] → nn.Embedding 查表 → 词向量序列
+"i love rnn" → tokenize → ["i","love","rnn"] → lookup vocabulary → [22,183,47] → nn.Embedding lookup → word vector sequence
 ```
 
 - Looking up the vocabulary (tokenize): each word is looked up in `vocab` to get an integer ID; words not in the vocabulary → `<OOV>`'s ID (1)
@@ -201,10 +201,10 @@ The biggest difference between an RNN and a traditional neural network is: **at 
 **encode (text → a padded ID sequence)** does 5 things:
 
 ```
-"i love rnn"  --分词-->  ["i","love","rnn"]  --查词典-->  [22,183,47]
-               +加<BOS>/<EOS>：[2,22,183,47,3]
-               +超过 max_length 截断
-               +不足补 <PAD>：[0,0,0,2,22,183,47,3]  （padding_first=True 时 PAD 在前）
+"i love rnn"  --tokenize-->  ["i","love","rnn"]  --vocab lookup-->  [22,183,47]
+               +add <BOS>/<EOS>: [2,22,183,47,3]
+               +truncate if exceeds max_length
+               +pad with <PAD>: [0,0,0,2,22,183,47,3]  (padding_first=True pads at the front)
 ```
 
 1. **Tokenize**: `text.split()` cuts the sentence into words on whitespace
@@ -226,11 +226,11 @@ The biggest difference between an RNN and a traditional neural network is: **at 
 Words must first be turned into numbers to be fed to the network. The most naive idea is one-hot encoding:
 
 ```
-词表 = ["我", "爱", "学习", "RNN"]   （词表大小 vocab_size = 4）
-"我"   → [1, 0, 0, 0]
-"爱"   → [0, 1, 0, 0]
-"学习" → [0, 0, 1, 0]
-"RNN"  → [0, 0, 0, 1]
+Vocab = ["I", "love", "study", "RNN"]   (vocab_size = 4)
+"I"     → [1, 0, 0, 0]
+"love"  → [0, 1, 0, 0]
+"study" → [0, 0, 1, 0]
+"RNN"   → [0, 0, 0, 1]
 ```
 
 Problems with one-hot:
@@ -270,15 +270,15 @@ This matrix is initially **random**, and is then **trained together with the cur
 
 ```
 "i love rnn"
-   │ 分词（tokenize）
+   │ Tokenize
 ["i", "love", "rnn"]
-   │ 查词表 → 每个词变成整数索引
+   │ Vocab lookup → each word becomes an integer index
 [22, 183, 47]
-   │ nn.Embedding 查表
-[[0.12, 0.88, ...],      ← 第0个时间步的输入 x_1（"i"的向量）
- [0.34, 0.12, ...],      ← x_2（"love"的向量）
- [0.90, 0.45, ...]]      ← x_3（"rnn"的向量）
-   │ 送入 RNN，按时间步依次输入
+   │ nn.Embedding lookup
+[[0.12, 0.88, ...],      ← input at time step 0, x_1 (vector for "i")
+ [0.34, 0.12, ...],      ← x_2 (vector for "love")
+ [0.90, 0.45, ...]]      ← x_3 (vector for "rnn")
+   │ Feed into RNN, input sequentially by time step
   h_1 → h_2 → h_3
 ```
 
@@ -375,7 +375,7 @@ Binary classification with a single neuron via BCE:
 - At prediction time, 0.5 is commonly used as the threshold: greater than 0.5 is judged the positive class, otherwise the negative class
 
   ```
-  输入→ 隐藏层 ... →输出层(sigmoid, 1个神经元)→ BCE损失函数
+  Input → Hidden Layer ... → Output Layer (sigmoid, 1 neuron) → BCE Loss
   ```
 
 Binary classification with two neurons via Softmax:
@@ -393,7 +393,7 @@ Binary classification with two neurons via Softmax:
 - At prediction time, the class with the highest probability is chosen as the predicted class
 
   ```
-  输入→ 隐藏层 ... →输出层(softmax, 2个神经元)→ 交叉熵损失函数
+  Input → Hidden Layer ... → Output Layer (softmax, 2 neurons) → Cross-Entropy Loss
   ```
 
 Summary of the differences:
@@ -409,9 +409,9 @@ Summary of the differences:
 - **Structure**: only one RNN layer; the input goes straight into this layer, and each time step computes one hidden state:
 
   ```
-  x_1 → [RNN层] → h_1
-  x_2 → [RNN层] → h_2
-  x_3 → [RNN层] → h_3
+  x_1 → [RNN Layer] → h_1
+  x_2 → [RNN Layer] → h_2
+  x_3 → [RNN Layer] → h_3
   ```
 
 - **Direction**: it reads only once from left to right, so the memory $h_t$ at each position contains only "past + present" context (it cannot see the future)
@@ -424,9 +424,9 @@ Summary of the differences:
 - **Structure**: **two RNNs** run within the same layer — one reads from left to right (forward) and one from right to left (backward), and at each position the hidden states of the two directions are **concatenated**:
 
   ```
-         x_1 →  x_2 →  x_3      （正向 RNN）
-         x_1 ←  x_2 ←  x_3      （反向 RNN）
-  h_t = [h_t^→ ; h_t^←]         （拼接，维度翻倍）
+         x_1 →  x_2 →  x_3      (Forward RNN)
+         x_1 ←  x_2 ←  x_3      (Backward RNN)
+  h_t = [h_t^→ ; h_t^←]         (Concatenate, dimension doubles)
   ```
 
 - **Why it is useful**: for a negated phrase like `"not good"`, the meaning of `not` can only be known thanks to the following `good`; when reading unidirectionally and reaching `not`, `good` has not been seen yet and the information is incomplete, whereas the backward branch can "see" the future in advance. So each position has both "past + future" context
@@ -439,9 +439,9 @@ Summary of the differences:
 - **Structure**: two RNN layers stacked vertically, where **the output of layer 1 at each time step serves as the input of layer 2 at the corresponding time step**:
 
   ```
-  x_1 → [层1] → h₁⁽¹⁾ → [层2] → h₁⁽²⁾
-  x_2 → [层1] → h₂⁽¹⁾ → [层2] → h₂⁽²⁾
-  x_3 → [层1] → h₃⁽¹⁾ → [层2] → h₃⁽²⁾
+  x_1 → [Layer 1] → h₁⁽¹⁾ → [Layer 2] → h₁⁽²⁾
+  x_2 → [Layer 1] → h₂⁽¹⁾ → [Layer 2] → h₂⁽²⁾
+  x_3 → [Layer 1] → h₃⁽¹⁾ → [Layer 2] → h₃⁽²⁾
   ```
 
 - **Each layer has its own set of weights**: weight sharing means sharing "**within the same layer**, across time steps" (all time steps share one set), but **different layers have different weights** — layer 1 uses `weight_ih_l0`/`weight_hh_l0`, layer 2 uses `weight_ih_l1`/`weight_hh_l1`. So **doubling the number of layers → roughly doubling the RNN's parameter count** (and the computational cost doubles along with it)
@@ -760,11 +760,11 @@ $$
 The complete single-step process (remember the order of these 4 steps):
 
 ```
-输入 [h_{t-1}, x_t]（拼接）
-  → ① 遗忘门 f_t：旧记忆 C_{t-1} 留多少
-  → ② 输入门 i_t、候选记忆 C̃_t：新信息要写多少、写什么
-  → ③ 细胞状态更新：C_t = f_t⊙C_{t-1} + i_t⊙C̃_t
-  → ④ 输出门 o_t：从 C_t 里挑多少作为 h_t，h_t = o_t⊙tanh(C_t)
+Input [h_{t-1}, x_t] (concatenate)
+  → ① Forget gate f_t: how much of old memory C_{t-1} to keep
+  → ② Input gate i_t, candidate memory C̃_t: how much new info to write, and what to write
+  → ③ Cell state update: C_t = f_t⊙C_{t-1} + i_t⊙C̃_t
+  → ④ Output gate o_t: how much of C_t to output as h_t, h_t = o_t⊙tanh(C_t)
 ```
 
 > **Compared with a plain RNN**: a plain RNN's single step `h_t = tanh(W·[h_{t-1}, x_t])` "rewrites the memory in full"; LSTM is "**partial retention + partial writing**", managing memory and output separately, which is why historical information can survive for a long time.

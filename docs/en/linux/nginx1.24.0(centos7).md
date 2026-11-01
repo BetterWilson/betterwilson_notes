@@ -6,15 +6,13 @@
 yum update -y
 yum -y install gcc gcc-c++ pcre pcre-devel  zlib zlib-devel openssl openssl-devel libxml2-devel libxslt-devel gd-devel GeoIP-devel jemalloc-devel libatomic_ops-devel perl-devel  perl-ExtUtils-Embed
  
-#安装Nginx需要先将官网下载的源码进行编译，依赖gcc环境
+# Installing Nginx requires compiling the source code downloaded from the official site, which depends on the gcc environment
  
-#PCRE是一个perl库，包括perl兼容的正则表达式库。Nginx的http模块使用pcre库来解析正则表达式 
+# PCRE is a Perl library including Perl-compatible regular expressions. Nginx's http module uses pcre to parse regular expressions 
  
-#zlib库提供很多种压缩解压缩方式，Nginx使用zlib对http包的内容进行gzip
+# zlib provides many compression/decompression methods. Nginx uses zlib to gzip HTTP package content
  
-#OpenSSL是一个强大的安全套接字层密码库，囊括主要的密码算法、常用的秘钥和证书封装管理功能及
-SSL协议，并提供丰富的应用程序供测试或其它目的使用。Nginx不仅支持http协议，还支持HTTPS协议
-（即在SSL协议上传输http）。
+# OpenSSL is a powerful secure sockets layer cryptographic library, including major cryptographic algorithms, common key and certificate encapsulation management functions, and the SSL protocol. It also provides rich applications for testing or other purposes. Nginx supports not only HTTP but also HTTPS (i.e., transmitting HTTP over SSL).
 ```
 
 ## 1 Download
@@ -49,7 +47,7 @@ Note: nginx's extraction directory and compilation directory cannot be the same 
 cd /opt/nginx-1.24.0
 ./configure && make && make install
 
-# 这种方式nginx的安装目录为/usr/local/nginx
+# With this method, nginx's installation directory is /usr/local/nginx
 ```
 
 ### Method 2: Compile with the defaults, and specify the installation directory:
@@ -141,21 +139,21 @@ At this point, you can start nginx from anywhere.
 ### 5.1 Start Directly with the nginx Command
 
 ```bash
-# 直接输入nginx来启动，但只能首次启动nginx使用，因为重复启动的话，会提示80端口已被占用
+# Enter nginx directly to start it, but this only works for the first launch because restarting it will show port 80 is already in use
 nginx
 
-# 查看nginx相关进程
+# View nginx-related processes
 ps -ef | grep nginx
 
-# 查看NGINX监听的端口
+# View the ports NGINX is listening on
 netstat -tunlp | grep nginx
 
-# 平滑重启nginx，也就是重新读取nginx的配置文件，而不是重启进程
+# Gracefully restart nginx, i.e., reload the nginx configuration file instead of restarting the process
 nginx -s reload
 
-# 确认nginx配置文件是否正确的
+# Verify whether the nginx configuration file is correct
 nginx -t 
-# 停止nginx， 杀死nginx进程
+# Stop nginx, kill the nginx process
 nginx -s stop
 ```
 
@@ -194,18 +192,18 @@ Annotated version:
 
 ```bash
 cat >/lib/systemd/system/nginx.service<<EOF
-[Unit]     # 记录service文件的通用信息
-Description=nginx    # Nginx服务描述信息
-After=network.target    # Nginx服务启动依赖，在指定服务之后启动
-[Service]    # 记录service文件的service信息
-Type=forking    # 标准UNIX Daemon使用的启动方式
+[Unit]     # Records the service file's general information
+Description=nginx    # Nginx service description
+After=network.target    # Nginx service startup dependency, starts after the specified service
+[Service]    # Records the service file's service information
+Type=forking    # The startup method used by standard UNIX Daemons
 ExecStartPre=/opt/my_nginx/sbin/nginx -t -c /opt/my_nginx/conf/nginx.conf
 ExecStart=/opt/my_nginx/sbin/nginx -c /opt/my_nginx/conf/nginx.conf
 ExecReload=/opt/my_nginx/sbin/nginx -s reload
 ExecStop=/opt/my_nginx/sbin/nginx -s stop
 PrivateTmp=true
-[Install]    # 记录service文件的安装信息
-WantedBy=multi-user.target    # 多用户环境下启用
+[Install]    # Records the service file's installation information
+WantedBy=multi-user.target    # Enabled in multi-user environment
 EOF
 cat /lib/systemd/system/nginx.service
 ```

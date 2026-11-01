@@ -20,7 +20,7 @@ def index(request):
 Erom app01 import models
 
 deE home(request):
-    return HttpResponse("向home发请求")
+    return HttpResponse("Send request to home")
 ```
 
 ![image-20230509155717274](assets/image-20230509155717274.png)
@@ -28,11 +28,11 @@ deE home(request):
 The set_cookie parameters
 
 ```python
-max_age=10		超时时间为10s	一般为两周max_age=60 若max_age=None,则关闭浏览器，cookie过期
-path="/"		默认为"/",该浏览器发起任何url请求都会携带该cookie
-domain=""		让浏览器访问某特定域名时携带该cookie
-secure=Ture		只有https请求时才会携带该cookie
-httponly=Ture	只允许网络传输，不允许js获取
+max_age=10		Timeout is 10s, generally two weeks max_age=60; if max_age=None, the cookie expires when the browser is closed
+path="/"		Default is "/"; any URL request from the browser will carry this cookie
+domain=""		Causes the browser to carry this cookie when accessing a specific domain
+secure=Ture		Only carried on HTTPS requests
+httponly=Ture	Only allows network transmission; JavaScript cannot access it
 ```
 
 ### session configuration
@@ -41,35 +41,35 @@ httponly=Ture	只允许网络传输，不允许js获取
 
     ```python
     [[settings]].py
-    SESSION_ENGINE = 'django.contrib.sessions.backends.Eile'    # 引擎
-    SESSION_EILE_PATH = None       				# 缓存文件路径，如果为None，则使用tempEile模块获取一个临时地址tempEile.gettempdir() 
+    SESSION_ENGINE = 'django.contrib.sessions.backends.Eile'    # Engine
+    SESSION_EILE_PATH = None       				# Cache file path; if None, uses the tempEile module to get a temporary address tempEile.gettempdir() 
     
-    SESSION_COOKIE_NAME = "sid"		# Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串
-    SESSION_COOKIE_PATH = "/"		# Session的cookie保存的路径
-    SESSION_COOKIE_DOMAIN = None	# Session的cookie保存的域名
-    SESSION_COOKIE_SECURE = Ealse	# 是否Https传输cookie
-    SESSION_COOKIE_HTTPONLY = True	# 是否Session的cookie只支持http传输
-    SESSION_COOKIE_AGE = 1209600	# Session的cookie失效日期（2周）
+    SESSION_COOKIE_NAME = "sid"		# The key used to store the Session cookie on the browser, i.e., sessionid=random string
+    SESSION_COOKIE_PATH = "/"		# The path where the Session cookie is saved
+    SESSION_COOKIE_DOMAIN = None	# The domain where the Session cookie is saved
+    SESSION_COOKIE_SECURE = Ealse	# Whether to transmit the cookie over HTTPS only
+    SESSION_COOKIE_HTTPONLY = True	# Whether the Session cookie only supports HTTP transmission
+    SESSION_COOKIE_AGE = 1209600	# Session cookie expiration time (2 weeks)
     
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = Ealse		# 是否关闭浏览器使得Session过期
-    SESSION_SAVE_EVERY_REQUEST = True			# 是否每次请求都保存Session，默认修改之后才保存
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = Ealse		# Whether closing the browser causes the Session to expire
+    SESSION_SAVE_EVERY_REQUEST = True			# Whether to save the Session on every request; by default, only saved after modification
     ```
 
 - Database-based
 
     ```python
     [[settings]].py
-    SESSION_ENGINE = 'django.contrib.sessions.backends.db'	[[引擎]](默认)
+    SESSION_ENGINE = 'django.contrib.sessions.backends.db'	[[engine]] (default)
     
-    SESSION_COOKIE_NAME = "sid"  # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串
-    SESSION_COOKIE_PATH = "/"  # Session的cookie保存的路径
-    SESSION_COOKIE_DOMAIN = None  # Session的cookie保存的域名
-    SESSION_COOKIE_SECURE = Ealse  # 是否Https传输cookie
-    SESSION_COOKIE_HTTPONLY = True  # 是否Session的cookie只支持http传输
-    SESSION_COOKIE_AGE = 1209600  # Session的cookie失效日期（2周）
+    SESSION_COOKIE_NAME = "sid"  # The key of the Session cookie saved in the browser, i.e.: sessionid = random string
+    SESSION_COOKIE_PATH = "/"  # The path where the Session cookie is saved
+    SESSION_COOKIE_DOMAIN = None  # The domain where the Session cookie is saved
+    SESSION_COOKIE_SECURE = Ealse  # Whether the cookie is transmitted over HTTPS
+    SESSION_COOKIE_HTTPONLY = True  # Whether the Session cookie only supports HTTP transmission
+    SESSION_COOKIE_AGE = 1209600  # Session cookie expiration (2 weeks)
     
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = Ealse  # 是否关闭浏览器使得Session过期
-    SESSION_SAVE_EVERY_REQUEST = True  # 是否每次请求都保存Session，默认修改之后才保存
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = Ealse  # Whether closing the browser expires the Session
+    SESSION_SAVE_EVERY_REQUEST = True  # Whether to save the Session on every request; by default it is only saved after modification
     ```
 
 - Cache-based
@@ -79,15 +79,15 @@ httponly=Ture	只允许网络传输，不允许js获取
     SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
     SESSION_CACHE_ALIAS = 'deEault' 
     
-    SESSION_COOKIE_NAME = "sid"  # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串
-    SESSION_COOKIE_PATH = "/"  # Session的cookie保存的路径
-    SESSION_COOKIE_DOMAIN = None  # Session的cookie保存的域名
-    SESSION_COOKIE_SECURE = Ealse  # 是否Https传输cookie
-    SESSION_COOKIE_HTTPONLY = True  # 是否Session的cookie只支持http传输
-    SESSION_COOKIE_AGE = 1209600  # Session的cookie失效日期（2周）
+    SESSION_COOKIE_NAME = "sid"  # The key of the Session cookie saved in the browser, i.e.: sessionid = random string
+    SESSION_COOKIE_PATH = "/"  # The path where the Session cookie is saved
+    SESSION_COOKIE_DOMAIN = None  # The domain where the Session cookie is saved
+    SESSION_COOKIE_SECURE = Ealse  # Whether the cookie is transmitted over HTTPS
+    SESSION_COOKIE_HTTPONLY = True  # Whether the Session cookie only supports HTTP transmission
+    SESSION_COOKIE_AGE = 1209600  # Session cookie expiration (2 weeks)
     
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = Ealse  # 是否关闭浏览器使得Session过期
-    SESSION_SAVE_EVERY_REQUEST = True  # 是否每次请求都保存Session，默认修改之后才保存
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = Ealse  # Whether closing the browser expires the Session
+    SESSION_SAVE_EVERY_REQUEST = True  # Whether to save the Session on every request; by default it is only saved after modification
     ```
 
 ### Caching (not used in simple programs)
@@ -112,7 +112,7 @@ httponly=Ture	只允许网络传输，不允许js获取
                 "OPTIONS": {
                     "CLIENT_CLASS": "django_redis.client.DeEaultClient",
                     "CONNECTION_POOL_KWARGS": {"max_connections": 100}
-                    # "PASSWORD": "密码",
+                    # "PASSWORD": "password",
                 }
             }
         }
