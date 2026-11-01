@@ -5,7 +5,7 @@ description: "深度学习学习笔记，基于 PyTorch 讲解神经网络基础
 # Deep_Learning
 [依赖安装](dependencies)
 
-[Pytorch](pytorch)
+[Pytorch](pytorch-basics)
 
 [Pytorch分类与回归](pytorch-cr)
 

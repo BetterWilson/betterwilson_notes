@@ -5,7 +5,7 @@ description: "Deep learning notes, covering PyTorch basics, neural networks, los
 # Deep Learning
 [Dependency Installation](dependencies)
 
-[PyTorch](pytorch)
+[PyTorch](pytorch-basics)
 
 [PyTorch Classification & Regression](pytorch-cr)
 

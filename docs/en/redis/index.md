@@ -6,9 +6,9 @@ description: "Redis. Transfer data between servers without a password Django con
 
 [Transfer data between servers without a password](no-password)
 
-[Django connects to Redis](django-redis)
+[Django connects to Redis](django-redis-connect)
 
-[Python connects to Redis](python-redis)
+[Python connects to Redis](python-redis-connect)
 
 [Python connects to Redis Cluster](python-redis-cluster)
 

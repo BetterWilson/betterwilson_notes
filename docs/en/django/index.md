@@ -3,13 +3,13 @@ description: "Django. Django-admin singleton pattern and lazy loading Django-adm
 ---
 
 # Django
-[Django-admin singleton pattern and lazy loading](django-admin)
+[Django-admin singleton pattern and lazy loading](django-admin-singleton)
 
 [Django-admin component](django-admin-component)
 
-[Django-auth component](django-auth)
+[Django-auth component](django-auth-component)
 
-[Django-signal component](django-signal)
+[Django-signal component](django-signal-component)
 
 [Django template lookup order](django-model)
 

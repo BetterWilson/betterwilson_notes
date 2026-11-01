@@ -5,9 +5,9 @@ description: "Redis 学习笔记，涵盖数据类型、持久化、主从复制
 # Redis
 [多台服务器无密码传输数据](no-password)
 
-[Django连接redis](django-redis)
+[Django连接redis](django-redis-connect)
 
-[Python连接redis](python-redis)
+[Python连接redis](python-redis-connect)
 
 [Python连接Redis集群](python-redis-cluster)
 

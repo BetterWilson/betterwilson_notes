@@ -53,10 +53,10 @@ export const SIDEBAR = {
     '/zh/django': {
         text: 'Django',
         items: [
-            {text: 'Django-admin单例模式和懒加载', link: '/zh/django/django-admin'},
+            {text: 'Django-admin单例模式和懒加载', link: '/zh/django/django-admin-singleton'},
             {text: 'Django-admin组件', link: '/zh/django/django-admin-component'},
-            {text: 'Django-auth组件', link: '/zh/django/django-auth'},
-            {text: 'Django-signal组件', link: '/zh/django/django-signal'},
+            {text: 'Django-auth组件', link: '/zh/django/django-auth-component'},
+            {text: 'Django-signal组件', link: '/zh/django/django-signal-component'},
             {text: 'Django模板查找顺序', link: '/zh/django/django-model'},
             {text: 'Django自定义命令', link: '/zh/django/django-manage'},
             {text: 'model中的抽象类', link: '/zh/django/model-class'},
@@ -67,8 +67,8 @@ export const SIDEBAR = {
         text: 'Redis',
         items: [
             {text: '多台服务器无密码传输数据', link: '/zh/redis/no-password'},
-            {text: 'Django连接redis', link: '/zh/redis/django-redis'},
-            {text: 'Python连接redis', link: '/zh/redis/python-redis'},
+            {text: 'Django连接redis', link: '/zh/redis/django-redis-connect'},
+            {text: 'Python连接redis', link: '/zh/redis/python-redis-connect'},
             {text: 'Python连接Redis集群', link: '/zh/redis/python-redis-cluster'},
             {text: 'Python连接Redis哨兵', link: '/zh/redis/python-redis-sentinel'},
             {text: 'redis持久化', link: '/zh/redis/redis-persistence'},
@@ -116,7 +116,7 @@ export const SIDEBAR = {
         text: 'Deep learning',
         items: [
             {text: '依赖安装', link: '/zh/deep_learning/dependencies'},
-            {text: 'Pytorch', link: '/zh/deep_learning/pytorch'},
+            {text: 'Pytorch', link: '/zh/deep_learning/pytorch-basics'},
             {text: 'Pytorch分类与回归', link: '/zh/deep_learning/pytorch-cr'},
             {text: '神经网络概念', link: '/zh/deep_learning/neural-network'},
             {text: '自定义损失/全连接层/求导与反向传播', link: '/zh/deep_learning/custom'},
@@ -182,10 +182,10 @@ export const SIDEBAR_EN = {
     '/en/django': {
         text: 'Django',
         items: [
-            {text: 'Django-admin Singleton Pattern and Lazy Loading', link: '/en/django/django-admin'},
+            {text: 'Django-admin Singleton Pattern and Lazy Loading', link: '/en/django/django-admin-singleton'},
             {text: 'Django-admin Component', link: '/en/django/django-admin-component'},
-            {text: 'Django-auth Component', link: '/en/django/django-auth'},
-            {text: 'Django-signal Component', link: '/en/django/django-signal'},
+            {text: 'Django-auth Component', link: '/en/django/django-auth-component'},
+            {text: 'Django-signal Component', link: '/en/django/django-signal-component'},
             {text: 'Django Template Lookup Order', link: '/en/django/django-model'},
             {text: 'Django Custom Commands', link: '/en/django/django-manage'},
             {text: 'Abstract Classes in Models', link: '/en/django/model-class'},
@@ -196,8 +196,8 @@ export const SIDEBAR_EN = {
         text: 'Redis',
         items: [
             {text: 'Transfer Data Between Servers Without Password', link: '/en/redis/no-password'},
-            {text: 'Connecting Redis with Django', link: '/en/redis/django-redis'},
-            {text: 'Connecting Redis with Python', link: '/en/redis/python-redis'},
+            {text: 'Connecting Redis with Django', link: '/en/redis/django-redis-connect'},
+            {text: 'Connecting Redis with Python', link: '/en/redis/python-redis-connect'},
             {text: 'Connecting Redis Cluster with Python', link: '/en/redis/python-redis-cluster'},
             {text: 'Connecting Redis Sentinel with Python', link: '/en/redis/python-redis-sentinel'},
             {text: 'Redis Persistence', link: '/en/redis/redis-persistence'},
@@ -245,7 +245,7 @@ export const SIDEBAR_EN = {
         text: 'Deep learning',
         items: [
             {text: 'Dependency Installation', link: '/en/deep_learning/dependencies'},
-            {text: 'PyTorch', link: '/en/deep_learning/pytorch'},
+            {text: 'PyTorch', link: '/en/deep_learning/pytorch-basics'},
             {text: 'PyTorch Classification & Regression', link: '/en/deep_learning/pytorch-cr'},
             {text: 'Neural Network Concepts', link: '/en/deep_learning/neural-network'},
             {text: 'Custom Loss / FC Layers / Differentiation & Backprop', link: '/en/deep_learning/custom'},

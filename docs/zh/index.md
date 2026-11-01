@@ -10,7 +10,7 @@ hero:
   actions:
     - theme: brand
       text: Notes
-      link: /zh/django/django-admin
+      link: /zh/django/django-admin-singleton
     - theme: alt
       text: Login/Register
       link: /zh/login/

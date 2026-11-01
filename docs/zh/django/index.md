@@ -3,13 +3,13 @@ description: "Django 框架学习笔记，涵盖 admin 组件、auth 认证、si
 ---
 
 # Django
-[Django-admin单例模式和懒加载](django-admin)
+[Django-admin单例模式和懒加载](django-admin-singleton)
 
 [Django-admin组件](django-admin-component)
 
-[Django-auth组件](django-auth)
+[Django-auth组件](django-auth-component)
 
-[Django-signal组件](django-signal)
+[Django-signal组件](django-signal-component)
 
 [Django模板查找顺序](django-model)
 
