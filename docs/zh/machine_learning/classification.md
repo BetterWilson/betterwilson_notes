@@ -15,7 +15,7 @@ KNN算法是有监督学习算法，既可用于分类，也可用于回归任�
 - 欧式距离（最常用）
 - 曼哈顿距离
 
-![image-20260624133715309](/images/machine_learning/image-20260624133715309.png)
+![image-20260624133715309](/images/machine_learning/machine-learning-classification-01.png)
 
 > 📖 **欧氏距离 vs 曼哈顿距离——用"走路"来理解**
 >
@@ -115,7 +115,7 @@ print(f"KNN预测准确率: {accuracy:.4f}")
 
 **交叉验证**（Cross Validation）：将训练集分为多个子集，轮流使用一个子集作为验证集（测试集），其余作为训练集，最终取平均性能指标，确保模型评估稳定性
 
-![image-20260624141841958](/images/machine_learning/image-20260624141841958.png)
+![image-20260624141841958](/images/machine_learning/machine-learning-classification-02.png)
 
 交叉验证的目的，其实就是为了降低结果的偶然性，从而提高模型的准确度与可信度
 
@@ -153,7 +153,7 @@ print(f"KNN预测准确率: {accuracy:.4f}")
 >
 > `n_jobs=-1` 表示用你电脑的所有CPU核心并行计算，加速这个过程。
 
-![image-20260624142536574](/images/machine_learning/image-20260624142536574.png)
+![image-20260624142536574](/images/machine_learning/machine-learning-classification-03.png)
 
 **网格搜索 + 交叉验证** 是模型的选择和调优的强有力的工具：
 
@@ -428,7 +428,7 @@ gain(D,A)=H(D)-H(D|A)
 $$
 根据信息增益选择特征方法是：对训练数据集D，计算其每个特征的信息增益，并比较它们的大小，并选择信息增益最大的特征进行划分。
 
-![image-20260625094500930](/images/machine_learning/image-20260625094500930.png)
+![image-20260625094500930](/images/machine_learning/machine-learning-classification-04.png)
 
 ### CART决策树
 
@@ -449,15 +449,15 @@ $$
 
 基尼指数计算举例
 
-![image-20260625104455872](/images/machine_learning/image-20260625104455872.png)
+![image-20260625104455872](/images/machine_learning/machine-learning-classification-05.png)
 
 - 是否有房
 
-  ![image-20260625104837079](/images/machine_learning/image-20260625104837079.png)
+  ![image-20260625104837079](/images/machine_learning/machine-learning-classification-06.png)
 
 - 婚姻状况
 
-  ![image-20260625104905582](/images/machine_learning/image-20260625104905582.png)
+  ![image-20260625104905582](/images/machine_learning/machine-learning-classification-07.png)
 
 > 📖 **基尼指数——用"抽签"来理解**
 >
@@ -724,7 +724,7 @@ print(f"测试集上使用最佳参数的随机森林准确率: {best_accuracy:.
 
 第一位表示模型预测结果和真实值是否一致，第二位表示模型预测的是正例还是反例
 
-![image-20260625160637641](/images/machine_learning/image-20260625160637641.png)
+![image-20260625160637641](/images/machine_learning/machine-learning-classification-09.png)
 
 
 

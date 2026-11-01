@@ -10,7 +10,7 @@ hero:
   actions:
     - theme: brand
       text: Notes
-      link: /en/git/GitUseful
+      link: /en/git/git-useful
     - theme: alt
       text: Login/Register
       link: /en/login/

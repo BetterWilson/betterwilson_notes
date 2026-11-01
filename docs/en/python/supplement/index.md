@@ -3,17 +3,17 @@ description: "Python Supplementary Knowledge Points. The bisect module The diffe
 ---
 
 # Python Supplementary Knowledge Points
-[Magic functions](MagicFunction)
+[Magic functions](magic-function)
 
 [The bisect module](bisect)
 
-[The difference between isinstance and type](IsinstanceAndType)
+[The difference between isinstance and type](isinstance-and-type)
 
-[The relationship between is and ==](IsAnd==)
+[The relationship between is and ==](is-and-eq)
 
-[Classification of built-in types](BuiltInTypes)
+[Classification of built-in types](built-in-types)
 
-[The relationship between type, object and class](TypeAndObjectAndClass)
+[The relationship between type, object and class](type-and-object-and-class)
 
 [The type metaclass](type)
 

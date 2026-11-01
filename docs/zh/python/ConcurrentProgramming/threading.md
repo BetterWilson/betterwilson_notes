@@ -147,15 +147,15 @@ if __name__ == '__main__':
 
 GIL， 全局解释器锁（Global Interpreter Lock），是CPython解释器特有的，让一个进程中同一个时刻只能有一个线程可以被CPU调用。
 
-![image-20210218184651385](/images/python/ConcurrentProgramming/image-20210218184651385.png)
+![image-20210218184651385](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-01.png)
 
 如果程序想利用 计算机的多核优势，让CPU同时处理一些任务，适合用多进程开发（即使资源开销大）。
 
-![image-20210218185849637](/images/python/ConcurrentProgramming/image-20210218185849637.png)
+![image-20210218185849637](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-02.png)
 
 如果程序不利用 计算机的多核优势，适合用多线程开发。
 
-![image-20210218185953326](/images/python/ConcurrentProgramming/image-20210218185953326.png)
+![image-20210218185953326](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-03.png)
 
 常见的程序开发中，计算操作需要使用CPU多核优势，IO操作不需要利用CPU的多核优势，所以，就有这一句话：
 
@@ -409,7 +409,7 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等所�
   print(dis.dis(add))
   ```
 
-  ![image-20240525124633642](/images/python/ConcurrentProgramming/image-20240525124633642.png)
+  ![image-20240525124633642](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-04.png)
 
 - `t.daemon = 布尔值` ，守护线程（必须放在start之前）
 
@@ -626,7 +626,7 @@ for i in range(2):
 
 官方给出的线程安全的操作：
 
-![image-20210225102151570](/images/python/ConcurrentProgramming/image-20210225102151570.png)
+![image-20210225102151570](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-05.png)
 
 **注意：要多注意看一些开发文档中是否标明线程安全。**
 

@@ -3,4 +3,4 @@ description: "Git 学习笔记，收录常用命令清单，帮助快速上手�
 ---
 
 # Git
-[Git常用命令清单](GitUseful.md)
+[Git常用命令清单](git-useful.md)

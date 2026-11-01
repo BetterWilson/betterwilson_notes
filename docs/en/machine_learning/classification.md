@@ -15,7 +15,7 @@ Core idea: If most of the k most similar samples of a sample in feature space be
 - Euclidean distance (most commonly used)
 - Manhattan distance
 
-![image-20260624133715309](/images/machine_learning/image-20260624133715309.png)
+![image-20260624133715309](/images/machine_learning/machine-learning-classification-01.png)
 
 > 📖 **Euclidean vs Manhattan distance — understand it through "walking"**
 >
@@ -115,7 +115,7 @@ Hyperparameters: In machine learning and deep learning, **hyperparameters** are 
 
 **Cross Validation**: split the training set into multiple subsets, use one subset as the validation set (test set) in turn while the rest are used as the training set, and finally take the average performance metric to ensure the stability of model evaluation.
 
-![image-20260624141841958](/images/machine_learning/image-20260624141841958.png)
+![image-20260624141841958](/images/machine_learning/machine-learning-classification-02.png)
 
 The purpose of cross validation is actually to reduce the randomness of the results, thereby improving the accuracy and credibility of the model.
 
@@ -153,7 +153,7 @@ The purpose of cross validation is actually to reduce the randomness of the resu
 >
 > `n_jobs=-1` means using all CPU cores of your computer for parallel computation to speed up the process.
 
-![image-20260624142536574](/images/machine_learning/image-20260624142536574.png)
+![image-20260624142536574](/images/machine_learning/machine-learning-classification-03.png)
 
 **Grid search + cross validation** is a powerful tool for model selection and tuning:
 
@@ -429,7 +429,7 @@ gain(D,A)=H(D)-H(D|A)
 $$
 The method of selecting features based on information gain is: for the training data set D, compute the information gain of each feature, compare their magnitudes, and select the feature with the largest information gain for splitting.
 
-![image-20260625094500930](/images/machine_learning/image-20260625094500930.png)
+![image-20260625094500930](/images/machine_learning/machine-learning-classification-04.png)
 
 ### CART Decision Tree
 
@@ -450,15 +450,15 @@ $$
 
 Gini index calculation example
 
-![image-20260625104455872](/images/machine_learning/image-20260625104455872.png)
+![image-20260625104455872](/images/machine_learning/machine-learning-classification-05.png)
 
 - Has a house or not
 
-  ![image-20260625104837079](/images/machine_learning/image-20260625104837079.png)
+  ![image-20260625104837079](/images/machine_learning/machine-learning-classification-06.png)
 
 - Marital status
 
-  ![image-20260625104905582](/images/machine_learning/image-20260625104905582.png)
+  ![image-20260625104905582](/images/machine_learning/machine-learning-classification-07.png)
 
 > 📖 **Gini index — understand it through "drawing lots"**
 >
@@ -723,7 +723,7 @@ In classification tasks, there are four different combinations between the Predi
 
 The first digit indicates whether the model's prediction matches the true value, and the second digit indicates whether the model predicted a positive example or a negative example.
 
-![image-20260625160637641](/images/machine_learning/image-20260625160637641.png)
+![image-20260625160637641](/images/machine_learning/machine-learning-classification-09.png)
 
 Using "cancer prediction" as an example to explain each parameter:
 

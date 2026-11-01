@@ -1,0 +1,1 @@
+const e="/images/python/ObjectOriented/python-object-oriented-function-error-reflection-01.png",t="/images/python/ObjectOriented/python-object-oriented-function-error-reflection-02.png",o="/images/python/ObjectOriented/python-object-oriented-function-error-reflection-03.png";export{e as _,t as a,o as b};

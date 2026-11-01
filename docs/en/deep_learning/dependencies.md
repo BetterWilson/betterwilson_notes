@@ -10,7 +10,7 @@ description: "Dependency Installation. PyTorch Official Download Page"
 nvidia-smi
 ```
 
-![image-20260630111626841](/images/deep_learning/image-20260630111626841.png)
+![image-20260630111626841](/images/deep_learning/deep-learning-dependencies-01.png)
 
 ## 2. Check the PyTorch Website for the Install Command Based on Your CUDA Version
 

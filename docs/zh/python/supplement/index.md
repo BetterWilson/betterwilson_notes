@@ -3,17 +3,17 @@ description: "Python补充知识点。isinstance和type区别 type,object,class�
 ---
 
 # Python补充知识点
-[魔法函数](MagicFunction)
+[魔法函数](magic-function)
 
 [bisect模块](bisect)
 
-[isinstance和type区别](IsinstanceAndType)
+[isinstance和type区别](isinstance-and-type)
 
-[is和==的关系](IsAnd==)
+[is和==的关系](is-and-eq)
 
-[内置类型分类](BuiltInTypes)
+[内置类型分类](built-in-types)
 
-[type,object,class三者关系](TypeAndObjectAndClass)
+[type,object,class三者关系](type-and-object-and-class)
 
 [type元类](type)
 

@@ -97,7 +97,7 @@ A CNN is mainly composed of three parts: convolutional layers, pooling layers, a
 - Pooling layers reduce the spatial size of feature maps through downsampling, thereby indirectly reducing the number of parameters and the computational cost of subsequent layers (especially fully connected layers)
 - Fully connected layers are used to output the desired result
 
-![image-20260718092324313](/images/deep_learning/image-20260718092324313.png)
+![image-20260718092324313](/images/deep_learning/deep-learning-cnn1-01.png)
 
 As shown in the figure above:
 
@@ -125,7 +125,7 @@ As shown in the figure above:
 
 ### The Convolution Computation Process
 
-![image-20260718093734496](/images/deep_learning/image-20260718093734496.png)
+![image-20260718093734496](/images/deep_learning/deep-learning-cnn1-02.png)
 
 - input denotes the input image
 - filter denotes the filter, also called the convolution kernel (filter matrix)
@@ -139,11 +139,11 @@ As shown in the figure above:
 >
 > So why not do a true convolution? Because the kernel's weights are **learned** — flipping or not makes no difference, since the weights will automatically adjust to appropriate values. Not flipping also saves a computation step. So the name "convolutional neural network" is a historical carryover; the actual operation is more accurately described as cross-correlation.
 
-![image-20260718093851108](/images/deep_learning/image-20260718093851108.png)
+![image-20260718093851108](/images/deep_learning/deep-learning-cnn1-03.png)
 
 The final feature map result is:
 
-![image-20260718093919698](/images/deep_learning/image-20260718093919698.png)
+![image-20260718093919698](/images/deep_learning/deep-learning-cnn1-04.png)
 
 ### Padding
 
@@ -154,7 +154,7 @@ From the convolution computation process above, we notice that:
 
 To solve the above two problems, we can add padding at the edges of the input (adding a ring of pixels around it, with pixel value 0, which keeps the image size unchanged):
 
-![image-20260718094241984](/images/deep_learning/image-20260718094241984.png)
+![image-20260718094241984](/images/deep_learning/deep-learning-cnn1-05.png)
 
 ### Stride
 
@@ -162,25 +162,25 @@ Stride: the number of pixels moved each time
 
 In the kernel sliding/scanning process above, the stride was 1, and the computed feature map is as follows:
 
-![image-20260718094538405](/images/deep_learning/image-20260718094538405.png)
+![image-20260718094538405](/images/deep_learning/deep-learning-cnn1-06.png)
 
 If we increase the stride to 2, a feature map can still be extracted, as shown below:
 
-![image-20260718094633157](/images/deep_learning/image-20260718094633157.png)
+![image-20260718094633157](/images/deep_learning/deep-learning-cnn1-07.png)
 
 ### Multi-Channel Convolution Computation
 
 **However many channels the input image has, the convolution kernel has that many channels**
 
-![image-20260718094746795](/images/deep_learning/image-20260718094746795.png)
+![image-20260718094746795](/images/deep_learning/deep-learning-cnn1-08.png)
 
-![image-20260718094837854](/images/deep_learning/image-20260718094837854.png)
+![image-20260718094837854](/images/deep_learning/deep-learning-cnn1-09.png)
 
 ### Multi-Kernel Computation
 
 **However many convolution kernels there are, there are that many feature maps. Each kernel corresponds to one feature map, and the number of output channels equals the number of kernels**
 
-![image-20260718095120847](/images/deep_learning/image-20260718095120847.png)
+![image-20260718095120847](/images/deep_learning/deep-learning-cnn1-10.png)
 
 > **Clearing up a common misconception: what exactly is the "dimensionality" of a convolution kernel?**
 >
@@ -334,7 +334,7 @@ The difference is that what is performed inside the pooling window is an aggrega
 
   Purpose: it can suppress the phenomenon of shifted estimated means caused by errors in network parameters
 
-  ![image-20260718101837985](/images/deep_learning/image-20260718101837985.png)
+  ![image-20260718101837985](/images/deep_learning/deep-learning-cnn1-11.png)
 
 - **Average Pooling**: within a local region, take the average of all elements as the output
 
@@ -342,25 +342,25 @@ The difference is that what is performed inside the pooling window is an aggrega
 
   Purpose: mainly used to suppress excessive variance caused by overly large differences between neighboring values
 
-  ![image-20260718101944064](/images/deep_learning/image-20260718101944064.png)
+  ![image-20260718101944064](/images/deep_learning/deep-learning-cnn1-12.png)
 
 ### Stride
 
 The stride of a pooling layer works the same way as that of a convolutional layer
 
-![image-20260718102324407](/images/deep_learning/image-20260718102324407.png)
+![image-20260718102324407](/images/deep_learning/deep-learning-cnn1-13.png)
 
 ### Padding
 
 In special cases, a pooling layer can also use padding to control the output size, but in practical models pooling layers are usually used to shrink the feature map size
 
-![image-20260718102538019](/images/deep_learning/image-20260718102538019.png)
+![image-20260718102538019](/images/deep_learning/deep-learning-cnn1-14.png)
 
 ### Multi-Channel Pooling Computation
 
 Pooling layers differ from convolutional layers in how they handle multiple channels: the pooling window slides **independently on each channel** and does not aggregate across channels, therefore **the number of output channels = the number of input channels**. In a convolutional layer, by contrast, each kernel takes a weighted sum over all input channels and outputs 1 feature map.
 
-![image-20260718102632348](/images/deep_learning/image-20260718102632348.png)
+![image-20260718102632348](/images/deep_learning/deep-learning-cnn1-15.png)
 
 ### Example
 
@@ -393,7 +393,7 @@ Depthwise Separable Convolution is the core component of lightweight networks su
 
 Receptive field (also called the field of view): the range of original input pixels that a single pixel on the feature map can "see".
 
-![image-20260719094410581](/images/deep_learning/image-20260719094410581.png)
+![image-20260719094410581](/images/deep_learning/deep-learning-cnn1-16.png)
 
 One 5×5 convolution and two stacked 3×3 convolutions end up with the same 5×5 receptive field — but two 3×3 layers have fewer parameters (18 vs 25), and additionally allow one more ReLU non-linear transformation in between. Therefore modern CNNs commonly stack multiple small kernels (such as 3×3) rather than using one large kernel.
 
@@ -467,7 +467,7 @@ The idea behind depthwise separable convolution is exactly this — **split thes
 
 Each input channel is assigned its own independent kernel, sliding only in the spatial dimensions. **Different channels do not interfere with each other**.
 
-![image-20260719095809066](/images/deep_learning/image-20260719095809066.png)
+![image-20260719095809066](/images/deep_learning/deep-learning-cnn1-17.png)
 
 As shown in the figure above: each output channel is associated with only the one corresponding input channel. M input channels → M output feature maps (the channel count is unchanged).
 
@@ -477,7 +477,7 @@ As shown in the figure above: each output channel is associated with only the on
 
 Depthwise only performs spatial filtering within each individual channel, with no information exchange between channels. Pointwise uses N kernels of size 1×1×M to form linear combinations of all M channels at the "pixel" level, ultimately outputting N channels. **A 1×1 convolution does not change the spatial size, only the number of channels.**
 
-![image-20260719095930793](/images/deep_learning/image-20260719095930793.png)
+![image-20260719095930793](/images/deep_learning/deep-learning-cnn1-18.png)
 
 > **Analogy**: Depthwise is like drawing patterns on M sheets of paper individually; Pointwise is like stacking the M sheets together and mixing them at different ratios to produce N new sheets.
 

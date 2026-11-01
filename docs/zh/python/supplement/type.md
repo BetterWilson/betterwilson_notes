@@ -115,4 +115,4 @@ python中的类实例化过程：
 
 在我们python的`abc`模块中，就自定义了`metaclass`并重写了`__new__`方法
 
-![image-20240516150231478](/images/python/supplement/image-20240516150231478.png)
+![image-20240516150231478](/images/python/supplement/python-supplement-type-01.png)

@@ -14,7 +14,7 @@ Effect: clicking different buttons displays different information.
 
 - Install vue-router when creating the project (automatic configuration)
 
-  ![image-20240920142043290](/images/vue/image-20240920142043290.png)
+  ![image-20240920142043290](/images/vue/vue-router-01.png)
 
 ## Usage
 
@@ -41,7 +41,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </style>
 ```
 
-![image-20241017152729299](/images/vue/image-20241017152729299.png)
+![image-20241017152729299](/images/vue/vue-router-02.png)
 
 The specific route paths rendered in `RouterView` are defined in the router config file `index.js`.
 
@@ -276,7 +276,7 @@ Here you can write logic to check whether the user is logged in, in order to det
 
   It is used in the same way as localStorage, but it is only valid while the browser is open — after closing the browser, sessionStorage is cleared.
 
-  ![image-20240922143853606](/images/vue/image-20240922143853606.png)
+  ![image-20240922143853606](/images/vue/vue-router-03.png)
 
 A simple check:
 

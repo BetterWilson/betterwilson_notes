@@ -97,7 +97,7 @@ CNN网络主要由三部分构成：卷积层、池化层和全连接层构成�
 - 池化层通过下采样减少特征图的空间尺寸，从而间接减少后续层（尤其是全连接层）的参数量和计算量
 - 全连接层用来输出想要的结果
 
-![image-20260718092324313](/images/deep_learning/image-20260718092324313.png)
+![image-20260718092324313](/images/deep_learning/deep-learning-cnn1-01.png)
 
 如上图所示：
 
@@ -125,7 +125,7 @@ CNN网络主要由三部分构成：卷积层、池化层和全连接层构成�
 
 ### 卷积的计算过程
 
-![image-20260718093734496](/images/deep_learning/image-20260718093734496.png)
+![image-20260718093734496](/images/deep_learning/deep-learning-cnn1-02.png)
 
 - input 表示输入的图像
 - filter 表示滤波器，也叫做卷积核（滤波矩阵）
@@ -139,11 +139,11 @@ CNN网络主要由三部分构成：卷积层、池化层和全连接层构成�
 >
 > 那为什么不做真正的卷积？因为卷积核的权重是**学出来的**——翻不翻转没有区别，反正权重会自动调整到合适的值。不翻转还省了一步计算。所以"卷积神经网络"这个名字是历史沿袭，实际运算更准确地说应该是互相关。
 
-![image-20260718093851108](/images/deep_learning/image-20260718093851108.png)
+![image-20260718093851108](/images/deep_learning/deep-learning-cnn1-03.png)
 
 最后的特征图结果为：
 
-![image-20260718093919698](/images/deep_learning/image-20260718093919698.png)
+![image-20260718093919698](/images/deep_learning/deep-learning-cnn1-04.png)
 
 ### Padding
 
@@ -154,7 +154,7 @@ CNN网络主要由三部分构成：卷积层、池化层和全连接层构成�
 
 为了解决以上两个问题，我们可以在输入边缘加上填充（在周围加一圈的像素点，像素点的值为0，可以保证图像尺寸不变）：
 
-![image-20260718094241984](/images/deep_learning/image-20260718094241984.png)
+![image-20260718094241984](/images/deep_learning/deep-learning-cnn1-05.png)
 
 ### Stride
 
@@ -162,25 +162,25 @@ CNN网络主要由三部分构成：卷积层、池化层和全连接层构成�
 
 在上面卷积核移动扫描的过程中，步长为1，计算特征图如下所示：
 
-![image-20260718094538405](/images/deep_learning/image-20260718094538405.png)
+![image-20260718094538405](/images/deep_learning/deep-learning-cnn1-06.png)
 
 如果把步长增大为2，也是可以提取特征图的，如下图所示：
 
-![image-20260718094633157](/images/deep_learning/image-20260718094633157.png)
+![image-20260718094633157](/images/deep_learning/deep-learning-cnn1-07.png)
 
 ### 多通道卷积计算
 
 **输入图像是几通道的，卷积核就是几通道的**
 
-![image-20260718094746795](/images/deep_learning/image-20260718094746795.png)
+![image-20260718094746795](/images/deep_learning/deep-learning-cnn1-08.png)
 
-![image-20260718094837854](/images/deep_learning/image-20260718094837854.png)
+![image-20260718094837854](/images/deep_learning/deep-learning-cnn1-09.png)
 
 ### 多卷积核计算
 
 **有几个卷积核，就有几个特征图，每一个卷积核对应一个特征图，输出的通道数等于卷积核的个数**
 
-![image-20260718095120847](/images/deep_learning/image-20260718095120847.png)
+![image-20260718095120847](/images/deep_learning/deep-learning-cnn1-10.png)
 
 > **常见误区辨析：卷积核的"维度"到底是多少？**
 >
@@ -334,7 +334,7 @@ print("卷积后y的shape:", y.shape)  # torch.Size([1, 8, 15, 15])
 
   作用：能够抑制网络参数误差造成的估计均值偏移的现象
 
-  ![image-20260718101837985](/images/deep_learning/image-20260718101837985.png)
+  ![image-20260718101837985](/images/deep_learning/deep-learning-cnn1-11.png)
 
 - **平均池化** (**Average Pooling**)：在一个局部区域内，取所有元素的平均值作为输出
 
@@ -342,25 +342,25 @@ print("卷积后y的shape:", y.shape)  # torch.Size([1, 8, 15, 15])
 
   作用：主要用来抑制邻域值之间差别过大，造成的方差过大
 
-  ![image-20260718101944064](/images/deep_learning/image-20260718101944064.png)
+  ![image-20260718101944064](/images/deep_learning/deep-learning-cnn1-12.png)
 
 ### Stride
 
 池化层的步长与卷积层一样
 
-![image-20260718102324407](/images/deep_learning/image-20260718102324407.png)
+![image-20260718102324407](/images/deep_learning/deep-learning-cnn1-13.png)
 
 ### Padding
 
 在特殊情况下，池化层也可以使用 padding 来控制输出尺寸，但在实际模型中，池化层通常用于缩小特征图大小
 
-![image-20260718102538019](/images/deep_learning/image-20260718102538019.png)
+![image-20260718102538019](/images/deep_learning/deep-learning-cnn1-14.png)
 
 ### 多通道池化计算
 
 池化层与卷积层在多通道处理上有所不同：池化窗口在**每个通道上独立滑动**，不跨通道聚合，因此**输出通道数 = 输入通道数**。而卷积层中，每个卷积核会对所有输入通道做加权求和，输出为 1 个特征图。
 
-![image-20260718102632348](/images/deep_learning/image-20260718102632348.png)
+![image-20260718102632348](/images/deep_learning/deep-learning-cnn1-15.png)
 
 ### 示例
 
@@ -393,7 +393,7 @@ print("平均值池化后y_avg的shape:", y_avg.shape)  # torch.Size([1, 3, 16, 
 
 感受野（也叫视野域）：特征图上一个像素点能"看到"的原始输入像素的范围大小。
 
-![image-20260719094410581](/images/deep_learning/image-20260719094410581.png)
+![image-20260719094410581](/images/deep_learning/deep-learning-cnn1-16.png)
 
 一层 5×5 卷积和两层堆叠的 3×3 卷积，最终的感受野都是 5×5——但两层 3×3 的参数量更少（18 vs 25），而且中间还能多加一个 ReLU 非线性变换。因此现代 CNN 普遍使用多个小卷积核（如 3×3）堆叠，而非一个大卷积核。
 
@@ -467,7 +467,7 @@ print(f"  节省 {(1-params_2x3/params_1x5)*100:.0f}% 参数，且中间多一�
 
 每个输入通道分配一个独立的卷积核，只在空间维度上滑动。**不同通道之间互不干扰**。
 
-![image-20260719095809066](/images/deep_learning/image-20260719095809066.png)
+![image-20260719095809066](/images/deep_learning/deep-learning-cnn1-17.png)
 
 如上图所示：每个输出通道只与对应的那一个输入通道相关联。输入 M 个通道 → 输出 M 个特征图（通道数不变）。
 
@@ -477,7 +477,7 @@ print(f"  节省 {(1-params_2x3/params_1x5)*100:.0f}% 参数，且中间多一�
 
 Depthwise 只在各自通道内做空间滤波，没有通道间的信息交流。Pointwise 用 N 个 1×1×M 的卷积核，在"像素点"级别对所有 M 个通道做线性组合，最终输出 N 个通道。**1×1 卷积不改变空间尺寸，只改变通道数。**
 
-![image-20260719095930793](/images/deep_learning/image-20260719095930793.png)
+![image-20260719095930793](/images/deep_learning/deep-learning-cnn1-18.png)
 
 > **类比**：Depthwise 好比给 M 张纸各自画花纹，Pointwise 好比把 M 张纸叠在一起用不同配比混合出 N 张新纸。
 

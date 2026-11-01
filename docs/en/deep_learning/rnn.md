@@ -37,7 +37,7 @@ Disadvantages of merging + padding:
 > - **Unequal**: each sample has a different amount of padding, hence a different noise concentration, so the features the model learns are unstable
 > Precisely for this reason, the code uses `padding_first=True` for the RNN to place PAD at the start of the sentence — so that what the RNN reads at its final step is real text rather than a pile of PADs.
 
-![image-20260804204252501](/images/deep_learning/image-20260804204252501.png)
+![image-20260804204252501](/images/deep_learning/deep-learning-rnn-01.png)
 
 - Figure 1: Vanilla Neural Networks — one sample corresponds to one output (convolutional neural networks, fully connected neural networks)
 
@@ -66,11 +66,11 @@ The biggest difference between an RNN and a traditional neural network is: **at 
 
    Feed the sequential data $x_1,x_2,...,x_T$ into the network in order; each time step computes a hidden state $h_t$, and $h_t$ in turn becomes one of the inputs of the next time step:
 
-   ![image-20260804090613829](/images/deep_learning/image-20260804090613829.png)
+   ![image-20260804090613829](/images/deep_learning/deep-learning-rnn-02.png)
 
 2. If we take the time step as the unit, the unrolled form of an RNN is:
 
-   ![image-20260804090700910](/images/deep_learning/image-20260804090700910.png)
+   ![image-20260804090700910](/images/deep_learning/deep-learning-rnn-03.png)
 
    Inside each small block after unrolling, the **same set of weights** is still used; only the input $x_t$ and the memory $h_{t-1}$ differ.
 
@@ -715,7 +715,7 @@ Each gate is a **sigmoid** (outputting 0~1: 0 = fully closed, 1 = fully open), a
 
 **① The forget gate $f_t$ — decides what to forget from the old memory $C_{t-1}$**
 
-![image-20260805162919729](/images/deep_learning/image-20260805162919729.png)
+![image-20260805162919729](/images/deep_learning/deep-learning-rnn-04.png)
 
 $$
 f_t=\sigma(W_f\cdot[h_{t-1},x_t]+b_f)
@@ -726,7 +726,7 @@ $$
 
 **② The input gate $i_t$ + candidate memory $\tilde{C}_t$ — decide what new information to write into the cell state**
 
-![image-20260805162950578](/images/deep_learning/image-20260805162950578.png)
+![image-20260805162950578](/images/deep_learning/deep-learning-rnn-05.png)
 
 $$
 i_t = \sigma(W_i\cdot[h_{t-1},x_t]+b_i)
@@ -741,7 +741,7 @@ $$
 
 **③ The output gate $o_t$ — decides which part of the updated $C_t$ to output externally as $h_t$**
 
-![image-20260805163012823](/images/deep_learning/image-20260805163012823.png)
+![image-20260805163012823](/images/deep_learning/deep-learning-rnn-06.png)
 
 $$
 o_t = \sigma(W_o\cdot[h_{t-1},x_t]+b_o)
@@ -753,7 +753,7 @@ $$
 
 ### The Core: How the Cell State Is Updated
 
-![image-20260805164005172](/images/deep_learning/image-20260805164005172.png)
+![image-20260805164005172](/images/deep_learning/deep-learning-rnn-07.png)
 
 $$
 C_t = f_t\odot C_{t-1}+i_t\odot\tilde{C}_t

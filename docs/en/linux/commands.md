@@ -17,7 +17,7 @@ Switch user: `su 【username】`; if no username is given, it switches to the ro
 
 Exit the root user: `exit`
 
-![image-20260619101411708](/images/linux/image-20260619101411708.png)
+![image-20260619101411708](/images/linux/linux-commands-01.png)
 
 
 
@@ -39,7 +39,7 @@ Once the password is set, user1 can log in to the server with their own username
 
 `sudo userdel -r user1`
 
-![image-20260619103053448](/images/linux/image-20260619103053448.png)
+![image-20260619103053448](/images/linux/linux-commands-02.png)
 
 ## Directory and File Operations
 
@@ -103,7 +103,7 @@ The permissions are: r (read), w (write), x (execute), - (no permission). Each g
 
 ### Showing the Directory Structure
 
-![image-20260619113753231](/images/linux/image-20260619113753231.png)
+![image-20260619113753231](/images/linux/linux-commands-03.png)
 
 ### Changing Directory or File Permissions
 

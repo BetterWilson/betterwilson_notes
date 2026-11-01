@@ -20,7 +20,7 @@ It has three state management members:
 
 The default installation method is recommended, as it lets you skip manual configuration.
 
-![image-20241017153123579](/images/vue/image-20241017153123579.png)
+![image-20241017153123579](/images/vue/vue-pinia-01.png)
 
 ## Basic usage
 

@@ -18,13 +18,13 @@ drf默认的解析器三个`JSONParser`, `FormParser`, `MultiPartParser`
 
 只支持JSON格式的数据
 
-![image-20240502163337700](/images/drf/image-20240502163337700.png)
+![image-20240502163337700](/images/drf/drf-parser-serializer-pagination-01.png)
 
 
 
 ### 1.2 FormParser
 
-![image-20240502163712593](/images/drf/image-20240502163712593.png)
+![image-20240502163712593](/images/drf/drf-parser-serializer-pagination-02.png)
 
 
 
@@ -32,7 +32,7 @@ drf默认的解析器三个`JSONParser`, `FormParser`, `MultiPartParser`
 
 既支持发送数据，又支持传输文件
 
-![image-20240502164120263](/images/drf/image-20240502164120263.png)
+![image-20240502164120263](/images/drf/drf-parser-serializer-pagination-03.png)
 
 
 
@@ -40,7 +40,7 @@ drf默认的解析器三个`JSONParser`, `FormParser`, `MultiPartParser`
 
 只支持文件传输
 
-![image-20210827084403453](/images/drf/image-20210827084403453.png)
+![image-20210827084403453](/images/drf/drf-parser-serializer-pagination-04.png)
 
 解析器可以设置多个，默认解析器：
 
@@ -61,7 +61,7 @@ class UserView(APIView):
 
 ### 1.5 源码分析
 
-![image-20240502182400173](/images/drf/image-20240502182400173.png)
+![image-20240502182400173](/images/drf/drf-parser-serializer-pagination-05.png)
 
 
 
@@ -1022,9 +1022,9 @@ class InfoView(APIView):
 
 #### 2.2.6 校验+保存+FK+M2M
 
-![image-20220917204013619](/images/drf/image-20220917204013619.png)
+![image-20220917204013619](/images/drf/drf-parser-serializer-pagination-06.png)
 
-![image-20220917204030432](/images/drf/image-20220917204030432.png)
+![image-20220917204030432](/images/drf/drf-parser-serializer-pagination-07.png)
 
 
 
@@ -1096,7 +1096,7 @@ class InfoView(APIView):
 
 当执行save时，内部会调用 create 或 update方法，如果想要自定义保存规则，也可以在此处进行处理。
 
-![image-20220918083811336](/images/drf/image-20220918083811336.png)
+![image-20220918083811336](/images/drf/drf-parser-serializer-pagination-08.png)
 
 
 
@@ -1118,11 +1118,11 @@ class InfoView(APIView):
 
 ##### 2.3.1 二合一
 
-![image-20210823210822789](/images/drf/image-20210823210822789.png)
+![image-20210823210822789](/images/drf/drf-parser-serializer-pagination-09.png)
 
-![image-20210823211016050](/images/drf/image-20210823211016050.png)
+![image-20210823211016050](/images/drf/drf-parser-serializer-pagination-10.png)
 
-![image-20210823211041662](/images/drf/image-20210823211041662.png)
+![image-20210823211041662](/images/drf/drf-parser-serializer-pagination-11.png)
 
 
 
@@ -1296,15 +1296,15 @@ class UserView(APIView):
 
 源码1：序列化过程
 
-![image-20210823235237512](/images/drf/image-20210823235237512.png)
+![image-20210823235237512](/images/drf/drf-parser-serializer-pagination-12.png)
 
-![image-20210823235752483](/images/drf/image-20210823235752483.png)
+![image-20210823235752483](/images/drf/drf-parser-serializer-pagination-13.png)
 
 源码2：数据校验过程
 
-![image-20210824001814091](/images/drf/image-20210824001814091.png)
+![image-20210824001814091](/images/drf/drf-parser-serializer-pagination-14.png)
 
-![image-20210824001844381](/images/drf/image-20210824001844381.png)
+![image-20210824001844381](/images/drf/drf-parser-serializer-pagination-15.png)
 
 
 
@@ -1371,17 +1371,17 @@ http://api.example.org/accounts/?page=4&page_size=100
           return Response({"status": True, "data": ser.data})
   ```
 
-  ![image-20240503095456161](/images/drf/image-20240503095456161.png)
+  ![image-20240503095456161](/images/drf/drf-parser-serializer-pagination-16.png)
 
-  ![image-20240503095549928](/images/drf/image-20240503095549928.png)
+  ![image-20240503095549928](/images/drf/drf-parser-serializer-pagination-17.png)
 
 - 根据URL路由动态自定义每页展示多少数据，需要用到类的继承
 
   自定义时如果不传参数，依旧会读取默认的配置文件
 
-  ![image-20240503095036401](/images/drf/image-20240503095036401.png)
+  ![image-20240503095036401](/images/drf/drf-parser-serializer-pagination-18.png)
 
-  ![image-20240503095110449](/images/drf/image-20240503095110449.png)
+  ![image-20240503095110449](/images/drf/drf-parser-serializer-pagination-19.png)
 
   ```python
   # views.py
@@ -1426,9 +1426,9 @@ http://api.example.org/accounts/?offset=400&limit=100
 
 `limit`表示当前页展示多少数据，`offset`表示从第几条数据之后开始展示
 
-![image-20240503101703684](/images/drf/image-20240503101703684.png)
+![image-20240503101703684](/images/drf/drf-parser-serializer-pagination-20.png)
 
-![image-20240503101644771](/images/drf/image-20240503101644771.png)
+![image-20240503101644771](/images/drf/drf-parser-serializer-pagination-21.png)
 
 ```python
 # views.py

@@ -5,11 +5,11 @@ description: "Deep learning notes, covering PyTorch basics, neural networks, los
 # Deep Learning
 [Dependency Installation](dependencies)
 
-[PyTorch](Pytorch)
+[PyTorch](pytorch)
 
-[PyTorch Classification & Regression](PytorchCR)
+[PyTorch Classification & Regression](pytorch-cr)
 
-[Neural Network Concepts](neural_network)
+[Neural Network Concepts](neural-network)
 
 [Custom Loss / Fully Connected Layers / Differentiation & Backpropagation](custom)
 

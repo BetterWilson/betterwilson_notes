@@ -17,7 +17,7 @@ def index(request):
     return res
 ```
 
-![image-20230509155322021](/images/python/supplement/image-20230509155322021.png)
+![image-20230509155322021](/images/python/supplement/python-supplement-cookie-session-01.png)
 
 ```python
 [[views]].py
@@ -27,7 +27,7 @@ deE home(request):
     return HttpResponse("Send request to home")
 ```
 
-![image-20230509155717274](/images/python/supplement/image-20230509155717274.png)
+![image-20230509155717274](/images/python/supplement/python-supplement-cookie-session-02.png)
 
 The set_cookie parameters
 

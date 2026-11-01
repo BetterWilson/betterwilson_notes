@@ -12,4 +12,4 @@ description: "Machine Learning. Ensemble Learning"
 
 [Clustering](clustering)
 
-[Ensemble Learning](ensemble_learning)
+[Ensemble Learning](ensemble-learning)

@@ -6,7 +6,7 @@ description: "drf认证，权限，限流，版本。CBV可以通过GET和POST�
 
 ## 1.前后端分离
 
-![image-20220903102113338](/images/drf/image-20220903102113338.png)
+![image-20220903102113338](/images/drf/drf-auth-permission-throttle-version-01.png)
 
 
 
@@ -127,13 +127,13 @@ class UserView(APIView):
 
 #### 3.1.4 drf请求入口分析
 
-![image-20240501153451481](/images/drf/image-20240501153451481.png)
+![image-20240501153451481](/images/drf/drf-auth-permission-throttle-version-02.png)
 
 ### 3.2 request和参数
 
 drf中的request和django中的request不一样，实际上是对django的request参数进行再封装
 
-![image-20240501121218606](/images/drf/image-20240501121218606.png)
+![image-20240501121218606](/images/drf/drf-auth-permission-throttle-version-03.png)
 
 可以看到，在Django中request是`WSGIRequest`对象；而在drf中的request是`rest_framework.request.Request`对象
 
@@ -141,11 +141,11 @@ drf中的request和django中的request不一样，实际上是对django的reques
 
 - 普通路由通过`self.kwargs`可以拿到请求的路由中传递的参数
 
-  ![image-20240501121814393](/images/drf/image-20240501121814393.png)
+  ![image-20240501121814393](/images/drf/drf-auth-permission-throttle-version-04.png)
 
 - 含正则表达式的路由通过`self.args`拿到路由中传递的参数
 
-  ![image-20240501122300016](/images/drf/image-20240501122300016.png)
+  ![image-20240501122300016](/images/drf/drf-auth-permission-throttle-version-05.png)
 
 #### 3.2.2 request对象
 
@@ -153,21 +153,21 @@ drf中的request和django中的request不一样，实际上是对django的reques
 
 在路由入口`dispatch`中，有一个函数`initialize_request(request, *args, **kwargs)`
 
-![image-20240501123746747](/images/drf/image-20240501123746747.png)
+![image-20240501123746747](/images/drf/drf-auth-permission-throttle-version-06.png)
 
 再来看函数`initialize_request(request, *args, **kwargs)`具体干了些啥
 
 这个函数将原来的Django中的request当作参数传入，返回的其实也是一个`Request`对象
 
-![image-20240501124034380](/images/drf/image-20240501124034380.png)
+![image-20240501124034380](/images/drf/drf-auth-permission-throttle-version-07.png)
 
 而在`Request`对象源码中，将本来的Django的`request`赋值为`_request`
 
-![image-20240501124519485](/images/drf/image-20240501124519485.png)
+![image-20240501124519485](/images/drf/drf-auth-permission-throttle-version-08.png)
 
 同时在源码中，有一个`__getattr__`方法，这个方法的作用是，如果我访问了类中一个不存在的变量时，就会执行这个`__getattr__`方法，并返回
 
-![image-20240501124701677](/images/drf/image-20240501124701677.png)
+![image-20240501124701677](/images/drf/drf-auth-permission-throttle-version-09.png)
 
 也就是说，我可以通过request._request.xxx获取到原本django中的request对象里面的值，
 
@@ -177,13 +177,13 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 流程图：
 
-![image-20210819150601089](/images/drf/image-20210819150601089.png)
+![image-20210819150601089](/images/drf/drf-auth-permission-throttle-version-10.png)
 
 
 
 ##### 2.request对象获取值
 
-![image-20240501125645869](/images/drf/image-20240501125645869.png)
+![image-20240501125645869](/images/drf/drf-auth-permission-throttle-version-11.png)
 
 
 
@@ -213,11 +213,11 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 - 设为None
 
-  ![image-20240501140713358](/images/drf/image-20240501140713358.png)
+  ![image-20240501140713358](/images/drf/drf-auth-permission-throttle-version-12.png)
 
 - 除了可以定义为None，也可以定义为一个函数，`request.user`和`request.auth`就分别对应两个函数的返回值
 
-  ![image-20240501141250592](/images/drf/image-20240501141250592.png)
+  ![image-20240501141250592](/images/drf/drf-auth-permission-throttle-version-13.png)
 
 
 
@@ -225,7 +225,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 `authentication_classes`是一个列表，可以同时应用多个认证组件
 
-![image-20240501133058471](/images/drf/image-20240501133058471.png)
+![image-20240501133058471](/images/drf/drf-auth-permission-throttle-version-14.png)
 
 
 
@@ -233,7 +233,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 此时，就需要用到drf的全局配置**(认证组件的类不能放在视图view.py中，会因为导入APIView导致循环引用)。**
 
-![image-20240501133711825](/images/drf/image-20240501133711825.png)
+![image-20240501133711825](/images/drf/drf-auth-permission-throttle-version-15.png)
 
 
 
@@ -243,7 +243,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 我们可以将个别视图类的`authentication_classes`列表置为空
 
-![image-20240501134846789](/images/drf/image-20240501134846789.png)
+![image-20240501134846789](/images/drf/drf-auth-permission-throttle-version-16.png)
 
 
 
@@ -251,7 +251,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 
 
-![image-20240501162055511](/images/drf/image-20240501162055511.png)
+![image-20240501162055511](/images/drf/drf-auth-permission-throttle-version-17.png)
 
 ### 3.4 权限
 
@@ -264,11 +264,11 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 #### 3.4.1 单视图应用
 
-![image-20240501154905696](/images/drf/image-20240501154905696.png)
+![image-20240501154905696](/images/drf/drf-auth-permission-throttle-version-18.png)
 
 #### 3.4.2 多视图应用
 
-![image-20240501155055984](/images/drf/image-20240501155055984.png)
+![image-20240501155055984](/images/drf/drf-auth-permission-throttle-version-19.png)
 
 #### 3.4.3 单视图多视图结合
 
@@ -276,7 +276,7 @@ request.xxx获取到django中request对象里面的值的原理是：当访问�
 
 我们可以将个别视图类的`authentication_classes`列表置为空
 
-![image-20240501155423437](/images/drf/image-20240501155423437.png)
+![image-20240501155423437](/images/drf/drf-auth-permission-throttle-version-20.png)
 
 #### 3.4.4 多个认证组件关系
 
@@ -330,7 +330,7 @@ class DemoView(APIView):
 
 #### 3.4.5 源码分析
 
-![image-20240501164709247](/images/drf/image-20240501164709247.png)
+![image-20240501164709247](/images/drf/drf-auth-permission-throttle-version-21.png)
 
 #### 思考题1：自定义request对象
 
@@ -371,7 +371,7 @@ class LoginView(APIView):
 - 对于匿名用户，使用用户IP作为唯一标识。
 - 对于登录用户，使用用户信息主键、用户ID或名称作为唯一标识。
 
-![image-20240502091541849](/images/drf/image-20240502091541849.png)
+![image-20240502091541849](/images/drf/drf-auth-permission-throttle-version-22.png)
 
 
 
@@ -385,15 +385,15 @@ class LoginView(APIView):
 
 #### 3.5.1 单视图应用
 
-![image-20240502090507786](/images/drf/image-20240502090507786.png)
+![image-20240502090507786](/images/drf/drf-auth-permission-throttle-version-23.png)
 
 #### 3.5.2 多视图应用
 
-![image-20240502104742468](/images/drf/image-20240502104742468.png)
+![image-20240502104742468](/images/drf/drf-auth-permission-throttle-version-24.png)
 
 #### 3.5.3 单视图多视图结合
 
-![image-20240502104821087](/images/drf/image-20240502104821087.png)
+![image-20240502104821087](/images/drf/drf-auth-permission-throttle-version-25.png)
 
 
 
@@ -401,15 +401,15 @@ class LoginView(APIView):
 
 - 基于drf提供的限流类
 
-  ![image-20240502091925735](/images/drf/image-20240502091925735.png)
+  ![image-20240502091925735](/images/drf/drf-auth-permission-throttle-version-26.png)
 
 - drf提供的限流类源码分析
 
-  ![image-20240502102914790](/images/drf/image-20240502102914790.png)
+  ![image-20240502102914790](/images/drf/drf-auth-permission-throttle-version-27.png)
 
 #### 3.5.5 源码分析
 
-![image-20240502104319930](/images/drf/image-20240502104319930.png)
+![image-20240502104319930](/images/drf/drf-auth-permission-throttle-version-28.png)
 
 **全局配置**
 
@@ -437,7 +437,7 @@ from rest_framework.versioning import QueryParameterVersioning
 
 - 单视图应用
 
-  ![image-20240502105555121](/images/drf/image-20240502105555121.png)
+  ![image-20240502105555121](/images/drf/drf-auth-permission-throttle-version-29.png)
 
 - 多视图应用
 
@@ -452,11 +452,11 @@ from rest_framework.versioning import QueryParameterVersioning
   }
   ```
 
-  ![image-20240502105901409](/images/drf/image-20240502105901409.png)
+  ![image-20240502105901409](/images/drf/drf-auth-permission-throttle-version-30.png)
 
 源码执行流程：
 
-![image-20210820105543193](/images/drf/image-20210820105543193.png)
+![image-20210820105543193](/images/drf/drf-auth-permission-throttle-version-31.png)
 
 
 
@@ -468,7 +468,7 @@ from rest_framework.versioning import QueryParameterVersioning
 from rest_framework.versioning import URLPathVersioning
 ```
 
-![image-20240502110650845](/images/drf/image-20240502110650845.png)
+![image-20240502110650845](/images/drf/drf-auth-permission-throttle-version-32.png)
 
 
 
@@ -478,11 +478,11 @@ from rest_framework.versioning import URLPathVersioning
 from rest_framework.versioning import AcceptHeaderVersioning
 ````
 
-![image-20240502110937054](/images/drf/image-20240502110937054.png)
+![image-20240502110937054](/images/drf/drf-auth-permission-throttle-version-33.png)
 
 #### 3.6.4 源码分析
 
-![image-20240502113926511](/images/drf/image-20240502113926511.png)
+![image-20240502113926511](/images/drf/drf-auth-permission-throttle-version-34.png)
 
 
 
@@ -490,6 +490,6 @@ from rest_framework.versioning import AcceptHeaderVersioning
 
 在每个版本处理的类中还定义了`reverse`方法，他是用来反向生成URL并携带相关的的版本信息用的，例如：
 
-![image-20210820105543193](/images/drf/image-20210820105543193-3386187.png)
+![image-20210820105543193](/images/drf/auth-permission-throttle-version-01.png)
 
-![image-20210820112152615](/images/drf/image-20210820112152615.png)
+![image-20210820112152615](/images/drf/drf-auth-permission-throttle-version-36.png)

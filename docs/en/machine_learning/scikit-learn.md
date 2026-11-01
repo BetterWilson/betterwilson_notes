@@ -13,7 +13,7 @@ pip install -U scikit-learn
 
 ## Model Selection
 
-![image-20260629140715883](/images/machine_learning/image-20260629140715883.png)
+![image-20260629140715883](/images/machine_learning/machine-learning-scikit-learn-01.png)
 
 ## Feature Extraction
 
@@ -318,7 +318,7 @@ print(selected_data)
 
 Dimensionality reduction maps high-dimensional features into a lower-dimensional space through linear or nonlinear mathematical transformations, producing entirely new low-dimensional features (not a subset of the original features). The core goal is to preserve as much of the original information as possible while reducing dimensionality.
 
-![image-20260625092047210](/images/machine_learning/image-20260625092047210.png)
+![image-20260625092047210](/images/machine_learning/machine-learning-scikit-learn-02.png)
 
 Dimensionality reduction: a 2D plane has 5 sample points. If we find a 1D number axis and project the 5 sample points onto it, minimizing the sum of perpendicular distances determines the axis position. The coordinates of the 5 sample points in the new axis coordinate system are the feature values after dimensionality reduction.
 

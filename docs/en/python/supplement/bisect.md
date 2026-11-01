@@ -24,6 +24,6 @@ Internally, `bisect` uses the binary search algorithm to insert data.
 
 By default it uses the `insort_right` function (if there are two identical items, the new item is added to the right of the old one), and `insort_right` internally calls the `bisect_right` function to implement the binary search algorithm.
 
-![image-20240512145030407](/images/python/supplement/image-20240512145030407.png)
+![image-20240512145030407](/images/python/supplement/python-supplement-bisect-01.png)
 
 If you need to search, you can use the `bisect` function, which by default also calls the `bisect_right` function.

@@ -13,7 +13,7 @@ pip install -U scikit-learn
 
 ## 模型选择
 
-![image-20260629140715883](/images/machine_learning/image-20260629140715883.png)
+![image-20260629140715883](/images/machine_learning/machine-learning-scikit-learn-01.png)
 
 ## 特征提取
 
@@ -318,7 +318,7 @@ print(selected_data)
 
 特征降维是通过线性或非线性数学变换，将高维特征映射到低维空间，生成全新的低维特征（非原始特征子集），核心是在降维的同时最大化保留原始数据信息
 
-![image-20260625092047210](/images/machine_learning/image-20260625092047210.png)
+![image-20260625092047210](/images/machine_learning/machine-learning-scikit-learn-02.png)
 
 特征降维：2维平面有5个样本点，如果找到一个一维数轴，将5个样本点投影到数轴上，如果垂直距离和最小，那么就确定数轴所在位置，5个样本点在新数轴坐标系下的坐标，就是降维后的特征值
 

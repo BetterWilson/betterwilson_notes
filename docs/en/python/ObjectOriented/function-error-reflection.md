@@ -135,7 +135,7 @@ This section explains 8 built-in functions, all of which relate to object-orient
       d = D()
   ```
 
-  ![image-20240511103953454](/images/python/ObjectOriented/image-20240511103953454.png)
+  ![image-20240511103953454](/images/python/ObjectOriented/python-object-oriented-function-error-reflection-01.png)
 
   **Application Scenario**
 
@@ -169,7 +169,7 @@ This section explains 8 built-in functions, all of which relate to object-orient
   print(value)
   ```
 
-  ![image-20210131150707551](/images/python/ObjectOriented/image-20210131150707551.png)
+  ![image-20210131150707551](/images/python/ObjectOriented/python-object-oriented-function-error-reflection-02.png)
 
   
 
@@ -662,7 +662,7 @@ while True:
 
 **Case 3**: Trigger the specified exception as required; each exception type has its own special meaning.
 
-![image-20210131231423064](/images/python/ObjectOriented/image-20210131231423064.png)
+![image-20210131231423064](/images/python/ObjectOriented/python-object-oriented-function-error-reflection-03.png)
 
 
 

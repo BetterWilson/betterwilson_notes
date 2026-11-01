@@ -6,7 +6,7 @@ description: "socket模块。我们先来看一个socket编程流程图 这里�
 
 我们先来看一个socket编程流程图
 
-![image-20240518145239078](/images/python/supplement/image-20240518145239078.png)
+![image-20240518145239078](/images/python/supplement/python-supplement-socket-01.png)
 
 这里的server端就是部署到服务器上的服务端，client端就是对应我们的PC软件浏览器，不过浏览器内部已经帮我们封装了socket
 
@@ -45,7 +45,7 @@ description: "socket模块。我们先来看一个socket编程流程图 这里�
 
 首先启动server端（如果先启动client端会因为无法连接server端而导致启动失败），server端会挂起等待client端发送网络请求，server端接收到网络请求后也会向client端发送数据
 
-![image-20240518152412799](/images/python/supplement/image-20240518152412799.png)
+![image-20240518152412799](/images/python/supplement/python-supplement-socket-02.png)
 
 **注意**：数据传输时是二进制，我们打印时需要转换成utf-8
 
@@ -101,7 +101,7 @@ description: "socket模块。我们先来看一个socket编程流程图 这里�
       print(data.decode('utf-8'))
   ```
 
-![image-20240518154037645](/images/python/supplement/image-20240518154037645.png)
+![image-20240518154037645](/images/python/supplement/python-supplement-socket-03.png)
 
 ## socket模拟HTTP请求
 
@@ -141,7 +141,7 @@ if __name__ == "__main__":
 
 这个案例中通过scoket模拟http请求获得百度的前端页面数据
 
-![image-20240518161958596](/images/python/supplement/image-20240518161958596.png)
+![image-20240518161958596](/images/python/supplement/python-supplement-socket-04.png)
 
 
 
@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
 每次循环的时候把socket的客户端给关闭了，所以无法正常连接导致报错
 
-![image-20240518154423928](/images/python/supplement/image-20240518154423928.png)
+![image-20240518154423928](/images/python/supplement/python-supplement-socket-05.png)
 
 简单粗暴的解决办法就是client端和server端连接通道不人为关闭，就是删除最后的close代码块
 

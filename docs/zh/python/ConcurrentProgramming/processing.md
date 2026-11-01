@@ -308,7 +308,7 @@ if __name__ == '__main__':
 
 **Queues(队列)**
 
-![image-20210302110643327](/images/python/ConcurrentProgramming/image-20210302110643327.png)
+![image-20210302110643327](/images/python/ConcurrentProgramming/python-concurrent-programming-processing-01.png)
 
 The [`Queue`](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Queue) class is a near clone of [`queue.Queue`](https://docs.python.org/3/library/queue.html#queue.Queue). For example
 
@@ -338,7 +338,7 @@ if __name__ == '__main__':
 
 **Pipes(管道)**
 
-![image-20210302110821720](/images/python/ConcurrentProgramming/image-20210302110821720.png)
+![image-20210302110821720](/images/python/ConcurrentProgramming/python-concurrent-programming-processing-02.png)
 
 The [`Pipe()`](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Pipe) function returns a pair of connection objects connected by a pipe which by default is duplex (two-way). For example:
 

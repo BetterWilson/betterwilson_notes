@@ -6,22 +6,22 @@ description: "Redis. Transfer data between servers without a password Django con
 
 [Transfer data between servers without a password](no-password)
 
-[Django connects to Redis](Django-redis)
+[Django connects to Redis](django-redis)
 
-[Python connects to Redis](Python-redis)
+[Python connects to Redis](python-redis)
 
-[Python connects to Redis Cluster](PythonRedisCluster)
+[Python connects to Redis Cluster](python-redis-cluster)
 
-[Python connects to Redis Sentinel](PythonRedisSentinel)
+[Python connects to Redis Sentinel](python-redis-sentinel)
 
-[Redis persistence](redisPersistence)
+[Redis persistence](redis-persistence)
 
-[Redis big keys, hot keys, and expired keys](RedisKey)
+[Redis big keys, hot keys, and expired keys](redis-key)
 
-[Redis Cluster](RedisCluster)
+[Redis Cluster](redis-cluster)
 
-[Redis Sentinel](RedisSentinel)
+[Redis Sentinel](redis-sentinel)
 
-[Redis data types](RedisDataType)
+[Redis data types](redis-data-type)
 
-[Redis Cluster - master-slave replication](RedisMaster-slaveReplication)
+[Redis Cluster - master-slave replication](redis-master-slave-replication)

@@ -25,9 +25,9 @@ description: "DRF Return Values, Transactions, Logging. Another approach, suitab
 
 ### 1.1 Normal Return
 
-![image-20240502142352055](/images/drf/image-20240502142352055.png)
+![image-20240502142352055](/images/drf/drf-response-transaction-logging-01.png)
 
-![image-20240502142414330](/images/drf/image-20240502142414330.png)
+![image-20240502142414330](/images/drf/drf-response-transaction-logging-02.png)
 
 ```python
 from rest_framework.views import APIView
@@ -247,7 +247,7 @@ class DemoView(ListModelMixin, CreateModelMixin, RetrieveModelMixin, DestroyMode
 
 ### 1.3 DRF Return Value Mechanism Source Code
 
-![image-20240502155015927](/images/drf/image-20240502155015927.png)
+![image-20240502155015927](/images/drf/drf-response-transaction-logging-03.png)
 
 
 
@@ -550,7 +550,7 @@ logging.info("Good afternoon")  # 10, Good afternoon
 logging.error("Are you silly")  # 40, Are you silly
 ```
 
-![image-20230115005930027](/images/drf/image-20230115005930027.png)
+![image-20230115005930027](/images/drf/drf-response-transaction-logging-04.png)
 
 
 
@@ -1150,7 +1150,7 @@ LOGGING = {
 }
 ```
 
-![image-20240307134506546](/images/drf/image-20240307134506546.png)
+![image-20240307134506546](/images/drf/drf-response-transaction-logging-05.png)
 
 ### 3.6 Splitting Logs by Time in Django
 

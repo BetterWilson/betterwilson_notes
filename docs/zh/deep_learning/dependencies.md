@@ -10,7 +10,7 @@ description: "依赖安装。内容包含：1.查看显卡驱动、2.根据显�
 nvidia-smi
 ```
 
-![image-20260630111626841](/images/deep_learning/image-20260630111626841.png)
+![image-20260630111626841](/images/deep_learning/deep-learning-dependencies-01.png)
 
 ## 2.根据显卡驱动支持的CUDA版本，去PyTorch官网查看下载命令
 

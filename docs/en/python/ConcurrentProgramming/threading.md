@@ -147,15 +147,15 @@ In summary, we can see that **multi-process** has greater overhead than **multi-
 
 GIL, the Global Interpreter Lock, is unique to the CPython interpreter. It allows only one thread in a process to be scheduled by the CPU at any given moment.
 
-![image-20210218184651385](/images/python/ConcurrentProgramming/image-20210218184651385.png)
+![image-20210218184651385](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-01.png)
 
 If a program wants to take advantage of the computer's multi-core capabilities and let the CPU handle several tasks at the same time, multi-process development is the right choice (even if the resource overhead is high).
 
-![image-20210218185849637](/images/python/ConcurrentProgramming/image-20210218185849637.png)
+![image-20210218185849637](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-02.png)
 
 If a program does not need to leverage the computer's multi-core capabilities, multi-threaded development is more suitable.
 
-![image-20210218185953326](/images/python/ConcurrentProgramming/image-20210218185953326.png)
+![image-20210218185953326](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-03.png)
 
 In common program development, computation operations need to use the CPU's multi-core advantage, while I/O operations do not need to use the CPU's multi-core advantage. Hence this saying:
 
@@ -409,7 +409,7 @@ Common thread methods:
   print(dis.dis(add))
   ```
 
-  ![image-20240525124633642](/images/python/ConcurrentProgramming/image-20240525124633642.png)
+  ![image-20240525124633642](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-04.png)
 
 - `t.daemon = <bool>`, daemon thread (must be set before `start`).
 
@@ -626,7 +626,7 @@ for i in range(2):
 
 Thread-safe operations as listed by the official documentation:
 
-![image-20210225102151570](/images/python/ConcurrentProgramming/image-20210225102151570.png)
+![image-20210225102151570](/images/python/ConcurrentProgramming/python-concurrent-programming-threading-05.png)
 
 **Note: pay close attention to whether development documentation marks an operation as thread-safe.**
 

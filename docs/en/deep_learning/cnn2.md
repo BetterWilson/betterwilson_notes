@@ -12,7 +12,7 @@ AlexNet is a deep convolutional neural network architecture proposed by Alex Kri
 
 In 2012 Sutskever, together with Alex Krizhevsky and Geoffrey Hinton, proposed AlexNet, a deep convolutional neural network architecture that set the direction for the development of computer vision and deep learning. They also did prominent work in sequence modeling, such as proposing the **Seq2Seq** model, which greatly improved the accuracy and efficiency of machine translation.
 
-![image-20260720194136065](/images/deep_learning/image-20260720194136065.png)
+![image-20260720194136065](/images/deep_learning/deep-learning-cnn2-01.png)
 
 ### Characteristics of the Network Architecture
 
@@ -167,7 +167,7 @@ VGG is a deep convolutional neural network architecture proposed in 2014 by Kare
 
 Karen Simonyan and Andrew Zisserman are both well-known British computer vision scientists who have made many important contributions in areas such as image classification, object detection, and face recognition. In VGG they used small-sized convolution kernels and stacked multiple convolutional layers of the same size, improving the capability of feature representation by increasing network depth, and ultimately mapping the input image to class probabilities. VGG achieved excellent results in the ImageNet challenge of its time and is regarded as one of the classic case studies in deep learning model design.
 
-![image-20260720201149618](/images/deep_learning/image-20260720201149618.png)
+![image-20260720201149618](/images/deep_learning/deep-learning-cnn2-02.png)
 
 ### Characteristics of the Network Structure
 
@@ -253,7 +253,7 @@ Compared with VGG16, VGG19 adds 3 additional convolutional layers, giving it a d
 
 Apart from differences in the number of kernels and layers, the network structures of VGG16 and VGG19 are very similar. This simple, regular structure makes VGG models easy to understand and implement, and provided a foundation for deep learning research and applications. However, because of its rather deep structure, VGG models are slow during both training and inference, and some subsequent models such as ResNet and Inception adopted more efficient structures.
 
-![image-20260720201149618](/images/deep_learning/image-20260720201149618.png)
+![image-20260720201149618](/images/deep_learning/deep-learning-cnn2-02.png)
 
 - Increased from 11 layers (layers without parameters are not counted) to 19 layers
 
@@ -318,7 +318,7 @@ ResNet is a deep convolutional neural network architecture proposed in 2015 by K
 
 Once model depth reaches a certain point, continuing to deepen it actually causes **training set** accuracy to drop. The figure below is a **comparison of a 56-layer and a 20-layer plain network on CIFAR-10**:
 
-![image-20260722211712570](/images/deep_learning/image-20260722211712570.png)
+![image-20260722211712570](/images/deep_learning/deep-learning-cnn2-03.png)
 
 **Note:** this is not overfitting, because the error on the **training set** is also high (the typical signature of overfitting is low training error and high test error, whereas here the training error itself is high). The real reason is that deeper networks are **harder to optimize (converge)**.
 
@@ -342,7 +342,7 @@ Goal: directly learn the mapping from x to the correct output H(x)
 The mathematical expression:
 $$H(x) = F(x) + x$$
 
-![image-20260722212002020](/images/deep_learning/image-20260722212002020.png)
+![image-20260722212002020](/images/deep_learning/deep-learning-cnn2-05.png)
 
 > **Reading the figure above (a Residual Block)**: the input $x$ splits into two paths — one passes through two weight layers (usually convolutional layers) and ReLU, learning the **residual mapping** $F(x)$; the other passes through a **shortcut connection / identity mapping** that skips these weight layers untouched. The two paths are added at the end to give $F(x)+x$, which then goes through one more ReLU as the output. Precisely because of this extra "do-nothing" shortcut, the network only needs to learn the **difference (residual)** between the input and the target rather than learning the entire complex mapping from scratch, which alleviates the vanishing gradient and degradation problems of deep networks.
 
@@ -722,7 +722,7 @@ In ResNet, a Bottleneck layer is a specific kind of convolutional layer, usually
 
 #### A Configuration Comparison of the Five ResNet Versions
 
-![image-20260722212338297](/images/deep_learning/image-20260722212338297.png)
+![image-20260722212338297](/images/deep_learning/deep-learning-cnn2-09.png)
 
 This figure (Table 1 of the original ResNet paper) compares the **number of residual blocks** and the **kernel configurations** of the five ResNet versions. Below it is organized into a textual table:
 
@@ -807,7 +807,7 @@ print(f"Adaptive pooling: {x.shape} → {out_adapt.shape}")  # [1,64,56,56] → 
 
 #### A Structural Comparison of VGG-19 vs Plain-34 vs ResNet-34
 
-![image-20260722222223804](/images/deep_learning/image-20260722222223804.png)
+![image-20260722222223804](/images/deep_learning/deep-learning-cnn2-10.png)
 
 **Left: VGG-19 (2014)**
 
@@ -955,7 +955,7 @@ The success of InceptionNet V3 propelled the development of image recognition an
 
 - From 256 to 480 channels, that is 64 (the 1×1 channels) + 128 (the 3×3 channels) + 32 (the 5×5 channels) + 256 = 480
 
-![Inception_module](/images/deep_learning/image-20260725103132325.png)
+![Inception_module](/images/deep_learning/deep-learning-cnn2-11.png)
 
 > **Reading the figure above (the Naive Inception module)**: the input passes through four parallel paths — a 1×1 convolution, a 3×3 convolution, a 5×5 convolution, and 3×3 max pooling — each extracting features at a different scale, and finally they are **concatenated** along the channel dimension. But this brings an explosion in computational cost — especially the 3×3 and 5×5 convolutions acting directly on a high-dimensional input. Therefore Inception V1 **added a 1×1 convolution bottleneck before the 3×3 and 5×5 convolutions** (not drawn in the figure; see "the Inception module with dimensionality reduction" below), compressing the channels before performing the large-kernel convolution, which greatly reduces the computational cost.
 

@@ -37,7 +37,7 @@ description: "卷积神经网络RNN。循环神经网络（Recurrent Neural Netw
 > - **不均等**：每个样本 padding 量不同，噪音浓度不同，模型学到的特征不稳定
 > 正因为如此，代码里才给 RNN 用 `padding_first=True` 把 PAD 放句首——让 RNN 最后一步读到的是真实文本，而不是一堆 PAD。
 
-![image-20260804204252501](/images/deep_learning/image-20260804204252501.png)
+![image-20260804204252501](/images/deep_learning/deep-learning-rnn-01.png)
 
 - 图1：普通神经网络( Vanilla Neural Networks ) 一个样本对应一个输出（卷积神经网络，全连接神经网络）
 
@@ -66,11 +66,11 @@ RNN跟传统神经网络最大的区别就在于：**RNN 在每个时间步，�
 
    把时序数据$x_1,x_2,...,x_T$依次输入网络，每个时间步算出一个隐藏状态$h_t$，$h_t$ 又作为下一个时间步的输入之一：
 
-   ![image-20260804090613829](/images/deep_learning/image-20260804090613829.png)
+   ![image-20260804090613829](/images/deep_learning/deep-learning-rnn-02.png)
 
 2. RNN如果以时间步为单位，那么展开形式为：
 
-   ![image-20260804090700910](/images/deep_learning/image-20260804090700910.png)
+   ![image-20260804090700910](/images/deep_learning/deep-learning-rnn-03.png)
 
    展开后每个小方块内部，用的还是**同一套权重**，只是输入 $x_t$ 和记忆 $h_{t-1}$ 不同。
 
@@ -715,7 +715,7 @@ $$
 
 **① 遗忘门 $f_t$ —— 决定从旧记忆 $C_{t-1}$ 里忘掉什么**
 
-![image-20260805162919729](/images/deep_learning/image-20260805162919729.png)
+![image-20260805162919729](/images/deep_learning/deep-learning-rnn-04.png)
 
 $$
 f_t=\sigma(W_f\cdot[h_{t-1},x_t]+b_f)
@@ -726,7 +726,7 @@ $$
 
 **② 输入门 $i_t$ + 候选记忆 $\tilde{C}_t$ —— 决定把什么新信息写进细胞状态**
 
-![image-20260805162950578](/images/deep_learning/image-20260805162950578.png)
+![image-20260805162950578](/images/deep_learning/deep-learning-rnn-05.png)
 
 $$
 i_t = \sigma(W_i\cdot[h_{t-1},x_t]+b_i)
@@ -741,7 +741,7 @@ $$
 
 **③ 输出门 $o_t$ —— 决定从更新后的 $C_t$ 里挑哪一部分作为 $h_t$ 对外输出**
 
-![image-20260805163012823](/images/deep_learning/image-20260805163012823.png)
+![image-20260805163012823](/images/deep_learning/deep-learning-rnn-06.png)
 
 $$
 o_t = \sigma(W_o\cdot[h_{t-1},x_t]+b_o)
@@ -753,7 +753,7 @@ $$
 
 ### 核心：细胞状态怎么更新
 
-![image-20260805164005172](/images/deep_learning/image-20260805164005172.png)
+![image-20260805164005172](/images/deep_learning/deep-learning-rnn-07.png)
 
 $$
 C_t = f_t\odot C_{t-1}+i_t\odot\tilde{C}_t

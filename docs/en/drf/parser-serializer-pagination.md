@@ -18,13 +18,13 @@ DRF's default parsers are three: `JSONParser`, `FormParser`, and `MultiPartParse
 
 Only supports JSON-format data.
 
-![image-20240502163337700](/images/drf/image-20240502163337700.png)
+![image-20240502163337700](/images/drf/drf-parser-serializer-pagination-01.png)
 
 
 
 ### 1.2 FormParser
 
-![image-20240502163712593](/images/drf/image-20240502163712593.png)
+![image-20240502163712593](/images/drf/drf-parser-serializer-pagination-02.png)
 
 
 
@@ -32,7 +32,7 @@ Only supports JSON-format data.
 
 Supports both sending data and transferring files.
 
-![image-20240502164120263](/images/drf/image-20240502164120263.png)
+![image-20240502164120263](/images/drf/drf-parser-serializer-pagination-03.png)
 
 
 
@@ -40,7 +40,7 @@ Supports both sending data and transferring files.
 
 Only supports file transfer.
 
-![image-20210827084403453](/images/drf/image-20210827084403453.png)
+![image-20210827084403453](/images/drf/drf-parser-serializer-pagination-04.png)
 
 Multiple parsers can be configured. The default parsers are:
 
@@ -61,7 +61,7 @@ class UserView(APIView):
 
 ### 1.5 Source Code Analysis
 
-![image-20240502182400173](/images/drf/image-20240502182400173.png)
+![image-20240502182400173](/images/drf/drf-parser-serializer-pagination-05.png)
 
 
 
@@ -1022,9 +1022,9 @@ class InfoView(APIView):
 
 #### 2.2.6 Validation + Save + FK + M2M
 
-![image-20220917204013619](/images/drf/image-20220917204013619.png)
+![image-20220917204013619](/images/drf/drf-parser-serializer-pagination-06.png)
 
-![image-20220917204030432](/images/drf/image-20220917204030432.png)
+![image-20220917204030432](/images/drf/drf-parser-serializer-pagination-07.png)
 
 
 
@@ -1096,7 +1096,7 @@ class InfoView(APIView):
 
 When `save` is executed, the `create` or `update` method is called internally. If you want to customize the saving rules, you can also handle it here.
 
-![image-20220918083811336](/images/drf/image-20220918083811336.png)
+![image-20220918083811336](/images/drf/drf-parser-serializer-pagination-08.png)
 
 
 
@@ -1118,11 +1118,11 @@ Conversely, the `read_only` option is used to specify that a field can only be s
 
 ##### 2.3.1 Combined into One
 
-![image-20210823210822789](/images/drf/image-20210823210822789.png)
+![image-20210823210822789](/images/drf/drf-parser-serializer-pagination-09.png)
 
-![image-20210823211016050](/images/drf/image-20210823211016050.png)
+![image-20210823211016050](/images/drf/drf-parser-serializer-pagination-10.png)
 
-![image-20210823211041662](/images/drf/image-20210823211041662.png)
+![image-20210823211041662](/images/drf/drf-parser-serializer-pagination-11.png)
 
 
 
@@ -1296,15 +1296,15 @@ The underlying source code implementation of serialization differs from the othe
 
 Source 1: The serialization process
 
-![image-20210823235237512](/images/drf/image-20210823235237512.png)
+![image-20210823235237512](/images/drf/drf-parser-serializer-pagination-12.png)
 
-![image-20210823235752483](/images/drf/image-20210823235752483.png)
+![image-20210823235752483](/images/drf/drf-parser-serializer-pagination-13.png)
 
 Source 2: The data validation process
 
-![image-20210824001814091](/images/drf/image-20210824001814091.png)
+![image-20210824001814091](/images/drf/drf-parser-serializer-pagination-14.png)
 
-![image-20210824001844381](/images/drf/image-20210824001844381.png)
+![image-20210824001844381](/images/drf/drf-parser-serializer-pagination-15.png)
 
 
 
@@ -1371,17 +1371,17 @@ Two usage methods:
           return Response({"status": True, "data": ser.data})
   ```
 
-  ![image-20240503095456161](/images/drf/image-20240503095456161.png)
+  ![image-20240503095456161](/images/drf/drf-parser-serializer-pagination-16.png)
 
-  ![image-20240503095549928](/images/drf/image-20240503095549928.png)
+  ![image-20240503095549928](/images/drf/drf-parser-serializer-pagination-17.png)
 
 - To dynamically customize how many records are displayed per page based on the URL, you need to use class inheritance.
 
   When customizing, if no parameter is passed, the default configuration file is still read.
 
-  ![image-20240503095036401](/images/drf/image-20240503095036401.png)
+  ![image-20240503095036401](/images/drf/drf-parser-serializer-pagination-18.png)
 
-  ![image-20240503095110449](/images/drf/image-20240503095110449.png)
+  ![image-20240503095110449](/images/drf/drf-parser-serializer-pagination-19.png)
 
   ```python
   # views.py
@@ -1426,9 +1426,9 @@ http://api.example.org/accounts/?offset=400&limit=100
 
 `limit` indicates how much data is displayed on the current page, and `offset` indicates from which record onward the data should be displayed.
 
-![image-20240503101703684](/images/drf/image-20240503101703684.png)
+![image-20240503101703684](/images/drf/drf-parser-serializer-pagination-20.png)
 
-![image-20240503101644771](/images/drf/image-20240503101644771.png)
+![image-20240503101644771](/images/drf/drf-parser-serializer-pagination-21.png)
 
 ```python
 # views.py

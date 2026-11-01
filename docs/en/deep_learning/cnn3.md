@@ -265,7 +265,7 @@ Observations:
 
 ## Optimizer Comparison
 
-![image-20260725161044326](/images/deep_learning/image-20260725161044326.png)
+![image-20260725161044326](/images/deep_learning/deep-learning-cnn3-02.png)
 
 ### Adagrad (Adaptive Gradient Algorithm):
 
@@ -291,7 +291,7 @@ Overall, for most deep learning problems, Adam is a good default choice because 
 
 K is a coefficient, and t is the number of iterations (**Note: t is the iteration count, not the epoch count!** One epoch contains multiple iterations. For example, with 10,000 training images and batch_size=64, 1 epoch ≈ 157 iterations). Learning rate schedules are typically adjusted per iteration, since the learning rate can be changed after every parameter update (iteration).
 
-![image-20260725170126307](/images/deep_learning/image-20260725170126307.png)
+![image-20260725170126307](/images/deep_learning/deep-learning-cnn3-03.png)
 
 ### Practical Experience
 
@@ -437,7 +437,7 @@ To ensure that normalization can be effective, two additional parameters are set
 
 ## Common Issues
 
-![image-20260725173513982](/images/deep_learning/image-20260725173513982.png)
+![image-20260725173513982](/images/deep_learning/deep-learning-cnn3-04.png)
 
 - **First plot (loss oscillates violently):** The cause may be an excessively large learning rate, causing the parameter update step size to be too large, jumping back and forth near the optimal solution without converging. Solution: reduce the learning rate.
 

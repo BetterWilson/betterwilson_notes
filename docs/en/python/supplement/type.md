@@ -115,4 +115,4 @@ When using a metaclass, the process of creating the class object can be handed o
 
 In Python's `abc` module, a `metaclass` is customized and the `__new__` method is overridden.
 
-![image-20240516150231478](/images/python/supplement/image-20240516150231478.png)
+![image-20240516150231478](/images/python/supplement/python-supplement-type-01.png)

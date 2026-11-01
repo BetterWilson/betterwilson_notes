@@ -5,22 +5,22 @@ description: "Redis 学习笔记，涵盖数据类型、持久化、主从复制
 # Redis
 [多台服务器无密码传输数据](no-password)
 
-[Django连接redis](Django-redis)
+[Django连接redis](django-redis)
 
-[Python连接redis](Python-redis)
+[Python连接redis](python-redis)
 
-[Python连接Redis集群](PythonRedisCluster)
+[Python连接Redis集群](python-redis-cluster)
 
-[Python连接Redis哨兵](PythonRedisSentinel)
+[Python连接Redis哨兵](python-redis-sentinel)
 
-[redis持久化](redisPersistence)
+[redis持久化](redis-persistence)
 
-[Redis大key热key过期key](RedisKey)
+[Redis大key热key过期key](redis-key)
 
-[Redis集群Cluster](RedisCluster)
+[Redis集群Cluster](redis-cluster)
 
-[Redis哨兵Sentinel](RedisSentinel)
+[Redis哨兵Sentinel](redis-sentinel)
 
-[Redis数据类型](RedisDataType)
+[Redis数据类型](redis-data-type)
 
-[Redis集群-主从复制](RedisMaster-slaveReplication)
+[Redis集群-主从复制](redis-master-slave-replication)

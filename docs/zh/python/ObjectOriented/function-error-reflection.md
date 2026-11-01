@@ -135,7 +135,7 @@ description: "内置函数，异常，反射。本次要给讲解的内置函数
       d = D()
   ```
 
-  ![image-20240511103953454](/images/python/ObjectOriented/image-20240511103953454.png)
+  ![image-20240511103953454](/images/python/ObjectOriented/python-object-oriented-function-error-reflection-01.png)
 
   **应用场景**
 
@@ -169,7 +169,7 @@ description: "内置函数，异常，反射。本次要给讲解的内置函数
   print(value)
   ```
 
-  ![image-20210131150707551](/images/python/ObjectOriented/image-20210131150707551.png)
+  ![image-20210131150707551](/images/python/ObjectOriented/python-object-oriented-function-error-reflection-02.png)
 
   
 
@@ -662,7 +662,7 @@ while True:
 
 **案例三**：按照规定去触发指定的异常，每种异常都具备被特殊的含义。
 
-![image-20210131231423064](/images/python/ObjectOriented/image-20210131231423064.png)
+![image-20210131231423064](/images/python/ObjectOriented/python-object-oriented-function-error-reflection-03.png)
 
 
 
