@@ -1,3 +1,7 @@
+---
+description: "Ensemble Learning. Ensemble learning: unify the results of multiple classifiers into one final decision, where each individual classifier is called a base classifier."
+---
+
 # Ensemble Learning
 
 **Ensemble learning**: unify the results of multiple classifiers into one final decision, where each individual classifier is called a **base classifier**.
@@ -35,7 +39,7 @@
 >
 > Algorithm illustration:
 >
-> ![image-20260629130251346](assets/image-20260629130251346.png)
+> ![image-20260629130251346](/images/machine_learning/image-20260629130251346.png)
 >
 > Model 1, Model 2, and Model 3 are each trained on a subset of the training set. Individually, their decision boundaries are very wiggly and prone to overfitting. **The decision boundary of the ensemble model is smoother than that of each individual model**, because the ensemble's weighted voting method reduces variance.
 
@@ -56,7 +60,7 @@ Use a shooting example to further describe the difference and relationship betwe
 
 Through n samplings, we obtain n training sample sets of size m, train n models, and make predictions on the same sample — this is equivalent to shooting n times.
 
-![image-20260629134334097](assets/image-20260629134334097.png)
+![image-20260629134334097](/images/machine_learning/image-20260629134334097.png)
 
 | Top-left corner | Shooting is accurate and concentrated → both bias and variance are small (most ideal) |
 | --------------- | ------------------------------------------------------------------------------------- |
@@ -99,7 +103,7 @@ Assuming the probabilities that all base classifiers make errors are independent
 
 ## AdaBoost — Sequential
 
-[Adaboost 算法的原理与推导-CSDN博客](https://blog.csdn.net/v_JULY_v/article/details/40718799)
+[Principles and derivation of the AdaBoost algorithm (CSDN, in Chinese)](https://blog.csdn.net/v_JULY_v/article/details/40718799)
 
 **AdaBoost (Adaptive Boosting)** core: train many "weak classifiers" in order, each focusing on the samples that the previous one misclassified, and finally combine them into a strong classifier through weighted voting.
 
@@ -338,7 +342,7 @@ plt.savefig("AdaBoost_accuracy_curve", dpi=200)
 plt.grid(True)
 ```
 
-![AdaBoost中各弱分类器的权重分布](assets/AdaBoost中各弱分类器的权重分布.png)
+![Weight distribution of the weak classifiers in AdaBoost](/images/machine_learning/adaboost-weak-classifier-weight-distribution.png)
 
 This plots `estimator_weights_`, i.e., the α value of each weak classifier:
 
@@ -346,7 +350,7 @@ This plots `estimator_weights_`, i.e., the α value of each weak classifier:
 - The subsequent α values decline overall and fluctuate (the remaining samples are hard; the error rate is close to 0.5, so α is naturally small)
 - This is exactly the characteristic of AdaBoost: solve the easy problems first, then tackle the hard bones, and the say is distributed according to contribution.
 
-![AdaBoost中弱分类器数量与准确率的关系](assets/AdaBoost中弱分类器数量与准确率的关系.png)
+![Number of weak classifiers vs. accuracy in AdaBoost](/images/machine_learning/adaboost-classifier-count-vs-accuracy.png)
 
 ## GBDT — Sequential
 
@@ -626,7 +630,7 @@ The model's task is to predict a person's age. The training set has only 4 peopl
 >
 > Final prediction = 1st tree + 2nd tree + 3rd tree + ... = getting closer and closer to the true value!
 >
-> ![image-20260629133427635](assets/image-20260629133427635.png)
+> ![image-20260629133427635](/images/machine_learning/image-20260629133427635.png)
 
 ### Example
 
@@ -684,7 +688,7 @@ plt.grid(True)
 plt.savefig('GBDT_training_score_change', dpi=200)
 ```
 
-![GBDT训练过程中的得分变化](assets/GBDT训练过程中的得分变化.png)
+![Score changes during GBDT training](/images/machine_learning/gbdt-score-during-training.png)
 
 > The training set score `gbdt_clf.train_score_` array records the loss value on the training set after each tree is added (for binary classification, the default is log loss / negative log-likelihood, so this curve is decreasing, and the smaller the value the better — although the y-axis label says "score", it is essentially the loss).
 

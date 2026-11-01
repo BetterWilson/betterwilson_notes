@@ -1,3 +1,7 @@
+---
+description: "神经网络概念。神经网络（Neural Network）是一种模仿生物神经系统构建的计算模型。它由大量神经元（Neuron） 按层次结构连接而成，能够从数据中自动学习复杂的映射关系。"
+---
+
 # 神经网络
 
 ## 神经网络的结构
@@ -12,7 +16,7 @@
 
 每个神经元做的事情非常简单——**加权求和 + 非线性变换**：
 
-![neuron](assets/neuron.png)
+![neuron](/images/deep_learning/neuron.png)
 
 数学上分为两步：
 
@@ -293,11 +297,11 @@ $$
 
 绘制成为计算图之后，可以清楚的看到向前计算的过程：
 
-![image-20260706211044955](assets/image-20260706211044955.png)
+![image-20260706211044955](/images/deep_learning/image-20260706211044955.png)
 
 对每个节点求偏导可有：
 
-![image-20260706211142222](assets/image-20260706211142222.png)
+![image-20260706211142222](/images/deep_learning/image-20260706211142222.png)
 
 反向传播的过程就是一个上图的从右往左的过程，自变量 $a,b,c$ 各自的偏导就是连线上的梯度的乘积（**这就是链式法则，链式求导**）：
 
@@ -348,7 +352,7 @@ $$
 
 ### 神经网络中的反向传播
 
-![image-20260709202800633](assets/image-20260709202800633.png)
+![image-20260709202800633](/images/deep_learning/image-20260709202800633.png)
 
 #### 什么是神经网络？（超简化理解）
 
@@ -627,7 +631,7 @@ ReLU 的导数就是指示函数 $I = \mathbf{1}(z > 0)$：$z>0$ 时 $I=1$，否
 
 ### 反向传播中的 3 个核心公式
 
-![image-20260710210701312](assets/image-20260710210701312.png)
+![image-20260710210701312](/images/deep_learning/image-20260710210701312.png)
 
 其中：
 
@@ -918,7 +922,7 @@ print(c.grad)  # dJ/dc = 3b = 6.0  ✓
 
 ## 激活函数
 
-![image-20260710203928493](assets/image-20260710203928493.png)
+![image-20260710203928493](/images/deep_learning/image-20260710203928493.png)
 
 ### 常见激活函数速览
 
@@ -1012,7 +1016,7 @@ print(c.grad)  # dJ/dc = 3b = 6.0  ✓
 
 每层的激活值都做归一化，得到的效果的形象图如下图所示：
 
-![image-20260712141212646](assets/image-20260712141212646.png)
+![image-20260712141212646](/images/deep_learning/image-20260712141212646.png)
 
 ### 为什么需要批归一化(Batch Normalization)
 
@@ -1030,7 +1034,7 @@ BN的提出，就是要解决在训练过程中，中间层数据分布发生改
 
 减均值除方差：**远离饱和区**
 
-![image-20260712141919463](assets/image-20260712141919463.png)
+![image-20260712141919463](/images/deep_learning/image-20260712141919463.png)
 
 中间层神经元激活输入 $x$ 从变化不拘一格的正态分布通过 BN 操作拉回到了均值为 0，方差为 1 的高斯分布。
 
@@ -1202,11 +1206,11 @@ $$
 
 如下图所示，激活函数sigmoid、tanh、relu在使用了BN后，准确度都有显著的提高（虚线是没有用BN的情况，实线是对应的使用BN的情况）
 
-![image-20260712142809616](assets/image-20260712142809616.png)
+![image-20260712142809616](/images/deep_learning/image-20260712142809616.png)
 
 ## Dropout
 
-![image-20260712143058908](assets/image-20260712143058908.png)
+![image-20260712143058908](/images/deep_learning/image-20260712143058908.png)
 
 ### 什么是 Dropout？
 
@@ -1264,7 +1268,7 @@ AlphaDropout 是 Dropout 的一个变种，专为 SELU 激活函数设计。
 
 ## 梯度消失和梯度爆炸
 
-![image-20260712135912408](assets/image-20260712135912408.png)
+![image-20260712135912408](/images/deep_learning/image-20260712135912408.png)
 
 **层数比较多的神经网络模型**在训练时也是会出现一些问题的，其中就包括梯度消失问题（gradient vanishing problem）和梯度爆炸问题（gradient exploding problem）。梯度消失问题和梯度爆炸问题一般随着网络层数的增加会变得越来越明显。
 

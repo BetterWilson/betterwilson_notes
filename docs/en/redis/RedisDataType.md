@@ -1,3 +1,7 @@
+---
+description: "Redis Data Types. Commands that apply to all data types. Set the time-to-live (TTL) for a key-value pair: Note: do not set a large number of key-value pairs to expire at the same time,"
+---
+
 # Redis Data Types
 
 ## Global Commands

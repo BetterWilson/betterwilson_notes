@@ -1,3 +1,7 @@
+---
+description: "Django连接redis。django-redis&&redis软件&&redis-py模块，他们之间的关系 python中直接操作redis软件，需要使用redis-py模块，"
+---
+
 # Django连接redis
 
 **django-redis&&redis软件&&redis-py模块，他们之间的关系**

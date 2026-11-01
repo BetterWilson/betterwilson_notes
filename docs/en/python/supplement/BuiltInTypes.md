@@ -1,4 +1,8 @@
-## Classification of common built-in types in Python
+---
+description: "Common Built-in Types in Python. Among Python's built-in types, there is only one type that can be set to None."
+---
+
+# Classification of common built-in types in Python
 
 - The `None` type
 

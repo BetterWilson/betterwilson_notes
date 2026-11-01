@@ -1,3 +1,7 @@
+---
+description: "Django. Django-admin singleton pattern and lazy loading Django-admin component Django-auth component Django-signal component Django template lookup order Django custom commands Abstract classes in mod…"
+---
+
 # Django
 [Django-admin singleton pattern and lazy loading](Django-admin)
 

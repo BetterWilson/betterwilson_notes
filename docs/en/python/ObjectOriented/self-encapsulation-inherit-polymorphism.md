@@ -1,3 +1,7 @@
+---
+description: "self, Encapsulation, Inheritance, Polymorphism. Each class can define a special __init__ initialization method, which is executed automatically when a class is instantiated to create an object, i.e.,"
+---
+
 # The self Object, Encapsulation, Inheritance, and Polymorphism
 
 ## 1. The self Object
@@ -30,7 +34,7 @@ msg_object.send_email("wupeiqi@live.com")  # Send email to wupeiqi@live.com, con
 msg_object.send_wechat("Wu Peiqi")  # Send WeChat to Wu Peiqi, content: Registration successful
 ```
 
-![image-20210123195714019](assets/image-20210123195714019.png)
+![image-20210123195714019](/images/python/ObjectOriented/image-20210123195714019.png)
 
 From the example above, you will notice:
 
@@ -68,7 +72,7 @@ login_object.send_email("wupeiqi@live.com")  # Send email to wupeiqi@live.com, c
 login_object.send_wechat("Wu Peiqi")
 ```
 
-![image-20210123195714019](assets/image-20210123195714019.png)
+![image-20210123195714019](/images/python/ObjectOriented/image-20210123195714019.png)
 
 
 
@@ -94,7 +98,7 @@ When writing object-oriented code, the most common members are:
 
 Note: there are many other members, which will be introduced later.
 
-![image-20210126140807446](assets/image-20210126140807446.png)
+![image-20210126140807446](/images/python/ObjectOriented/image-20210126140807446.png)
 
 ```python
 class Person:
@@ -420,7 +424,7 @@ Derived class
 
 
 
-![image-20210126182724313](assets/image-20210126182724313.png)
+![image-20210126182724313](/images/python/ObjectOriented/image-20210126182724313.png)
 
 ```python
 class Base:
@@ -609,7 +613,7 @@ obj = ThreadingTCPServer()
 obj.serve_forever()
 ```
 
-![image-20210126192330261](assets/image-20210126192330261.png)
+![image-20210126192330261](/images/python/ObjectOriented/image-20210126192330261.png)
 
 
 
@@ -770,7 +774,7 @@ Summary:
 
 Now that we have a preliminary understanding of object-oriented programming, let's take another look at the data types we learned earlier: str, list, dict, and so on. They are in fact all classes, and objects of different kinds can be created from a class.
 
-![image-20210118203012874](assets/image-20210118203012874.png)
+![image-20210118203012874](/images/python/ObjectOriented/image-20210118203012874.png)
 
 
 
@@ -826,15 +830,15 @@ Once you have mastered the knowledge points above, you can actually solve most i
 
 But when you encounter some special cases (which are uncommon), you may not know how to handle them, for example:
 
-![image-20210129134949419](assets/image-20210129134949419.png)
+![image-20210129134949419](/images/python/ObjectOriented/image-20210129134949419.png)
 
 
 
-![image-20210129140026593](assets/image-20210129140026593.png)
+![image-20210129140026593](/images/python/ObjectOriented/image-20210129140026593.png)
 
 
 
-![image-20210129142756667](assets/image-20210129142756667.png)
+![image-20210129142756667](/images/python/ObjectOriented/image-20210129142756667.png)
 
 
 
@@ -844,7 +848,7 @@ If a class has an inheritance relationship, you can use `mro()` to get the inher
 
 Example 1:
 
-![image-20210129134831112](assets/image-20210129134831112.png)
+![image-20210129134831112](/images/python/ObjectOriented/image-20210129134831112.png)
 
 ```python
 mro(A) = [A] + [B,C]
@@ -884,7 +888,7 @@ print( A.__mro__ ) # (<class '__main__.A'>, <class '__main__.B'>, <class '__main
 
 Example 2:
 
-![image-20210129134912674](assets/image-20210129134912674.png)
+![image-20210129134912674](/images/python/ObjectOriented/image-20210129134912674.png)
 
 ```python
 mro(A) = [A] + merge( mro(B), mro(C), [B,C] )
@@ -921,7 +925,7 @@ print( A.mro() ) # [<class '__main__.A'>, <class '__main__.B'>, <class '__main__
 
 Example 3:
 
-![image-20210129134949419](assets/image-20210129134949419.png)
+![image-20210129134949419](/images/python/ObjectOriented/image-20210129134949419.png)
 
 ```python
 mro(A) = [A] + merge( mro(B),mro(C),[B,C])
@@ -957,7 +961,7 @@ print(A.mro()) # [<class '__main__.A'>, <class '__main__.B'>, <class '__main__.D
 
 Example 4:
 
-![image-20210129140026593](assets/image-20210129140026593.png)
+![image-20210129140026593](/images/python/ObjectOriented/image-20210129140026593.png)
 
 ```python
 mro(A) = [A] + merge( mro(B), mro(C), [B,C])
@@ -997,7 +1001,7 @@ print(A.mro()) # [<class '__main__.A'>, <class '__main__.B'>, <class '__main__.C
 
 Example 5:
 
-![image-20210129142756667](assets/image-20210129142756667.png)
+![image-20210129142756667](/images/python/ObjectOriented/image-20210129142756667.png)
 
 ```python
 Abbreviated as: A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object
@@ -1095,7 +1099,7 @@ You may have noticed that using the formal C3 algorithm rules to analyze a class
 
 So, based on my own experience, I have summarized a single sentence to share with you: <span style="color:red">**From left to right, depth-first; for diamonds large or small, keep the top**</span>. Based on this sentence, you can find the inheritance relationship more quickly.
 
-![image-20210129142756667](assets/image-20210129142756667.png)
+![image-20210129142756667](/images/python/ObjectOriented/image-20210129142756667.png)
 
 ```
 Abbreviated as: A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object

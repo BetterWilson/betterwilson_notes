@@ -42,7 +42,8 @@ docs/
 │   ├── machine_learning/  deep_learning/
 │   └── login/                 # 登录页（UI mock）
 ├── en/                        # 英文内容（路径 /en/，部分翻译）
-├── public/                    # 站点级静态资源（logo、favicon、hero 图）
+├── public/                    # 站点级静态资源（logo、favicon）
+│   └── images/<topic>/        # 文章配图（中英文共用一份）
 ├── index.md                   # 根路径跳转页 → /zh/
 └── .vitepress/
     ├── config.mjs             # 导航栏、语言(locales)、搜索、页脚、公式插件
@@ -56,16 +57,18 @@ docs/
 
 仅创建 `.md` 文件还不够，**必须在 `docs/.vitepress/sidebar-data.js` 中注册**：
 
-1. 在 `docs/zh/<topic>/` 下新建 `xxx.md`；
+1. 在 `docs/zh/<topic>/` 下新建 `xxx.md`，顶部 frontmatter 写一句 `description:`（用于搜索引擎摘要和分享卡片），正文以唯一的一个 `#` 一级标题开头；
 2. 在 `sidebar-data.js` 的 `SIDEBAR` 中，找到对应的 `/<topic>` 分组，追加 `{ text: '标题', link: '/zh/<topic>/xxx' }`；
-3. 如需英文版，在 `docs/en/<topic>/` 同步翻译，并注册到 `SIDEBAR_EN`。
+3. 如需英文版，在 `docs/en/<topic>/` 同步翻译，并注册到 `SIDEBAR_EN`；
+4. 提交前运行 `npm run docs:build`：线上站点直接发布已提交的 `dist/`，不重新构建就不会生效。
 
 > `sidebar-data.js` 是侧边栏和"相关文章"组件的**唯一数据源**（`config.mjs` 与 `RelatedArticles.vue` 共用）。漏注册 = 页面在 UI 上无法访问，也不会出现在相关文章里。
 
 ### 图片资源
 
-- 文章内配图：放在 `docs/<topic>/assets/`，Markdown 里用相对路径引用；
-- 站点级图片（logo、favicon、hero 插图）：放 `docs/public/`，用 `/logo.png`、`/picture1.svg` 引用。
+- 文章内配图：放在 `docs/public/images/<topic>/`，Markdown 里用绝对路径引用，例如 `![说明](/images/redis/foo.png)`。中英文页面共用同一份图片，**不要**再建 `docs/zh/<topic>/assets/` 这类按语言区分的目录。
+- 文件名用小写英文 + 连字符，**不能含空格**：路径里有空格时 markdown 会把整段 `![...](...)` 当纯文本输出，图片不显示。
+- 站点级图片（logo、favicon）：放 `docs/public/`，用 `/logo.png` 引用。
 
 ### 数学公式
 

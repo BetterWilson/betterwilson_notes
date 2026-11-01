@@ -1,3 +1,7 @@
+---
+description: "type,object,class三者关系。在python中，所有类的创建关系遵循： 在python中，type()方法有两种使用 由此可见，"
+---
+
 # type,object,class 三者关系
 
 在python中，所有类的创建关系遵循：
@@ -55,4 +59,4 @@ print(type(object))         # (<class 'object'>,)
 
 三者关系图
 
-![image-20240504102023071](assets/image-20240504102023071.png)
+![image-20240504102023071](/images/python/supplement/image-20240504102023071.png)

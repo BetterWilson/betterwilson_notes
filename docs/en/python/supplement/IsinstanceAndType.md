@@ -1,3 +1,7 @@
+---
+description: "isinstance vs type. In Python, there are two ways to determine the type to which a class instance belongs: Using type(x) is A determines whether x was created by A; the difference from isinstance is t…"
+---
+
 # The difference between isinstance and type
 
 In Python, there are two ways to determine the type to which a class instance belongs:

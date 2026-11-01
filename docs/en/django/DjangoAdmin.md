@@ -1,3 +1,7 @@
+---
+description: "Django-admin Component. admin is a visual tool provided by django: it is used to perform CRUD operations on the tables defined in the ORM. When the Django project starts,"
+---
+
 # Django-admin component
 
 `admin` is a visual tool provided by `django`: it is used to perform CRUD operations on the tables defined in the ORM.
@@ -24,7 +28,7 @@ Routes:
 
 - Create table data
 
-  ![image-20240428163610913](assets/image-20240428163610913.png)
+  ![image-20240428163610913](/images/django/image-20240428163610913.png)
 
 - Create a superuser to log in to admin
 
@@ -36,36 +40,36 @@ Routes:
 
 - The created superuser data is stored in the database `user_auth` table
 
-  ![image-20240428162113139](assets/image-20240428162113139.png)
+  ![image-20240428162113139](/images/django/image-20240428162113139.png)
 
 - Login
 
   Visit the route `http://localhost:8000/admin/`
 
-  ![image-20230205071631627](assets/image-20230205071631627.png)
+  ![image-20230205071631627](/images/django/image-20230205071631627.png)
 
 - Configuration
 
   Each app has an `admin.py` file, in which we can configure the tables we want to perform CRUD operations on
 
-  ![image-20240428162922005](assets/image-20240428162922005.png)
+  ![image-20240428162922005](/images/django/image-20240428162922005.png)
 
   Now visit again and we can manage our registered tables
-  ![image-20240428163042460](assets/image-20240428163042460.png)
+  ![image-20240428163042460](/images/django/image-20240428163042460.png)
 
   The three options for adding data
 
-  ![image-20240428163410940](assets/image-20240428163410940.png)
+  ![image-20240428163410940](/images/django/image-20240428163410940.png)
 
 ## 3 admin configuration methods
 
 - Method 1: use `admin.site.register`, passing a custom configuration class as a parameter
 
-  ![image-20240428164934307](assets/image-20240428164934307.png)
+  ![image-20240428164934307](/images/django/image-20240428164934307.png)
 
 - Method 2: use the decorator `admin.register` above a custom class to register the table
 
-  ![image-20240428170612983](assets/image-20240428170612983.png)
+  ![image-20240428170612983](/images/django/image-20240428170612983.png)
 
 ## 4 Source code analysis
 
@@ -75,9 +79,9 @@ When we start the Django project, Django first runs the `admin.py` file in every
 
 The executed code is `autodiscover_modules("admin", register_to=site)`
 
-![image-20240428201346638](assets/image-20240428201346638.png)
+![image-20240428201346638](/images/django/image-20240428201346638.png)
 
-![image-20240428201402894](assets/image-20240428201402894.png)
+![image-20240428201402894](/images/django/image-20240428201402894.png)
 
 Now if we customize `autodiscover_modules("xxxx")`
 
@@ -85,23 +89,23 @@ every time the Django project runs, it will by default first look for the `xxxx.
 
 When `admin.py` is loaded, the `admin.site` method is executed.
 
-![image-20240428183333186](assets/image-20240428183333186.png)
+![image-20240428183333186](/images/django/image-20240428183333186.png)
 
 Looking inside `admin.site`, we find that `site` is an instantiated object.
 
-![image-20240428183506456](assets/image-20240428183506456.png)
+![image-20240428183506456](/images/django/image-20240428183506456.png)
 
 The object instantiated by `site` is actually an `AdminSite`, and `DefaultAdminSite()` is actually a **lazy loading** mechanism.
 
-![image-20240428183616977](assets/image-20240428183616977.png)
+![image-20240428183616977](/images/django/image-20240428183616977.png)
 
 In the initializer of `AdminSite`, an empty dictionary `_registry` is defined.
 
-![image-20240428183856240](assets/image-20240428183856240.png)
+![image-20240428183856240](/images/django/image-20240428183856240.png)
 
 ### 4.2 Executing the `register` method at registration time
 
-![image-20240428185249667](assets/image-20240428185249667.png)
+![image-20240428185249667](/images/django/image-20240428185249667.png)
 
 `self._registry[model] = admin_class(model, self)`
 
@@ -115,13 +119,13 @@ It returns a list that contains the URL routing data.
 
 **Note: due to the singleton pattern, the `admin.site` object created here is the same object as the one created in `ModelAdmin`** (this means storing data and retrieving data happen on the same object).
 
-![image-20240428185647207](assets/image-20240428185647207.png)
+![image-20240428185647207](/images/django/image-20240428185647207.png)
 
-![image-20240428185820449](assets/image-20240428185820449.png)
+![image-20240428185820449](/images/django/image-20240428185820449.png)
 
 What is finally returned is the basic `urlpatterns` plus the automatically generated URLs for each class we registered.
 
-![image-20240428190116538](assets/image-20240428190116538.png)
+![image-20240428190116538](/images/django/image-20240428190116538.png)
 
 Here another level of nesting is added, prefixed with the app name and table name, with `model_admin.urls` nested inside.
 
@@ -129,13 +133,13 @@ To see the specific route distribution, you need to look under the `urls` of the
 
 This makes it convenient to customize routes by overriding the `urls` of a particular class.
 
-![image-20240428190629071](assets/image-20240428190629071.png)
+![image-20240428190629071](/images/django/image-20240428190629071.png)
 
 Now let's look at the route distribution in `ModelAdmin`; essentially it returns a list containing the specific CRUD routes.
 
-![image-20240428191357011](assets/image-20240428191357011.png)
+![image-20240428191357011](/images/django/image-20240428191357011.png)
 
-![image-20240428191632466](assets/image-20240428191632466.png)
+![image-20240428191632466](/images/django/image-20240428191632466.png)
 
 
 
@@ -160,7 +164,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
   # Or use mine.short_description = "Custom", which is equivalent to the decorator @admin.display(description="Custom")
   ```
 
-  ![image-20240428165553633](assets/image-20240428165553633.png)
+  ![image-20240428165553633](/images/django/image-20240428165553633.png)
 
 - `list_display_links`, when listing, columns can be clicked to jump.
 
@@ -234,7 +238,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
   	list_display_links = ['title']
   ```
 
-  ![image-20240428171149768](assets/image-20240428171149768.png)
+  ![image-20240428171149768](/images/django/image-20240428171149768.png)
 
 - `search_fields`, when listing, the fuzzy search feature.
 
@@ -245,7 +249,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
       search_fields = ['id', 'title']
   ```
 
-  ![image-20240428172019921](assets/image-20240428172019921.png)
+  ![image-20240428172019921](/images/django/image-20240428172019921.png)
 
 - `date_hierarchy`, when listing, searches `Date` and `DateTime` types.
 
@@ -307,7 +311,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
       actions_selection_counter = True
   ```
 
-  ![image-20240428171545633](assets/image-20240428171545633.png)
+  ![image-20240428171545633](/images/django/image-20240428171545633.png)
 
   When we select, the form data is sent via a POST request and can be retrieved from `request.POST`.
 
@@ -476,7 +480,7 @@ Now let's look at the route distribution in `ModelAdmin`; essentially it returns
       form = DepartForm
   ```
 
-  ![image-20240428172602912](assets/image-20240428172602912.png)
+  ![image-20240428172602912](/images/django/image-20240428172602912.png)
 
 - `empty_value_display = "Default value when column data is empty"`
 

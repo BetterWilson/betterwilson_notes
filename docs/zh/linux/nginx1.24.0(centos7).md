@@ -1,3 +1,7 @@
+---
+description: "nginx1.24.0安装(centos7)。注意：nginx的解压目录和编译目录不能是同一文件夹。 知道主要的目录作用，我们也就可以启动nginx了。 浏览器直接访问你的ip地址就可以看到了： 如果想要在任意目录输入nginx即可启动，"
+---
+
 # nginx1.24.0安装(centos7)
 
 ## 0 下载依赖
@@ -21,7 +25,7 @@ SSL协议，并提供丰富的应用程序供测试或其它目的使用。Nginx
 
 去这个链接：<https://nginx.org/en/download.html>
 
-![image-20231118220457668](assets/image-20231118220457668.png)
+![image-20231118220457668](/images/linux/image-20231118220457668.png)
 
 ```bash
 cd /opt
@@ -123,7 +127,7 @@ root      39444  73894  0 22:37 pts/1    00:00:00 grep --color=auto nginx
 
 浏览器直接访问你的ip地址就可以看到了：
 
-![image-20231118224049201](assets/image-20231118224049201.png)
+![image-20231118224049201](/images/linux/image-20231118224049201.png)
 
 如果想要在任意目录输入`nginx`即可启动，那还需要配置nginx的环境变量。
 

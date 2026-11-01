@@ -1,3 +1,7 @@
+---
+description: "Redis Big Keys, Hot Keys, Expired Keys. Let's understand redis's mechanism for deleting expired keys. In order to periodically check resource and service status and perform the corresponding operation…"
+---
+
 # Redis Big Keys, Hot Keys, and Expired Keys
 
 ## Expired `key` Deletion Mechanism

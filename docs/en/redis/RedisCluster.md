@@ -1,3 +1,7 @@
+---
+description: "Redis Cluster. Whether it is a single node, or master-slave replication, or even sentinel, you will eventually hit a data bottleneck."
+---
+
 # Redis Cluster
 
 ## Distributed Storage
@@ -6,11 +10,11 @@ Whether it is a single node, or master-slave replication, or even sentinel, you 
 
 We would certainly want to store the data in a distributed way.
 
-![image-20240317134848527](assets/image-20240317134848527.png)
+![image-20240317134848527](/images/redis/image-20240317134848527.png)
 
 ### Sequential Partitioning and Hash Partitioning
 
-![image-20240317135030806](assets/image-20240317135030806.png)
+![image-20240317135030806](/images/redis/image-20240317135030806.png)
 
 Sequential distribution:
 
@@ -30,7 +34,7 @@ Characteristics of hash distribution:
 - There are also problems. For example, when we add a server and hash the same key with the remainder, the divisor changes from 3 to 4, so the storage location changes. That is, when the number of servers changes, all caches become invalid for a period of time. When the application cannot get data from the cache, it will request data from the backend server. Similarly, suppose a cache server suddenly fails and we need to remove it, changing the number of cache servers from 3 to 2. This also causes a large number of caches to become invalid at the same time, causing a cache avalanche — the backend server will bear enormous pressure, and the whole system may well be crushed. To solve this, the consistent hashing algorithm was created.
 - The amount of migrated data is related to the number of added nodes; it is recommended to double the capacity when expanding.
 
-![image-20240317135620032](assets/image-20240317135620032.png)
+![image-20240317135620032](/images/redis/image-20240317135620032.png)
 
 #### Consistent Hashing Algorithm
 
@@ -48,7 +52,7 @@ The specific steps are as follows:
 2. Then each server is hashed using a Hash function. You can choose the server's IP or hostname as the key for hashing, thereby determining the position of each machine on the hash ring.
 3. Finally, use the algorithm to locate the server for data access: hash the data key with the same function to compute a hash value and determine the data's position on the ring; from this position, walk clockwise along the ring, and the first server encountered is the server the data should be located on.
 
-![image-20240317140013207](assets/image-20240317140013207.png)
+![image-20240317140013207](/images/redis/image-20240317140013207.png)
 
 **Advantages and disadvantages of the consistent hashing algorithm**
 
@@ -80,7 +84,7 @@ For hash slots, you need to understand two concepts:
    - Why set up 2^14 slots, i.e., 16384 slots? Theoretically, the crc16 algorithm can produce 2^16 values, ranging from 0 to 65535. When taking the modulo of a key, it should be `crc16(key)%65535`, but it was designed as `crc16(key)%16384`. The reason is that when designing the Redis cluster, a space trade-off was made: the number of nodes was considered unlikely to exceed 1000, and to ensure communication efficiency between nodes, 2^14 was adopted.
    - The slot space of a Redis cluster can be fine-tuned manually. For example, machines with better performance can be assigned more slots, and machines with poorer performance fewer. This can all be handled with commands. Of course, the Redis cluster allows adjustments, but does not allow large adjustments — the slot difference between nodes cannot exceed 2%.
 
-   ![image-20240317141148091](assets/image-20240317141148091.png)
+   ![image-20240317141148091](/images/redis/image-20240317141148091.png)
 
 ## About Clusters
 
@@ -130,7 +134,7 @@ CentOS Linux release 7.9.2009 (Core)
 
 On 4 servers, each server has one master and one replica, for a total of 8 redis instances. In addition, all master and replica nodes cannot be on the same server, to prevent a server downtime from taking both the master and its replica down together, which would cause data loss.
 
-![image-20240317141805760](assets/image-20240317141805760.png)
+![image-20240317141805760](/images/redis/image-20240317141805760.png)
 
 In the early stage, we need to install all 8 redis instances required by the cluster on the 4 servers. Then we first use 3 servers (6 instances) to deploy the cluster, and only use the remaining two redis instances later during cluster expansion and shrinking.
 
@@ -629,7 +633,7 @@ The process of establishing master-slave replication relationships:
 
 - **Draw the diagram. Note that a replica node should not replicate the master node on the same server; replication should be cross-replicated.**
 
-  ![image-20240323142609903](assets/image-20240323142609903.png)
+  ![image-20240323142609903](/images/redis/image-20240323142609903.png)
 
 - **Based on the drawn diagram and the obtained node relationships, execute the commands to establish the master-slave relationships**
 
@@ -728,7 +732,7 @@ The reason is that cluster writes and queries also need to use the algorithm to 
 
 Solution: ASK routing. It's also easy to understand — look at the diagram.
 
-![image-20240323143745663](assets/image-20240323143745663.png)
+![image-20240323143745663](/images/redis/image-20240323143745663.png)
 
 So it's simple: just add the `-c` parameter. (The `-c` parameter can be placed after the port, or before `-h`.)
 
@@ -977,7 +981,7 @@ The principle is quite simple, but the operation is a bit troublesome, because t
 
 So if you want to expand, you need to recalculate: how many master nodes will there be after expansion? How many slots should each master node get on average? And how many slots should each existing master node allocate to the newly added master node? All of this needs to be calculated before you start.
 
-![image-20240323154731380](assets/image-20240323154731380.png)
+![image-20240323154731380](/images/redis/image-20240323154731380.png)
 
 The problems that may be encountered during migration are also things we need to understand in advance and prepare contingency plans for:
 
@@ -1181,7 +1185,7 @@ e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 16
 
 **Note that now that we have one more server, we need to re-adjust the master-slave replication relationships.**
 
-![image-20240323160734102](assets/image-20240323160734102.png)
+![image-20240323160734102](/images/redis/image-20240323160734102.png)
 
 Of course, this is just a schematic diagram. The actual master-slave relationships at this point are certainly not like the very beginning, because in the earlier automatic-deployment section, the master-slave relationships established internally by the cluster when deploying automatically are bound to differ from ours. Here, I will directly adjust the master-slave relationships of all replica nodes to match the effect of the right side of the diagram above.
 
@@ -1224,7 +1228,7 @@ e827ae7807b2f04c77702e325db3eb311403b3bb 192.168.10.152:6380@16380 master - 0 16
 
 ### Cluster Shrinking
 
-![image-20240323161000762](assets/image-20240323161000762.png)
+![image-20240323161000762](/images/redis/image-20240323161000762.png)
 
 **The cluster shrinking process**
 
@@ -1445,7 +1449,7 @@ Now, the two redis instances on the db04 node have truly left the cluster succes
 
 However, there is still a problem: two nodes in the cluster have successfully gone offline, but at this moment the master-slave state of the remaining cluster is still problematic. The current master-slave relationships of the cluster are as follows:
 
-![image-20240323161807076](assets/image-20240323161807076.png)
+![image-20240323161807076](/images/redis/image-20240323161807076.png)
 
 **Adjusting the master-slave state**
 
@@ -1579,7 +1583,7 @@ The cluster state is ok, but the master and replica nodes of db03 both show `dis
 
 The master-slave situation of the cluster at this point is as follows:
 
-![image-20240323162913684](assets/image-20240323162913684.png)
+![image-20240323162913684](/images/redis/image-20240323162913684.png)
 
 Let's not adjust the master-slave relationships for now; first let's start the downed node.
 
@@ -1644,7 +1648,7 @@ a8b027568d5dfc6e14560ede0d6b5ce45f04ed6f 192.168.10.151:6380@16380 master - 0 16
 
 The cluster state is normal and no data was lost, but the master-slave relationships need to be adjusted manually.
 
-![image-20240323163219723](assets/image-20240323163219723.png)
+![image-20240323163219723](/images/redis/image-20240323163219723.png)
 
 According to the master-slave relationship diagram organized from the above figure, we only need to swap the master-slave relationships of the 6380 node on 152 and the 6381 node on 151.
 

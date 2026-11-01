@@ -1,3 +1,7 @@
+---
+description: "Python Supplementary Knowledge Points. The bisect module The difference between isinstance and type The relationship between is and == Classification of built-in types The relationship between type,"
+---
+
 # Python Supplementary Knowledge Points
 [Magic functions](MagicFunction)
 

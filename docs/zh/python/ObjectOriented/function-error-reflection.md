@@ -1,3 +1,7 @@
+---
+description: "内置函数，异常，反射。本次要给讲解的内置函数共8个，他们都跟面向对象的知识相关。 所以当你以后在见到下面的情况时，首先就要想到handler可以是：函数、类、具有call方法的对象 这三种，到底具体是什么，"
+---
+
 # 内置函数，异常，反射
 
 
@@ -131,7 +135,7 @@
       d = D()
   ```
 
-  ![image-20240511103953454](assets/image-20240511103953454.png)
+  ![image-20240511103953454](/images/python/ObjectOriented/image-20240511103953454.png)
 
   **应用场景**
 
@@ -165,7 +169,7 @@
   print(value)
   ```
 
-  ![image-20210131150707551](assets/image-20210131150707551.png)
+  ![image-20210131150707551](/images/python/ObjectOriented/image-20210131150707551.png)
 
   
 
@@ -658,7 +662,7 @@ while True:
 
 **案例三**：按照规定去触发指定的异常，每种异常都具备被特殊的含义。
 
-![image-20210131231423064](assets/image-20210131231423064.png)
+![image-20210131231423064](/images/python/ObjectOriented/image-20210131231423064.png)
 
 
 

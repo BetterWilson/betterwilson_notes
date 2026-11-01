@@ -1,3 +1,7 @@
+---
+description: "Redis Sentinel. Sentinel mainly solves the problems of master-slave replication: Sentinel mainly performs the following three tasks: Redis Sentinel is a distributed system."
+---
+
 # Redis Sentinel
 
 Sentinel mainly solves the problems of master-slave replication:
@@ -23,7 +27,7 @@ Officially, it is recommended that a Sentinel monitoring group consist of at lea
 
 Here I prepared 3 CentOS 7 servers with identical hardware, all running Redis 5.0.7.
 
-![image-20240317101848518](assets/image-20240317101848518.png)
+![image-20240317101848518](/images/redis/image-20240317101848518.png)
 
 **Port planning**
 

@@ -1,3 +1,7 @@
+---
+description: "Neural Network Concepts. A Neural Network is a computational model built by imitating biological nervous systems. It is formed by connecting a large number of neurons in a layered structure,"
+---
+
 # Neural Networks
 
 ## The Structure of a Neural Network
@@ -12,7 +16,7 @@ A Neural Network is a computational model built by imitating biological nervous 
 
 What each neuron does is very simple — **a weighted sum + a non-linear transformation**:
 
-![neuron](assets/neuron.png)
+![neuron](/images/deep_learning/neuron.png)
 
 Mathematically it splits into two steps:
 
@@ -293,11 +297,11 @@ At this point the partial derivatives are:
 
 Once drawn as a computation graph, the forward computation process can be seen clearly:
 
-![image-20260706211044955](assets/image-20260706211044955.png)
+![image-20260706211044955](/images/deep_learning/image-20260706211044955.png)
 
 Taking the partial derivative at each node gives:
 
-![image-20260706211142222](assets/image-20260706211142222.png)
+![image-20260706211142222](/images/deep_learning/image-20260706211142222.png)
 
 The process of backpropagation is a right-to-left traversal of the figure above, and the partial derivative of each independent variable $a,b,c$ is the product of the gradients along the connecting edges (**this is the chain rule, chained differentiation**):
 
@@ -348,7 +352,7 @@ Forward Propagation (left→right):   Backpropagation (right→left):
 
 ### Backpropagation in a Neural Network
 
-![image-20260709202800633](assets/image-20260709202800633.png)
+![image-20260709202800633](/images/deep_learning/image-20260709202800633.png)
 
 #### What is a neural network? (an ultra-simplified understanding)
 
@@ -419,8 +423,8 @@ Layer 1 (2 neurons, input dim=2):
 
 > ⚠️ **Note**: here the rows of $W_1$ are the **inputs** and the columns are the **neurons** (not the common "rows = neurons" convention).
 > Therefore the computation uses $z = W^T x + b$ (a transpose is needed), which expands to:
-> $$z_1 = x_1 w_{11} + x_2 w_{21} + b_1 \quad\text{（第1列 = 神经元1的两个输入权重）}$$
-> $$z_2 = x_1 w_{12} + x_2 w_{22} + b_2 \quad\text{（第2列 = 神经元2的两个输入权重）}$$
+> $$z_1 = x_1 w_{11} + x_2 w_{21} + b_1 \quad\text{(column 1 = neuron 1's two input weights)}$$
+> $$z_2 = x_1 w_{12} + x_2 w_{22} + b_2 \quad\text{(column 2 = neuron 2's two input weights)}$$
 >
 > **Why not use the common $z=Wx$?** The two conventions are essentially the same — all that matters is that the matrix multiplication dimensions match. This article consistently uses $W^T x$ so that in the later expansions (such as $z_1^{(1)} = x_1 w_{11} + x_2 w_{21} + ...$) the subscript meanings stay consistent: $w_{ij}$ = the weight from input $i$ to neuron $j$.
 
@@ -628,7 +632,7 @@ ReLU's derivative is the indicator function $I = \mathbf{1}(z > 0)$: when $z>0$,
 
 ### The 3 Core Formulas of Backpropagation
 
-![image-20260710210701312](assets/image-20260710210701312.png)
+![image-20260710210701312](/images/deep_learning/image-20260710210701312.png)
 
 Here:
 
@@ -919,7 +923,7 @@ print(c.grad)  # dJ/dc = 3b = 6.0  ✓
 
 ## Activation Functions
 
-![image-20260710203928493](assets/image-20260710203928493.png)
+![image-20260710203928493](/images/deep_learning/image-20260710203928493.png)
 
 ### A Quick Tour of Common Activation Functions
 
@@ -1013,7 +1017,7 @@ Batch normalization:
 
 Normalization is applied to the activations of every layer, and the resulting effect is illustrated in the figure below:
 
-![image-20260712141212646](assets/image-20260712141212646.png)
+![image-20260712141212646](/images/deep_learning/image-20260712141212646.png)
 
 ### Why Do We Need Batch Normalization
 
@@ -1031,7 +1035,7 @@ BN was proposed precisely to solve the situation where the data distribution of 
 
 Subtracting the mean and dividing by the variance: **staying away from the saturation region**
 
-![image-20260712141919463](assets/image-20260712141919463.png)
+![image-20260712141919463](/images/deep_learning/image-20260712141919463.png)
 
 The activation input $x$ of intermediate-layer neurons is pulled back by the BN operation from an unconstrained, varied normal distribution to a Gaussian with mean 0 and variance 1.
 
@@ -1203,11 +1207,11 @@ Without BN, using the Sigmoid activation function leads to a severe vanishing gr
 
 As shown in the figure below, the activation functions sigmoid, tanh, and relu all show a significant improvement in accuracy after BN is used (the dashed lines are the cases without BN, and the solid lines are the corresponding cases with BN)
 
-![image-20260712142809616](assets/image-20260712142809616.png)
+![image-20260712142809616](/images/deep_learning/image-20260712142809616.png)
 
 ## Dropout
 
-![image-20260712143058908](assets/image-20260712143058908.png)
+![image-20260712143058908](/images/deep_learning/image-20260712143058908.png)
 
 ### What is Dropout?
 
@@ -1265,7 +1269,7 @@ In summary, solving the problem of loss oscillation during training requires con
 
 ## Vanishing and Exploding Gradients
 
-![image-20260712135912408](assets/image-20260712135912408.png)
+![image-20260712135912408](/images/deep_learning/image-20260712135912408.png)
 
 **Neural network models with a relatively large number of layers** also encounter some problems during training, among them the gradient vanishing problem and the gradient exploding problem. The vanishing gradient problem and the exploding gradient problem generally become more and more pronounced as the number of network layers increases.
 
@@ -1281,7 +1285,7 @@ $$\frac{\partial L}{\partial w_{11}} = (\hat{y} - y) \cdot I_3 \cdot (w_1^{(3)} 
 
 When the Sigmoid activation function is used, each layer's derivative term $I$ (i.e. $f'(z)$) is at most only 0.25 (Sigmoid's maximum derivative), and is usually close to 0 in the saturation region. Assuming each layer's gradient factor averages 0.25, the gradient reaching layer 1 in a 10-layer network is:
 
-$$0.25^{10} \approx 9.5 \times 10^{-7} \approx \text{几乎为 0}$$
+$$0.25^{10} \approx 9.5 \times 10^{-7} \approx \text{almost 0}$$
 
 > **Getting a feel with numbers**: suppose the output layer's error is 10 (calling for a large adjustment); after passing through 10 Sigmoid layers, the signal reaching layer 1 is only 0.00000095 — the earlier layers receive almost no training signal at all. This is why the first few layers of a deep network "cannot learn".
 
@@ -1321,7 +1325,7 @@ Suitable for the **Sigmoid / Tanh** activation functions.
 
 **Formula**: the weights are sampled randomly from the following distribution:
 
-$$W \sim \mathcal{N}\left(0, \frac{2}{n_{in} + n_{out}}\right) \quad \text{或} \quad W \sim \mathcal{U}\left[-\sqrt{\frac{6}{n_{in} + n_{out}}}, \sqrt{\frac{6}{n_{in} + n_{out}}}\right]$$
+$$W \sim \mathcal{N}\left(0, \frac{2}{n_{in} + n_{out}}\right) \quad \text{or} \quad W \sim \mathcal{U}\left[-\sqrt{\frac{6}{n_{in} + n_{out}}}, \sqrt{\frac{6}{n_{in} + n_{out}}}\right]$$
 
 | Symbol                       | Meaning                                   |
 | -------------------------- | -------------------------------------- |
@@ -1340,7 +1344,7 @@ Suitable for the **ReLU / Leaky ReLU** activation functions.
 
 **Formula**:
 
-$$W \sim \mathcal{N}\left(0, \frac{2}{n_{in}}\right) \quad \text{或} \quad W \sim \mathcal{U}\left[-\sqrt{\frac{6}{n_{in}}}, \sqrt{\frac{6}{n_{in}}}\right]$$
+$$W \sim \mathcal{N}\left(0, \frac{2}{n_{in}}\right) \quad \text{or} \quad W \sim \mathcal{U}\left[-\sqrt{\frac{6}{n_{in}}}, \sqrt{\frac{6}{n_{in}}}\right]$$
 
 > **Why does He use $n_{in}$ while Xavier uses $n_{in}+n_{out}$?** ReLU zeroes out half the neurons' outputs (when $z \leq 0$), halving the variance. To compensate for this lost half, He initialization's variance is **twice** Xavier's ($2/n_{in}$ vs $1/n_{in}$). He also considers only the forward direction (disregarding $n_{out}$), because under ReLU the forward and backward variance analyses give the same result, both yielding $2/n_{in}$.
 
@@ -1535,7 +1539,7 @@ Training GPU memory = Model parameters + Gradients + Optimizer state + Activatio
 
 In a computer, a floating-point number represents a real number using three parts — **a sign bit, exponent bits, and mantissa bits** — similar to scientific notation:
 
-$$\text{数值} = (-1)^{\text{sign}} \times 2^{\text{exponent}} \times (1.\text{mantissa})$$
+$$\text{value} = (-1)^{\text{sign}} \times 2^{\text{exponent}} \times (1.\text{mantissa})$$
 
 | Format     | Full name                                     | Total bits | Sign bits | Exponent bits | Mantissa bits | Bytes per number | Numeric range                 | Precision          |
 | -------- | ---------------------------------------- | ------ | ------ | ------ | ------ | ---------- | ------------------------ | ------------- |
@@ -1620,7 +1624,7 @@ Model parameters are the network's own weights and biases, stored in `param.data
 
 **Computing the usage**:
 
-$$\text{参数量} = \text{输入维度} \times \text{输出维度} + \text{输出维度（偏置）}$$
+$$\text{params} = \text{input dim} \times \text{output dim} + \text{output dim (bias)}$$
 
 > **Example**: `nn.Linear(1024, 2048)`:
 >
@@ -1675,8 +1679,8 @@ An optimizer needs to store extra state in order to update parameters better. Th
 | $v$ (second moment) | second moment estimate | The exponential moving average of the **squared** gradients | Records the gradients' "fluctuation magnitude", adaptively giving each parameter a different learning rate |
 
 > **A recap of the formulas**:
-> $$m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t \quad \text{（方向记忆）}$$
-> $$v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2 \quad \text{（幅度记忆）}$$
+> $$m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t \quad \text{(direction memory)}$$
+> $$v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2 \quad \text{(magnitude memory)}$$
 
 **The complete Adam memory computation** (using the 8 MB of parameters of `nn.Linear(1024, 2048)` as an example):
 
@@ -1728,7 +1732,7 @@ Yet such a BERT-base model has only ~110M parameters ≈ **440 MB**! Activations
 
 #### The formula for estimating activation memory
 
-$$\text{Activation Memory} = \text{batch\_size} \times \sum_{每层} \left(\text{该层输出元素数} \times \text{每个元素的字节数}\right)$$
+$$\text{Activation Memory} = \text{batch\_size} \times \sum_{\text{each layer}} \left(\text{output elements of that layer} \times \text{bytes per element}\right)$$
 
 The easiest way to blow up GPU memory: **setting batch_size too large**. Activations have a strictly linear relationship with batch_size — double the batch_size, double the activations.
 
@@ -1922,7 +1926,7 @@ Parameters + gradients + the optimizer come to only **2.4 MB**, but the activati
 
 ### Summary: The Training Memory Formula
 
-$$\boxed{\text{Training Memory} = \underbrace{P}_{\text{参数}} + \underbrace{P}_{\text{梯度}} + \underbrace{k \cdot P}_{\text{优化器}} + \underbrace{B \cdot \sum_l |a^l| \cdot d}_{\text{激活值（通常最大！）}}}$$
+$$\boxed{\text{Training Memory} = \underbrace{P}_{\text{params}} + \underbrace{P}_{\text{grads}} + \underbrace{k \cdot P}_{\text{optimizer}} + \underbrace{B \cdot \sum_l |a^l| \cdot d}_{\text{activations (usually largest!)}}}$$
 
 | Symbol      | Meaning                                      |
 | --------- | ----------------------------------------- |

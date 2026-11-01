@@ -1,3 +1,7 @@
+---
+description: "Redis Persistence. So-called persistence means flushing the in-memory data to the local disk, so as to achieve the goals of persistence and data recovery. In Redis,"
+---
+
 # Redis Persistence
 
 So-called persistence means flushing the in-memory data to the local disk, so as to achieve the goals of persistence and data recovery.
@@ -15,7 +19,7 @@ However it is triggered, the data is written to the same RDB file in an overwrit
 - `save`, a synchronous command — it occupies the main Redis process. During the execution of `save`, Redis will block all client requests, so when the data volume is very large, this command is not recommended.
 - `bgsave`, an asynchronous command — Redis uses Linux's `fork()` to spawn a child process to do the persistence work, while the main process continues to provide other services. (Recommended)
 
-![image-20240316211219933](assets/image-20240316211219933.png)
+![image-20240316211219933](/images/redis/image-20240316211219933.png)
 
 For manual triggering, you only need to configure it in the configuration file (note the read/write permissions):
 

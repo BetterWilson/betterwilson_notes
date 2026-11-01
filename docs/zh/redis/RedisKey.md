@@ -1,3 +1,7 @@
+---
+description: "Redis大key热key过期key。来了解下redis关于过期key的删除机制。 为了定期检测资源和服务状态并根据预定策略执行相应的操作，Redis调用一个内部函数来执行多种后台任务，例如： 这些定期任务是Redis服务正常运行的保障，"
+---
+
 #  Redis 大key热key过期key
 
 ## 过期`key`删除机制

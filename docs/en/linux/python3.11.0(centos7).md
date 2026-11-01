@@ -1,3 +1,7 @@
+---
+description: "Python 3.11.0 Installation (CentOS 7). Try importing ssl and see if it raises an error"
+---
+
 # Python 3.11.0 Interpreter Installation (CentOS 7)
 
 ## 1 Download Dependencies
@@ -12,7 +16,7 @@ yum install gcc patch libffi-devel python-devel  zlib-devel bzip2-devel openssl-
 
 https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tgz
 
-![image-20240215220631343](assets\image-20240215220631343.png)
+![image-20240215220631343](/images/linux/image-20240215220631343.png)
 
 ## 3 Download python3.11, extract it, and install it under the `/opt` directory
 
@@ -77,13 +81,13 @@ pip 23.1.2 from /opt/python311/lib/python3.11/site-packages/pip (python 3.11)
 
 
 
-# Related Issues
+## Related Issues
 
 ### ModuleNotFoundError: No module named '_ssl'
 
 Try importing ssl and see if it raises an error
 
-![img](assets\1168165-20231122195039876-1769554304.png)
+![img](/images/linux/1168165-20231122195039876-1769554304.png)
 
 ### Solution:
 

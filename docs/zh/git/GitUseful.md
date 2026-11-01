@@ -1,6 +1,10 @@
+---
+description: "Git常用命令清单。Git的设置文件为.gitconfig，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。 注意：这个命令会覆盖你手动输入的提交信息。如果你希望保留自定义信息，可以使用下面这个更灵活的版本："
+---
+
 # 常用 Git 命令清单
 
-![img](./assets/bg2015120901.png)
+![img](/images/git/bg2015120901.png)
 
 - Workspace：工作区
 - Index / Stage：暂存区

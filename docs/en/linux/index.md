@@ -1,3 +1,7 @@
+---
+description: "Linux. Linux Commands (Ubuntu) Project Preparation MySQL 8.0 Installation (CentOS 7)) Nginx 1.24.0 Installation (CentOS 7)) Python 3.11.0 Interpreter Installation (CentOS 7)) Redis 5.0.7 Installation …"
+---
+
 # Linux
 [Linux Commands (Ubuntu)](commands.md)
 

@@ -1,3 +1,7 @@
+---
+description: "进程。进程是计算机中资源分配的最小单元；一个进程中可以有多个线程，同一个进程中的线程共享资源； Python中通过多进程可以利用CPU的多核优势，计算密集型操作适用于多进程。"
+---
+
 # 进程
 
 ## 1. 多进程开发
@@ -304,7 +308,7 @@ if __name__ == '__main__':
 
 **Queues(队列)**
 
-![image-20210302110643327](assets/image-20210302110643327.png)
+![image-20210302110643327](/images/python/ConcurrentProgramming/image-20210302110643327.png)
 
 The [`Queue`](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Queue) class is a near clone of [`queue.Queue`](https://docs.python.org/3/library/queue.html#queue.Queue). For example
 
@@ -334,7 +338,7 @@ if __name__ == '__main__':
 
 **Pipes(管道)**
 
-![image-20210302110821720](assets/image-20210302110821720.png)
+![image-20210302110821720](/images/python/ConcurrentProgramming/image-20210302110821720.png)
 
 The [`Pipe()`](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Pipe) function returns a pair of connection objects connected by a pipe which by default is duplex (two-way). For example:
 

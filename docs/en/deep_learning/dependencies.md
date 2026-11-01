@@ -1,3 +1,7 @@
+---
+description: "Dependency Installation. PyTorch Official Download Page"
+---
+
 # PyTorch Installation
 
 ## 1. Check GPU Driver
@@ -6,7 +10,7 @@
 nvidia-smi
 ```
 
-![image-20260630111626841](assets/image-20260630111626841.png)
+![image-20260630111626841](/images/deep_learning/image-20260630111626841.png)
 
 ## 2. Check the PyTorch Website for the Install Command Based on Your CUDA Version
 

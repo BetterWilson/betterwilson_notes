@@ -1,3 +1,7 @@
+---
+description: "Clustering Algorithms. The implementation process of the K-means algorithm: 📖 What is Euclidean distance? Euclidean distance is the most commonly used \"straight-line distance\" in our daily life."
+---
+
 # Clustering Algorithms
 
 ## k-means
@@ -41,7 +45,7 @@ The implementation process of the K-means algorithm:
 
 - If the new and old center points no longer change, stop iterating; otherwise return to step 2.
 
-![image-20260629094223858](assets/image-20260629094223858.png)
+![image-20260629094223858](/images/machine_learning/image-20260629094223858.png)
 
 The key points of K-means:
 
@@ -66,7 +70,7 @@ Parameter explanation:
 - $p$ represents a certain sample point (its coordinates)
 - $m_i$ represents the center point (centroid) of the $i$-th cluster
 
-  ![image-20260629095239616](assets/image-20260629095239616.png)
+  ![image-20260629095239616](/images/machine_learning/image-20260629095239616.png)
 
 - **Meaning of the value**: the smaller the SSE, the more compact the samples within a cluster; **but as K increases, SSE necessarily decreases, so the optimal K must be determined with the elbow method (rather than by looking at SSE alone)**.
 
@@ -111,7 +115,7 @@ The elbow method is mainly used to determine the K value for clustering. The pro
 - However, there will be an inflection point in the SSE change; when the rate of decrease suddenly slows down, that is considered the best K value.
 - The elbow criterion is also useful in deciding when to stop training. Data usually contains more noise; when adding more categories no longer brings more returns, we stop adding categories.
 
-![image-20260629095623647](assets/image-20260629095623647.png)
+![image-20260629095623647](/images/machine_learning/image-20260629095623647.png)
 
 > 📖 **Elbow method — why is it called the "elbow"?**
 >
@@ -140,7 +144,7 @@ The silhouette coefficient considers the cohesion within a cluster and the separ
 - Compute the average silhouette coefficient of all samples.
 - The range of the silhouette coefficient is [-1,1].
 
-  ![image-20260629100503026](assets/image-20260629100503026.png)
+  ![image-20260629100503026](/images/machine_learning/image-20260629100503026.png)
 
 - **Meaning of the value**: the range is [-1,1]. The closer to 1, the more "compact within the cluster and dispersed between clusters"; 0 means the sample is on the boundary of two clusters; -1 means the sample is assigned incorrectly.
 
@@ -252,4 +256,4 @@ plt.tight_layout()
 plt.show()
 ```
 
-![kmeans_elbow_sc](assets/kmeans_elbow_sc.png)
+![kmeans_elbow_sc](/images/machine_learning/kmeans_elbow_sc.png)

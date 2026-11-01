@@ -1,3 +1,7 @@
+---
+description: "自定义损失/全连接层/求导与反向传播。PyTorch 内置了 nn.MSELoss、nn.CrossEntropyLoss、nn.BCELoss 等常用损失函数。但在实际项目中，"
+---
+
 # 自定义损失/全连接层/求导与反向传播
 
 ## Tensor的阶数理解

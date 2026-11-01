@@ -1,0 +1,1 @@
+const e="/images/python/ObjectOriented/image-20240511103953454.png",t="/images/python/ObjectOriented/image-20210131150707551.png",i="/images/python/ObjectOriented/image-20210131231423064.png";export{e as _,t as a,i as b};

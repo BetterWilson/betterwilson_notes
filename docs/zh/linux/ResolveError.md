@@ -1,8 +1,12 @@
+---
+description: "报错解决。下载最新的OpenSSL源码，解压并编译 我选择了/usr/src目录来对源代码进行操作。 重新编译nginx配置文件(nginx第一次下载时即可配置)"
+---
+
 # 虚拟环境下安装uwsgi
 
 #### ERROR: Could not build wheels for uwsgi, which is required to install pyproject.toml-based projects
 
-![image-20240216225748743](assets\image-20240216225748743.png)
+![image-20240216225748743](/images/linux/image-20240216225748743.png)
 
 **更新并安装 yum 软件包**
 
@@ -51,7 +55,7 @@ pip install uwsgi==2.0.23
 
 
 
-# ssl证书配置时nginx提示缺少`ngx_http_ssl_module`模块
+## ssl证书配置时nginx提示缺少`ngx_http_ssl_module`模块
 
 ### nginx: [emerg] the "ssl" parameter requires ngx_http_ssl_module in...
 

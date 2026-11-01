@@ -1,3 +1,7 @@
+---
+description: "drf视图，路由，筛选器。APIView是drf中 “顶层” 的视图类，在他的内部主要实现drf基础的组件的使用，例如：版本、认证、权限、限流等。 GenericAPIView 继承APIView，在APIView的基础上又增加了一些功能。"
+---
+
 # drf视图，路由，筛选器
 
 ## 1.视图（*）
@@ -116,7 +120,7 @@ class UserView(GenericAPIView):
 
 ### 1.3 GenericViewSet
 
-![image-20210824092131703](assets/image-20210824092131703.png)
+![image-20210824092131703](/images/drf/image-20210824092131703.png)
 
 `GenericViewSet`类中没有定义任何代码，他就是继承 `ViewSetMixin` 和 `GenericAPIView`，也就说他的功能就是将继承的两个类的功能继承到一起。
 
@@ -222,7 +226,7 @@ class UserView(CreateModelMixin,RetrieveModelMixin, UpdateModelMixin, DestroyMod
 
 **示例1：**
 
-![image-20210824230441249](assets/image-20210824230441249.png)
+![image-20210824230441249](/images/drf/image-20210824230441249.png)
 
 ```python
 # urls.py
@@ -269,7 +273,7 @@ class UserView(mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet)
 
 **示例2：**
 
-![image-20210824231043061](assets/image-20210824231043061.png)
+![image-20210824231043061](/images/drf/image-20210824231043061.png)
 
 ```python
 # urls.py
@@ -488,7 +492,7 @@ class PermissionA(BasePermission):
 
 ### 1.5 源码分析
 
-![image-20240503141923143](assets/image-20240503141923143.png)
+![image-20240503141923143](/images/drf/image-20240503141923143.png)
 
 
 
@@ -606,7 +610,7 @@ class XXXView(ModelViewSet):
 
 ### 3.1 自定义Filter（推荐）
 
-![image-20210825200814769](assets/image-20210825200814769.png)
+![image-20210825200814769](/images/drf/image-20210825200814769.png)
 
 ```python
 # urls.py

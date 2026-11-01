@@ -1,3 +1,7 @@
+---
+description: "drf解析器，序列化器，分页。解析请求者发来的数据（JSON） 使用 request.data 获取请求体中的数据。 这个 reqeust.data 的数据怎么来的呢？其实在drf内部是由解析器，"
+---
+
 # drf解析器，序列化器，分页
 
 ## 1 解析器
@@ -14,13 +18,13 @@ drf默认的解析器三个`JSONParser`, `FormParser`, `MultiPartParser`
 
 只支持JSON格式的数据
 
-![image-20240502163337700](assets/image-20240502163337700.png)
+![image-20240502163337700](/images/drf/image-20240502163337700.png)
 
 
 
 ### 1.2 FormParser
 
-![image-20240502163712593](assets/image-20240502163712593.png)
+![image-20240502163712593](/images/drf/image-20240502163712593.png)
 
 
 
@@ -28,7 +32,7 @@ drf默认的解析器三个`JSONParser`, `FormParser`, `MultiPartParser`
 
 既支持发送数据，又支持传输文件
 
-![image-20240502164120263](assets/image-20240502164120263.png)
+![image-20240502164120263](/images/drf/image-20240502164120263.png)
 
 
 
@@ -36,7 +40,7 @@ drf默认的解析器三个`JSONParser`, `FormParser`, `MultiPartParser`
 
 只支持文件传输
 
-![image-20210827084403453](assets/image-20210827084403453.png)
+![image-20210827084403453](/images/drf/image-20210827084403453.png)
 
 解析器可以设置多个，默认解析器：
 
@@ -57,7 +61,7 @@ class UserView(APIView):
 
 ### 1.5 源码分析
 
-![image-20240502182400173](assets/image-20240502182400173.png)
+![image-20240502182400173](/images/drf/image-20240502182400173.png)
 
 
 
@@ -1018,9 +1022,9 @@ class InfoView(APIView):
 
 #### 2.2.6 校验+保存+FK+M2M
 
-![image-20220917204013619](assets/image-20220917204013619.png)
+![image-20220917204013619](/images/drf/image-20220917204013619.png)
 
-![image-20220917204030432](assets/image-20220917204030432.png)
+![image-20220917204030432](/images/drf/image-20220917204030432.png)
 
 
 
@@ -1092,7 +1096,7 @@ class InfoView(APIView):
 
 当执行save时，内部会调用 create 或 update方法，如果想要自定义保存规则，也可以在此处进行处理。
 
-![image-20220918083811336](assets/image-20220918083811336.png)
+![image-20220918083811336](/images/drf/image-20220918083811336.png)
 
 
 
@@ -1114,11 +1118,11 @@ class InfoView(APIView):
 
 ##### 2.3.1 二合一
 
-![image-20210823210822789](assets/image-20210823210822789.png)
+![image-20210823210822789](/images/drf/image-20210823210822789.png)
 
-![image-20210823211016050](assets/image-20210823211016050.png)
+![image-20210823211016050](/images/drf/image-20210823211016050.png)
 
-![image-20210823211041662](assets/image-20210823211041662.png)
+![image-20210823211041662](/images/drf/image-20210823211041662.png)
 
 
 
@@ -1292,15 +1296,15 @@ class UserView(APIView):
 
 源码1：序列化过程
 
-![image-20210823235237512](assets/image-20210823235237512.png)
+![image-20210823235237512](/images/drf/image-20210823235237512.png)
 
-![image-20210823235752483](assets/image-20210823235752483.png)
+![image-20210823235752483](/images/drf/image-20210823235752483.png)
 
 源码2：数据校验过程
 
-![image-20210824001814091](assets/image-20210824001814091.png)
+![image-20210824001814091](/images/drf/image-20210824001814091.png)
 
-![image-20210824001844381](assets/image-20210824001844381.png)
+![image-20210824001844381](/images/drf/image-20210824001844381.png)
 
 
 
@@ -1367,17 +1371,17 @@ http://api.example.org/accounts/?page=4&page_size=100
           return Response({"status": True, "data": ser.data})
   ```
 
-  ![image-20240503095456161](assets/image-20240503095456161.png)
+  ![image-20240503095456161](/images/drf/image-20240503095456161.png)
 
-  ![image-20240503095549928](assets/image-20240503095549928.png)
+  ![image-20240503095549928](/images/drf/image-20240503095549928.png)
 
 - 根据URL路由动态自定义每页展示多少数据，需要用到类的继承
 
   自定义时如果不传参数，依旧会读取默认的配置文件
 
-  ![image-20240503095036401](assets/image-20240503095036401.png)
+  ![image-20240503095036401](/images/drf/image-20240503095036401.png)
 
-  ![image-20240503095110449](assets/image-20240503095110449.png)
+  ![image-20240503095110449](/images/drf/image-20240503095110449.png)
 
   ```python
   # views.py
@@ -1422,9 +1426,9 @@ http://api.example.org/accounts/?offset=400&limit=100
 
 `limit`表示当前页展示多少数据，`offset`表示从第几条数据之后开始展示
 
-![image-20240503101703684](assets/image-20240503101703684.png)
+![image-20240503101703684](/images/drf/image-20240503101703684.png)
 
-![image-20240503101644771](assets/image-20240503101644771.png)
+![image-20240503101644771](/images/drf/image-20240503101644771.png)
 
 ```python
 # views.py

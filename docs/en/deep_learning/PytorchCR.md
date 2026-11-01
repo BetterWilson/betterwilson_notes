@@ -1,3 +1,7 @@
+---
+description: "PyTorch Classification & Regression. Supplementary Note: Breaking Down the Softmax Formula The meaning of each symbol in the formula: Intuitive understanding: Softmax does two things: 2."
+---
+
 # Pytorch Classification and Regression
 
 ## Principles of Classification and Regression
@@ -6,7 +10,7 @@
 
 - Regression predicts values; the model's output is a real number
 
-  ![image-20260701103133654](assets/image-20260701103133654.png)
+  ![image-20260701103133654](/images/deep_learning/image-20260701103133654.png)
 
 ### Classification
 
@@ -18,7 +22,7 @@
   - 1 -> [0, 1, 0]
   - 2 -> [0, 0, 1]
 
-  ![image-20260701104818869](assets/image-20260701104818869.png)
+  ![image-20260701104818869](/images/deep_learning/image-20260701104818869.png)
 
 - Example output for a 3-class classification problem: [0.2, 0.7, 0.1], where the result is a probability distribution, obtained using Softmax (output activation function)
 
@@ -323,7 +327,7 @@ To avoid overfitting.
 
 - Access: `http://localhost:8848/`
 
-![image-20260704201011147](assets/image-20260704201011147.png)
+![image-20260704201011147](/images/deep_learning/image-20260704201011147.png)
 
 ### Core Concepts Quick Reference (before looking at the code)
 

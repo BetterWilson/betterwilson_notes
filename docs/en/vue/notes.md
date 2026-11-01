@@ -1,3 +1,7 @@
+---
+description: "Vue Knowledge Points. After importing the JS file, you need to register the corresponding element (such as a div block): At this point a Vue project is considered set up. However,"
+---
+
 # Vue knowledge points
 
 ## Creating a Vue project
@@ -31,25 +35,25 @@ Two approaches:
 
   Run the command `npm create vue@latest`
 
-  ![image-20240920114432624](assets/image-20240920114432624.png)
+  ![image-20240920114432624](/images/vue/image-20240920114432624.png)
 
   Vue Router, Pinia, and ESLint will all be used in later development, so leave them uninstalled for now.
 
   After opening the project in WebStorm, run `npm install` to install the project dependencies.
 
-  ![image-20240920114744555](assets/image-20240920114744555.png)
+  ![image-20240920114744555](/images/vue/image-20240920114744555.png)
 
   After installation, run `npm run dev` and you'll see that the project is up and running.
 
-  ![image-20240920120301866](assets/image-20240920120301866.png)
+  ![image-20240920120301866](/images/vue/image-20240920120301866.png)
 
   You can also create a project directly with Vite in WebStorm:
 
-  ![image-20240920121629889](assets/image-20240920121629889.png)
+  ![image-20240920121629889](/images/vue/image-20240920121629889.png)
 
   An explanation of the files generated after scaffolding the environment with Vite:
 
-  ![image-20240920123233369](assets/image-20240920123233369.png) When deploying the project later, simply run `npm run build` to compile all of the project's code into HTML, JS, CSS, and other files that can be placed directly on a server.
+  ![image-20240920123233369](/images/vue/image-20240920123233369.png) When deploying the project later, simply run `npm run build` to compile all of the project's code into HTML, JS, CSS, and other files that can be placed directly on a server.
 
 
 
@@ -294,7 +298,7 @@ Vue also provides a simpler way: we can write `setup` inside `<script>`, so we d
   </html>
   ```
 
-  ![image-20240811095335118](assets/image-20240811095335118.png)
+  ![image-20240811095335118](/images/vue/image-20240811095335118.png)
 
   We can extract the parts of the Vue package we need from `Vue`, so that when writing code below we don't have to prefix everything with `Vue.`.
 
@@ -342,7 +346,7 @@ var refers to a variable, while const refers to a constant. Variables can be mod
 
 In particular, when we use const to define an object, replacing that object with a different object is not allowed; however, changing some of the key-value pairs inside it is fine.
 
-![image-20240726143453825](assets/image-20240726143453825.png)
+![image-20240726143453825](/images/vue/image-20240726143453825.png)
 
 ## Reactivity basics (Composition API only)
 
@@ -517,7 +521,7 @@ Similarly, the `v-bind` directive also supports ternary expressions.
 </html>
 ```
 
-![image-20240916090904811](assets/image-20240916090904811.png)
+![image-20240916090904811](/images/vue/image-20240916090904811.png)
 
 ## The v-model directive
 
@@ -727,7 +731,7 @@ Related events include: click, dbclick, mouseover, mouseover...
 
 ## Lifecycle
 
-![](assets/lifecycle_zh-CN.W0MNXI0C.png)
+![](/images/vue/lifecycle_zh-CN.W0MNXI0C.png)
 
 Official link: [Composition API: Lifecycle Hooks | Vue.js (vuejs.org)](https://cn.vuejs.org/api/composition-api-lifecycle.html#composition-api-lifecycle-hooks)
 

@@ -1,3 +1,7 @@
+---
+description: "bisect模块。在Python中，如果我们想维持一个已排序的序列，可以使用内置的bisect模块，例如： bisect内部使用二分查找算法来添加数据 默认使用insort_right函数（如果有两个相同数据，新数据添加到老数据右边），"
+---
+
 # bisect模块
 
 在Python中，如果我们想维持一个已排序的序列，可以使用内置的`bisect`模块，例如：
@@ -20,6 +24,6 @@ print(bisect.bisect(inter_list, 3))		# 3
 
 默认使用`insort_right`函数（如果有两个相同数据，新数据添加到老数据右边），而`insort_right`内部调用的是`bisect_right`函数来实现二分查找算法
 
-![image-20240512145030407](assets/image-20240512145030407.png)
+![image-20240512145030407](/images/python/supplement/image-20240512145030407.png)
 
 如果需要查找，可以使用`bisect`函数，默认调用的也是`bisect_right`函数

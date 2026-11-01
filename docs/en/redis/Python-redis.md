@@ -1,3 +1,7 @@
+---
+description: "Connecting Redis with Python. Normally, when we operate redis, we go through the process of creating and establishing a connection object, executing the redis operation,"
+---
+
 # Python Connects to Redis
 
 Install redis
@@ -687,7 +691,7 @@ Summary: for very simple publish/subscribe scenarios, Redis's publish/subscribe 
 
 By default, each redis operation creates (requests a connection from the pool) and disconnects (returns the connection to the pool) a connection. If you want to issue multiple commands in a single request, you can use a pipeline to issue multiple commands in one request, thereby improving performance.
 
-![image-20240316211441093](assets/image-20240316211441093.png)
+![image-20240316211441093](/images/redis/image-20240316211441093.png)
 
 Pipeline technology is a batch-processing technique provided by the client, used to process multiple Redis commands at once, thereby improving the performance of the whole interaction.
 

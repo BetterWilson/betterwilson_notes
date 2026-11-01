@@ -1,4 +1,8 @@
-## Transferring data between servers without a password
+---
+description: "Transfer Data Between Servers Without Password. Here we demonstrate transferring redis and its configuration files between servers without a password. After this,"
+---
+
+# Transferring data between servers without a password
 
 Here we demonstrate transferring `redis` and its configuration files between servers without a password.
 

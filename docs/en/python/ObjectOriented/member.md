@@ -1,3 +1,7 @@
+---
+description: "Members, Member Modifiers. All members in object-oriented programming are as follows: When programming with object orientation,"
+---
+
 # Members and Member Modifiers
 
 ## 1. Members

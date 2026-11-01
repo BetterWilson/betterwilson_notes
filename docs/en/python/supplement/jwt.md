@@ -1,10 +1,14 @@
+---
+description: "JWT. JSON Web Tokens is an open industry standard RFC 7519 used to securely represent claims between two parties. Currently, JWT is widely used for user authentication in systems,"
+---
+
 # JWT
 
 JSON Web Tokens is an open industry standard [RFC 7519](https://tools.ietf.org/html/rfc7519) used to securely represent claims between two parties. Currently, JWT is widely used for user authentication in systems, especially in projects where the front end and back end are separated.
 
 ### 1. JWT authentication flow
 
-![img](assets/425762-20191114064617993-2060294994.png)
+![img](/images/python/supplement/425762-20191114064617993-2060294994.png)
 
 In project development, authentication generally follows the process shown in the diagram above: after the user logs in successfully, the server returns a token to the user's browser. From then on, the user's browser carries the token when sending requests to the server. The server verifies the validity of the token; if valid, it shows the data to the user, otherwise it returns some error information.
 

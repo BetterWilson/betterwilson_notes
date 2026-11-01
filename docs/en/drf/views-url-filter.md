@@ -1,3 +1,7 @@
+---
+description: "DRF Views, Routing, Filters. APIView is the \"top-level\" view class in DRF. Internally, it mainly implements the use of DRF's basic components, such as versioning, authentication, permissions,"
+---
+
 # DRF Views, Routing, and Filters
 
 ## 1. Views (*)
@@ -116,7 +120,7 @@ Note: its greatest significance is extracting database queries and serializer cl
 
 ### 1.3 GenericViewSet
 
-![image-20210824092131703](assets/image-20210824092131703.png)
+![image-20210824092131703](/images/drf/image-20210824092131703.png)
 
 The `GenericViewSet` class does not define any code itself; it simply inherits from `ViewSetMixin` and `GenericAPIView`, meaning its purpose is to combine the functionality of the two inherited classes into one.
 
@@ -222,7 +226,7 @@ These 5 classes already implement the `list`, `create`, `retrieve`, `update`, `p
 
 **Example 1:**
 
-![image-20210824230441249](assets/image-20210824230441249.png)
+![image-20210824230441249](/images/drf/image-20210824230441249.png)
 
 ```python
 # urls.py
@@ -269,7 +273,7 @@ class UserView(mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet)
 
 **Example 2:**
 
-![image-20210824231043061](assets/image-20210824231043061.png)
+![image-20210824231043061](/images/drf/image-20210824231043061.png)
 
 ```python
 # urls.py
@@ -486,7 +490,7 @@ Therefore, when writing view classes, if the class directly or indirectly inheri
 
 ### 1.5 Source Code Analysis
 
-![image-20240503141923143](assets/image-20240503141923143.png)
+![image-20240503141923143](/images/drf/image-20240503141923143.png)
 
 
 
@@ -604,7 +608,7 @@ DRF also has corresponding components that support conditional search.
 
 ### 3.1 Custom Filter (Recommended)
 
-![image-20210825200814769](assets/image-20210825200814769.png)
+![image-20210825200814769](/images/drf/image-20210825200814769.png)
 
 ```python
 # urls.py

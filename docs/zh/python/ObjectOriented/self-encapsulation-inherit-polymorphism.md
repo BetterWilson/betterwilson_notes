@@ -1,3 +1,7 @@
+---
+description: "self对象，封装，继承，多态。在每个类中都可以定义个特殊的：__init__ 初始化方法 ，在实例化类创建对象时自动执行，即：对象=类()。 注意：除了self默认参数以外，方法中的参数的定义和执行与函数是相同。 当然，"
+---
+
 # self对象，封装，继承，多态
 
 ## 1. self对象
@@ -30,7 +34,7 @@ msg_object.send_email("wupeiqi@live.com") # 给wupeiqi@live.com发邮件，内�
 msg_object.send_wechat("武沛齐") # 给武沛齐发微信，内容是：注册成功
 ```
 
-![image-20210123195714019](assets/image-20210123195714019.png)
+![image-20210123195714019](/images/python/ObjectOriented/image-20210123195714019.png)
 
 通过上述的示例，你会发现：
 
@@ -68,7 +72,7 @@ login_object.send_email("wupeiqi@live.com") # 给wupeiqi@live.com发邮件，内
 login_object.send_wechat("武沛齐")
 ```
 
-![image-20210123195714019](assets/image-20210123195714019.png)
+![image-20210123195714019](/images/python/ObjectOriented/image-20210123195714019.png)
 
 
 
@@ -94,7 +98,7 @@ login_object.send_wechat("武沛齐")
 
 注意：还有很多其他的成员，后续再来介绍。
 
-![image-20210126140807446](assets/image-20210126140807446.png)
+![image-20210126140807446](/images/python/ObjectOriented/image-20210126140807446.png)
 
 ```python
 class Person:
@@ -420,7 +424,7 @@ p1 = Person("武沛齐",20)
 
 
 
-![image-20210126182724313](assets/image-20210126182724313.png)
+![image-20210126182724313](/images/python/ObjectOriented/image-20210126182724313.png)
 
 ```python
 class Base:
@@ -609,7 +613,7 @@ obj = ThreadingTCPServer()
 obj.serve_forever()
 ```
 
-![image-20210126192330261](assets/image-20210126192330261.png)
+![image-20210126192330261](/images/python/ObjectOriented/image-20210126192330261.png)
 
 
 
@@ -774,7 +778,7 @@ func(v2)
 
 在初步了解面向对象之后，再来看看我们之前学习的：str、list、dict等数据类型，他们其实都一个类，根据类可以创建不同类的对象。
 
-![image-20210118203012874](assets/image-20210118203012874.png)
+![image-20210118203012874](/images/python/ObjectOriented/image-20210118203012874.png)
 
 
 
@@ -830,15 +834,15 @@ print(data)
 
 但如果遇到一些特殊情况（不常见），你就可能不知道怎么搞了，例如：
 
-![image-20210129134949419](assets/image-20210129134949419.png)
+![image-20210129134949419](/images/python/ObjectOriented/image-20210129134949419.png)
 
 
 
-![image-20210129140026593](assets/image-20210129140026593.png)
+![image-20210129140026593](/images/python/ObjectOriented/image-20210129140026593.png)
 
 
 
-![image-20210129142756667](assets/image-20210129142756667.png)
+![image-20210129142756667](/images/python/ObjectOriented/image-20210129142756667.png)
 
 
 
@@ -848,7 +852,7 @@ print(data)
 
 示例1：
 
-![image-20210129134831112](assets/image-20210129134831112.png)
+![image-20210129134831112](/images/python/ObjectOriented/image-20210129134831112.png)
 
 ```python
 mro(A) = [A] + [B,C]
@@ -888,7 +892,7 @@ print( A.__mro__ ) # (<class '__main__.A'>, <class '__main__.B'>, <class '__main
 
 示例2：
 
-![image-20210129134912674](assets/image-20210129134912674.png)
+![image-20210129134912674](/images/python/ObjectOriented/image-20210129134912674.png)
 
 ```python
 mro(A) = [A] + merge( mro(B), mro(C), [B,C] )
@@ -925,7 +929,7 @@ print( A.mro() ) # [<class '__main__.A'>, <class '__main__.B'>, <class '__main__
 
 示例3:
 
-![image-20210129134949419](assets/image-20210129134949419.png)
+![image-20210129134949419](/images/python/ObjectOriented/image-20210129134949419.png)
 
 ```python
 mro(A) = [A] + merge( mro(B),mro(C),[B,C])
@@ -961,7 +965,7 @@ print(A.mro()) # [<class '__main__.A'>, <class '__main__.B'>, <class '__main__.D
 
 示例4：
 
-![image-20210129140026593](assets/image-20210129140026593.png)
+![image-20210129140026593](/images/python/ObjectOriented/image-20210129140026593.png)
 
 ```python
 mro(A) = [A] + merge( mro(B), mro(C), [B,C])
@@ -1000,7 +1004,7 @@ print(A.mro()) # [<class '__main__.A'>, <class '__main__.B'>, <class '__main__.C
 
 示例5：
 
-![image-20210129142756667](assets/image-20210129142756667.png)
+![image-20210129142756667](/images/python/ObjectOriented/image-20210129142756667.png)
 
 ```python
 简写为：A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object
@@ -1098,7 +1102,7 @@ print(A.mro()) # 简写为：A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N
 
 所以，我自己根据经验总结了一句话赠送给大家：<span style="color:red">**从左到右，深度优先，大小钻石，留住顶端**</span>，基于这句话可以更快的找到继承关系。
 
-![image-20210129142756667](assets/image-20210129142756667.png)
+![image-20210129142756667](/images/python/ObjectOriented/image-20210129142756667.png)
 
 ```
 简写为：A -> B -> D -> G -> H -> K -> C -> E -> F -> M -> N -> P -> object

@@ -1,3 +1,7 @@
+---
+description: "Relationship between type, object, class. In Python, the creation relationships of all classes follow: In Python,"
+---
+
 # The relationship between type, object and class
 
 In Python, the creation relationships of all classes follow:
@@ -53,4 +57,4 @@ Even if we don't write the inheritance relationship directly in the code, Python
 
 Diagram of the relationship between the three:
 
-![image-20240504102023071](assets/image-20240504102023071.png)
+![image-20240504102023071](/images/python/supplement/image-20240504102023071.png)

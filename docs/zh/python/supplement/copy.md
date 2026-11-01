@@ -1,3 +1,7 @@
+---
+description: "深copy与浅copy。对于可变数据类型，b=a会将a和b指向同一个数据空间，且a和b的地址是相同的 b = copy.copy(a)会将a的数据复制一份，放到新的内存空间中 c = [a,b]c里面实际存储的是a和b的指针地址，"
+---
+
 # 深copy与浅copy
 
 ## 赋值与copy

@@ -1,8 +1,12 @@
+---
+description: "Regression Algorithms. The linear regression problem is to find the plane in the figure above (whether it is a line or a plane,"
+---
+
 # Regression Algorithms
 
 ## Linear Regression
 
-![image-20260627092156532](assets/image-20260627092156532.png)
+![image-20260627092156532](/images/machine_learning/image-20260627092156532.png)
 
 The linear regression problem is to find the **plane** in the figure above (whether it is a line or a plane, it is collectively called a **hyperplane**) such that the sum of squared distances from the plane to all points is minimized.
 
@@ -259,7 +263,7 @@ The basic idea of gradient descent can be analogized to the process of descendin
 
 Consider this scenario: a person is trapped on a mountain and needs to get down (to find the lowest point of the mountain, i.e., the valley). But the fog on the mountain is thick, making visibility very low. Therefore, the path down cannot be determined; he must use the information around him to find the way down. At this point, he can use the gradient descent algorithm to help himself descend. Specifically, based on his current position, **find the steepest place at that position, then walk in the direction where the mountain height decreases**. (Similarly, if our goal is to go up the mountain, i.e., climb to the summit, then we should walk in the steepest upward direction.) Then, after walking each segment of distance, he repeatedly applies the same method, and finally succeeds in reaching the valley.
 
-![image-20260627100711485](assets/image-20260627100711485.png)
+![image-20260627100711485](/images/machine_learning/image-20260627100711485.png)
 
 The basic process of gradient descent is very similar to the mountain-descent scenario.
 
@@ -273,7 +277,7 @@ According to the earlier scenario assumption, the fastest way down the mountain 
 
 This also explains why we go to great lengths to compute the gradient! We need to reach the bottom of the mountain, so at each step we need to observe the steepest place at that moment; the gradient happens to tell us this direction. The direction of the gradient is the direction in which the function rises fastest at a given point, so the opposite direction of the gradient is the direction in which the function falls fastest at a given point — this is exactly what we need. Therefore, as long as we keep walking in the direction opposite to the gradient, we can reach the local minimum!
 
-![image-20260627100853236](assets/image-20260627100853236.png)
+![image-20260627100853236](/images/machine_learning/image-20260627100853236.png)
 
 #### The Gradient Descent Process
 
@@ -294,7 +298,7 @@ The iterative process of gradient descent
 
 After four iterations, i.e., four steps, we basically reach the lowest point of the function, i.e., the bottom of the mountain.
 
-![image-20260627113114947](assets/image-20260627113114947.png)
+![image-20260627113114947](/images/machine_learning/image-20260627113114947.png)
 
 ##### Gradient Descent for a Multivariate Function
 
@@ -314,7 +318,7 @@ The iterative process of gradient descent
 - ...
 - $\theta_{100}=(1.6296e^{-10},4.8888e^{-10})$
 
-![image-20260627115719818](assets/image-20260627115719818.png)
+![image-20260627115719818](/images/machine_learning/image-20260627115719818.png)
 
 #### Gradient Descent Formula
 
@@ -357,7 +361,7 @@ The step size determines the length advanced along the negative direction of the
 - If the learning rate is too small, the descent will be slow, i.e., the convergence will be slow.
 - If the learning rate is too large, it is easy to overshoot the minimum and cause oscillation during descent.
 
-![image-20260627132441547](assets/image-20260627132441547.png)
+![image-20260627132441547](/images/machine_learning/image-20260627132441547.png)
 
 How to understand $\frac{\partial J(\theta)}{\partial\theta_i}$:
 
@@ -367,7 +371,7 @@ Why is there a minus sign (or why do we subtract)?
 
 - Adding a minus sign before the gradient means advancing in the direction opposite to the gradient.
 
-  ![image-20260627132707040](assets/image-20260627132707040.png)
+  ![image-20260627132707040](/images/machine_learning/image-20260627132707040.png)
 
 #### Full Gradient Descent (FGD)
 
@@ -500,7 +504,7 @@ print('Test set MSE:', mse)
 
 - Underfitting means the model has relatively large errors on both the training set and the test set; overfitting means small errors on the training set but large errors on the test set.
 
-  ![image-20260627135326573](assets/image-20260627135326573.png)
+  ![image-20260627135326573](/images/machine_learning/image-20260627135326573.png)
 
 
 
@@ -553,7 +557,7 @@ def under_fitting():
 under_fitting()
 ```
 
-![image-20260627135632531](assets/image-20260627135632531.png)
+![image-20260627135632531](/images/machine_learning/image-20260627135632531.png)
 
 #### Just Right Fitting
 
@@ -607,7 +611,7 @@ def fitting():
 fitting()
 ```
 
-![image-20260627135832976](assets/image-20260627135832976.png)
+![image-20260627135832976](/images/machine_learning/image-20260627135832976.png)
 
 #### Overfitting
 
@@ -663,7 +667,7 @@ def over_fitting():
 over_fitting()
 ```
 
-![image-20260627135938394](assets/image-20260627135938394.png)
+![image-20260627135938394](/images/machine_learning/image-20260627135938394.png)
 
 ### Regularized Linear Models
 
@@ -820,7 +824,7 @@ print("sklearn linear regression test set MSE: {:.4f}".format(mean_squared_error
 
 ## Logistic Regression
 
-![image-20260627092156532](assets/image-20260627092156532.png)
+![image-20260627092156532](/images/machine_learning/image-20260627092156532.png)
 
 Logistic regression is actually also about finding this hyperplane.
 
@@ -836,7 +840,7 @@ We have already found this function, i.e., we have found this hyperplane.
 
 Suppose in classification, the positive sample points have label value 1 and the negative sample points have label value 0. How do we convert the function value into the classification label value [0,1]?
 
-![image-20260627155159509](assets/image-20260627155159509.png)
+![image-20260627155159509](/images/machine_learning/image-20260627155159509.png)
 
 **Logistic regression = sigmoid function + linear regression**
 

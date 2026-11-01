@@ -1,8 +1,12 @@
+---
+description: "Magic Functions. In Python classes, there are some special methods, all in the __method__ format. These methods have special meanings internally. Next,"
+---
+
 # Magic Functions
 
 In Python classes, there are some special methods, all in the `__method__` format. These methods have special meanings internally. Next, let's talk about some common special members:
 
-# String Representation
+## String Representation
 
 - `__repr__`: controls what this function returns for its instances.
 
@@ -70,7 +74,7 @@ In Python classes, there are some special methods, all in the `__method__` forma
   
 
 
-# Collections and Sequences
+## Collections and Sequences
 
 - `__len()__`: returns the specified length.
 
@@ -147,7 +151,7 @@ In Python classes, there are some special methods, all in the `__method__` forma
 
   In the above code, after we implement the `__getitem__` method, slicing a `Group` object still yields a `Group` object.
 
-  ![image-20240512141204008](assets/image-20240512141204008.png)
+  ![image-20240512141204008](/images/python/supplement/image-20240512141204008.png)
 
 - `__contains__`: used to determine whether a whole contains a part.
 
@@ -157,13 +161,13 @@ In Python classes, there are some special methods, all in the `__method__` forma
 
   We can also define a custom `__contains__` method in a class.
 
-  ![image-20240512142748816](assets/image-20240512142748816.png)
+  ![image-20240512142748816](/images/python/supplement/image-20240512142748816.png)
 
 - `__reversed__`: by overriding this method, we can customize the ordering operation on elements.
 
   If we call the `reversed()` function, Python internally executes the `__reverse__` method.
 
-  ![image-20240512143557499](assets/image-20240512143557499.png)
+  ![image-20240512143557499](/images/python/supplement/image-20240512143557499.png)
 
 ### Callable
 
@@ -282,7 +286,7 @@ In Python classes, there are some special methods, all in the `__method__` forma
   ```
 
 
-![image-20240516140920103](assets/image-20240516140920103.png)
+![image-20240516140920103](/images/python/supplement/image-20240516140920103.png)
 
 ### Attribute-Related
 
@@ -290,13 +294,13 @@ In Python classes, there are some special methods, all in the `__method__` forma
 
   `__setattr__`
 
-  ![image-20240516131118212](assets/image-20240516131118212.png)
+  ![image-20240516131118212](/images/python/supplement/image-20240516131118212.png)
 
 - `__getattribute__`: when this method is defined, it is called whenever any attribute or variable of the class is accessed, whether or not it is defined, and the return value of this method is returned.
 
   `__setattribute__`
 
-  ![image-20240516131547492](assets/image-20240516131547492.png)
+  ![image-20240516131547492](/images/python/supplement/image-20240516131547492.png)
 
 - `__dir__`
 
@@ -312,7 +316,7 @@ In Python classes, there are some special methods, all in the `__method__` forma
 
   For example:
 
-  ![image-20240516133218316](assets/image-20240516133218316.png)
+  ![image-20240516133218316](/images/python/supplement/image-20240516133218316.png)
   
   When a class only defines the `__get__` method, the descriptor is called a **non-data descriptor**.
   

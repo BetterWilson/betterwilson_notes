@@ -1,3 +1,7 @@
+---
+description: "Linux命令(Ubuntu)。新系统下，root用户无密码，使用sudo passwd root为root用户添加密码= sudo权限提升：使用时，身份由普通用户 -> root 切换用户：su 【用户名】，不添加用户名，"
+---
+
 # Linux命令
 
 ## 用户配置
@@ -13,7 +17,7 @@
 
 root用户退出：`exit`
 
-![image-20260619101411708](assets/image-20260619101411708.png)
+![image-20260619101411708](/images/linux/image-20260619101411708.png)
 
 
 
@@ -35,7 +39,7 @@ root用户退出：`exit`
 
 `sudo userdel -r user1`
 
-![image-20260619103053448](assets/image-20260619103053448.png)
+![image-20260619103053448](/images/linux/image-20260619103053448.png)
 
 ## 目录及文件操作
 
@@ -102,7 +106,7 @@ Linux不以后缀来区分文件类型，后面的9个字符表示文件的访�
 
 ### 显示目录结构
 
-![image-20260619113753231](assets/image-20260619113753231.png)
+![image-20260619113753231](/images/linux/image-20260619113753231.png)
 
 ### 改变目录或文件权限
 

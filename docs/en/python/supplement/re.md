@@ -1,3 +1,7 @@
+---
+description: "re Regular Expressions. re.match(pattern,text,flags=0) Matches from the beginning of the string; it only verifies whether the \"beginning matches the rule\"."
+---
+
 # re regular expressions
 
 ## match

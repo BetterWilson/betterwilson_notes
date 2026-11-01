@@ -1,3 +1,7 @@
+---
+description: "Python连接Redis集群"
+---
+
 # Python连接Redis集群
 
 ```python

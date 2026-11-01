@@ -1,4 +1,8 @@
-## MySQL8.0安装(centos7)
+---
+description: "MySQL8.0安装(centos7)。把可能遗留的mariadb卸载掉，然后在下载libaio-devel依赖库，防止后续出现报错。 官网链接 下载到本地，传到云服务器上 注：如果输入mysql -V没有返回版本号，"
+---
+
+# MySQL8.0安装(centos7)
 
 ## 0 安装前的准备
 

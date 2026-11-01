@@ -1,3 +1,7 @@
+---
+description: "vue知识点。引入js文件后需要对相应的代码块（如一个div块）进行注册： 此时代表一个vue项目构建完成，但是这样显得构建项目比较麻烦，"
+---
+
 # Vue知识点
 
 ## 创建vue项目：
@@ -31,25 +35,25 @@
   
   指令`npm create vue@latest`
   
-  ![image-20240920114432624](assets/image-20240920114432624.png)
+  ![image-20240920114432624](/images/vue/image-20240920114432624.png)
   
   其中关于Vue Router,Pinia,ESLint在后续代码开发时都会使用到，这里先暂不安装
   
   使用webstorm打开项目后，需要执行`npm install`安装项目依赖
   
-  ![image-20240920114744555](assets/image-20240920114744555.png)
+  ![image-20240920114744555](/images/vue/image-20240920114744555.png)
   
   安装后执行`npm run dev`即可看到安装完成
   
-  ![image-20240920120301866](assets/image-20240920120301866.png)
+  ![image-20240920120301866](/images/vue/image-20240920120301866.png)
   
   也可以通过webstorm直接使用vite创建项目：
   
-  ![image-20240920121629889](assets/image-20240920121629889.png)
+  ![image-20240920121629889](/images/vue/image-20240920121629889.png)
   
   关于使用vite安装环境后的文件说明：
   
-  ![image-20240920123233369](assets/image-20240920123233369.png)后续进行项目部署时，只需要执行`npm run build`就可以将项目中的所有代码编译成html,js,css等文件，可直接放到服务器上
+  ![image-20240920123233369](/images/vue/image-20240920123233369.png)后续进行项目部署时，只需要执行`npm run build`就可以将项目中的所有代码编译成html,js,css等文件，可直接放到服务器上
   
   
 
@@ -294,7 +298,7 @@ vue中也提供了简便方法，我们可以将setup写在`<script>`中，这�
   </html>
   ```
 
-  ![image-20240811095335118](assets/image-20240811095335118.png)
+  ![image-20240811095335118](/images/vue/image-20240811095335118.png)
 
   我们可以将需要的部分vue包从vue中提取出来，这样下面书写时就不需要添加`Vue.`
 
@@ -342,7 +346,7 @@ var是指变量，const是指常量；变量可以被修改，而常量不可以
 
 特别的，当我们使用const定义一个字典时，如果要把这个字典换成另一个字典，这个肯定不行，但是如果只是将字典中的某些键值对进行更改，那是可行的
 
-![image-20240726143453825](assets/image-20240726143453825.png)
+![image-20240726143453825](/images/vue/image-20240726143453825.png)
 
 ## 响应式基础（只针对组合式API）
 
@@ -517,7 +521,7 @@ vue中，常量和变量是不支持修改的，我们需要修改，有两种�
 </html>
 ```
 
-![image-20240916090904811](assets/image-20240916090904811.png)
+![image-20240916090904811](/images/vue/image-20240916090904811.png)
 
 ## v-model指令
 
@@ -727,7 +731,7 @@ v-on用于表示事件相关的指令，也可以简写
 
 ## 生命周期
 
-![](assets/lifecycle_zh-CN.W0MNXI0C.png)
+![](/images/vue/lifecycle_zh-CN.W0MNXI0C.png)
 
 官网链接[组合式 API：生命周期钩子 | Vue.js (vuejs.org)](https://cn.vuejs.org/api/composition-api-lifecycle.html#composition-api-lifecycle-hooks)
 

@@ -1,3 +1,7 @@
+---
+description: "Django-signal Component. Django 4.2 signals official docs: Django has a \"signal dispatcher\". It is essentially the observer pattern, also known as Publish/Subscribe. When some action occurs,"
+---
+
 # Django-signal component
 
 Django 4.2 signals official docs: https://docs.djangoproject.com/en/4.2/ref/signals/#signals
@@ -121,11 +125,11 @@ Database Wrappers
       return HttpResponse("OK")
   ```
 
-![image-20240519092650759](assets/image-20240519092650759.png)
+![image-20240519092650759](/images/django/image-20240519092650759.png)
 
 Of course, if we print out `args` and `kwargs`, we can see that both signals are triggered by the `UserInfo` table.
 
-![image-20240519093115406](assets/image-20240519093115406.png)
+![image-20240519093115406](/images/django/image-20240519093115406.png)
 
 ### Usage 2: using a decorator
 
@@ -154,7 +158,7 @@ def demo(request):
     return HttpResponse("OK")
 ```
 
-![image-20240519093455450](assets/image-20240519093455450.png)
+![image-20240519093455450](/images/django/image-20240519093455450.png)
 
 ##### Note on where signals are defined
 
@@ -423,14 +427,14 @@ post_delete_callback {'signal': <django.db.models.signals.ModelSignal object at 
 
 After we run `python manage.py makemigrations` and `python manage.py migrate`, two tables with data are automatically created: `django_content_type` and `auth_permission`.
 
-![image-20240519095757844](assets/image-20240519095757844.png)
+![image-20240519095757844](/images/django/image-20240519095757844.png)
 
 The implementation principle is that when Django starts, functions are registered on the `post_migrate` signal. When we run `python manage.py migrate`, Django not only creates tables based on the `migrations` folder configuration in the registered apps, but also executes the functions registered on the `post_migrate` signal to insert data into the `django_content_type` and `auth_permission` tables.
 
 We can find the source code in the Django-auth component:
 
-![image-20240519100413069](assets/image-20240519100413069.png)
+![image-20240519100413069](/images/django/image-20240519100413069.png)
 
 Flowchart:
 
-![image-20240519101823131](assets/image-20240519101823131.png)
+![image-20240519101823131](/images/django/image-20240519101823131.png)

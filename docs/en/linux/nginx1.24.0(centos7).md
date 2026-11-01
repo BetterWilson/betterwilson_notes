@@ -1,3 +1,7 @@
+---
+description: "Nginx 1.24.0 Installation (CentOS 7). Go to this link: Note: nginx's extraction directory and compilation directory cannot be the same folder. When there are no errors: Next,"
+---
+
 # Nginx 1.24.0 Installation (CentOS 7)
 
 ## 0 Download Dependencies
@@ -19,7 +23,7 @@ yum -y install gcc gcc-c++ pcre pcre-devel  zlib zlib-devel openssl openssl-deve
 
 Go to this link: <https://nginx.org/en/download.html>
 
-![image-20231118220457668](assets/image-20231118220457668.png)
+![image-20231118220457668](/images/linux/image-20231118220457668.png)
 
 ```bash
 cd /opt
@@ -121,7 +125,7 @@ root      39444  73894  0 22:37 pts/1    00:00:00 grep --color=auto nginx
 
 You can see it by visiting your IP address directly in the browser:
 
-![image-20231118224049201](assets/image-20231118224049201.png)
+![image-20231118224049201](/images/linux/image-20231118224049201.png)
 
 If you want to be able to start nginx by typing `nginx` from any directory, you also need to configure nginx's environment variables.
 

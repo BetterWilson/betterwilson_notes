@@ -1,3 +1,7 @@
+---
+description: "Redis哨兵Sentinel。Redis Sentinel 是一个分布式系统， 你可以在一个架构中运行多个 Sentinel 进程（progress），"
+---
+
 # Redis哨兵Sentinel
 
 哨兵主要解决主从复制的问题：
@@ -23,7 +27,7 @@ Redis Sentinel 是一个分布式系统， 你可以在一个架构中运行多�
 
 我这里准备3台centos7服务器，硬件一致，Redis版本都是5.0.7
 
-![image-20240317101848518](assets/image-20240317101848518.png)
+![image-20240317101848518](/images/redis/image-20240317101848518.png)
 
 **端口规划**
 

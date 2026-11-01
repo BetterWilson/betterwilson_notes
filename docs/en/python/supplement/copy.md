@@ -1,3 +1,7 @@
+---
+description: "Deep Copy vs Shallow Copy. For mutable data types, b = a makes a and b point to the same data space, and the addresses of a and b are the same."
+---
+
 # Deep copy vs. shallow copy
 
 ## Assignment and copy

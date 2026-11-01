@@ -1,3 +1,7 @@
+---
+description: "Project Deployment. Note: deploy the backend first, use postman to test that the requests work, and only then modify the baseURL in the axios file in vue. Don't mix up the order."
+---
+
 # Deploying a Frontend/Backend Separated Project
 
 ```
@@ -15,17 +19,17 @@ Django + vue + uwsgi + nginx
 
 ### 1 Set Up the Server Security Group Ports
 
-![image-20240327194311322](assets\image-20240327194311322.png)
+![image-20240327194311322](/images/linux/image-20240327194311322.png)
 
 ### 2 Configure Server Domain Resolution
 
-![image-20240327183117979](assets\image-20240327183117979.png)
+![image-20240327183117979](/images/linux/image-20240327183117979.png)
 
 ### 3 Apply for the SSL Certificate
 
-![image-20240327183634817](assets\image-20240327183634817.png)
+![image-20240327183634817](/images/linux/image-20240327183634817.png)
 
-![image-20240327183916816](assets\image-20240327183916816.png)
+![image-20240327183916816](/images/linux/image-20240327183916816.png)
 
 ```
 It will be approved shortly after application; download the certificate in nginx format for later use
@@ -44,7 +48,7 @@ Project layout:
 - All `ssl` certificates are also uploaded to the `/od/` folder and extracted there; each `ssl` certificate has its own separate folder
 - The `python` virtual environment is placed in the `/od/backend/` folder, at the same level as the project root; the `uwsgi` startup script is placed in the `/od/backend/script/` folder; log files are placed in the `/od/backend/log/` folder
 
-![image-20240327185736072](assets\image-20240327185736072.png)
+![image-20240327185736072](/images/linux/image-20240327185736072.png)
 
 
 
@@ -52,7 +56,7 @@ Project layout:
 
 In the Django project's `settings.py`, change `DEBUG` to `True` and set `ALLOWED_HOSTS` to `["*"]`.
 
-![image-20240327194957533](assets\image-20240327194957533.png)
+![image-20240327194957533](/images/linux/image-20240327194957533.png)
 
 ```bash
 # Project directory planning
@@ -119,7 +123,7 @@ cd /od/backend/dahe/
 python3 manage.py  runserver 0.0.0.0:8000
 ```
 
-![image-20240327190111409](assets\image-20240327190111409.png)
+![image-20240327190111409](/images/linux/image-20240327190111409.png)
 
 Here you can use `postman` to send requests to the backend API and check whether you get the correct return values.
 
@@ -202,13 +206,13 @@ Configuration process:
 - It is recommended to directly delete all the original content in `nginx.conf` and copy in the edited content after preparing it locally.
 - Below, the nginx deployment of a frontend/backend separated project is used as an example; pure frontend projects are similar.
 
-![image-20240327192722530](assets\image-20240327192722530.png)
+![image-20240327192722530](/images/linux/image-20240327192722530.png)
 
 After the backend project is deployed, we need to run postman tests again.
 
 Because we have configured `HTTPS` and `uwsgi`, the URL for our postman tests needs to be changed to our domain name.
 
-![image-20240327192943689](assets\image-20240327192943689.png)
+![image-20240327192943689](/images/linux/image-20240327192943689.png)
 
 Once the tests pass here, we can proceed with the frontend configuration.
 
@@ -218,7 +222,7 @@ Once the tests pass here, we can proceed with the frontend configuration.
 
 **Note: change `baseURL` to the address we tested in postman above; this is very important, don't forget**
 
-![image-20240327193259203](assets\image-20240327193259203.png)
+![image-20240327193259203](/images/linux/image-20240327193259203.png)
 
 ### 2 Build the Project
 
@@ -232,7 +236,7 @@ Upload the zip to a designated location on the cloud server. I upload mine to th
 
 ### 3 Add the Frontend Module in the nginx Configuration File
 
-![image-20240327192330206](assets\image-20240327192330206.png)After adding it, reload the configuration file (restart nginx)
+![image-20240327192330206](/images/linux/image-20240327192330206.png)After adding it, reload the configuration file (restart nginx)
 
 ```
 nginx -s reload
@@ -394,4 +398,4 @@ http {
 
 After deployment and testing are complete, close the MySQL and Redis ports on the cloud server to improve its security.
 
-![image-20240327194546837](assets\image-20240327194546837.png)
+![image-20240327194546837](/images/linux/image-20240327194546837.png)

@@ -1,3 +1,7 @@
+---
+description: "卷积神经网络CNN3。SGD原理： 与传统的梯度下降（Batch Gradient Descent，每次用全部数据计算梯度）不同，严格意义上的 SGD 每次只使用一个样本来计算梯度，因此具有随机性。但在实际使用中，"
+---
+
 # 卷积神经网络CNN3
 
 ## 优化器
@@ -242,7 +246,7 @@ plt.grid(True, alpha=0.3)
 plt.show()
 ```
 
-![不同优化器在 f(w)=w² 上的收敛对比（初始 w=3）](assets/optimizer-comparison.png)
+![不同优化器在 f(w)=w² 上的收敛对比（初始 w=3）](/images/deep_learning/optimizer-comparison.png)
 
 观察结论：
 
@@ -261,7 +265,7 @@ plt.show()
 
 ## 优化器对比
 
-![image-20260725161044326](assets/image-20260725161044326.png)
+![image-20260725161044326](/images/deep_learning/image-20260725161044326.png)
 
 ### Adagrad（Adaptive Gradient Algorithm）：
 
@@ -287,7 +291,7 @@ plt.show()
 
 K是一个系数，t是迭代次数（**注意：t 是 iteration（迭代次数），不是 epoch！** 一个 epoch 包含多次 iteration。例如 10000 张训练图片、batch_size=64，则 1 个 epoch ≈ 157 次 iteration）。学习率调度通常按 iteration 来调整，因为每一步参数更新（iteration）后都可以改变学习率。
 
-![image-20260725170126307](assets/image-20260725170126307.png)
+![image-20260725170126307](/images/deep_learning/image-20260725170126307.png)
 
 ### 经验
 
@@ -433,7 +437,7 @@ K是一个系数，t是迭代次数（**注意：t 是 iteration（迭代次数�
 
 ## 常见问题
 
-![image-20260725173513982](assets/image-20260725173513982.png)
+![image-20260725173513982](/images/deep_learning/image-20260725173513982.png)
 
 - **第一个图（损失剧烈震荡）：** 原因可能是学习率过大，导致参数更新步长太大，在最优解附近来回跳跃而无法收敛。解决方法：降低学习率。
 

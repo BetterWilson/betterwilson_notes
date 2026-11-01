@@ -1,6 +1,7 @@
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
+description: "BetterWilson's personal engineering notes: in-depth write-ups and worked examples across Python, Django, DRF, Vue, Redis, Linux, machine learning, and deep learning."
 
 hero:
   name: "Welcome BetterWilson"

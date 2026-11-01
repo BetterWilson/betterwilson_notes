@@ -1,3 +1,7 @@
+---
+description: "Project Preparation. Covers: 1 Backup the database from MySQL, 2 Local project package dependencies, 3 Open the cloud server security group."
+---
+
 # Local Project Preparation
 
 ## 1 Backup the database from MySQL
@@ -19,8 +23,8 @@ pip freeze > requirements.txt
 
 
 
-# Online Project Preparation
+## Online Project Preparation
 
 ## 3 Open the cloud server security group
 
-![image-20240215230155324](assets\image-20240215230155324.png)
+![image-20240215230155324](/images/linux/image-20240215230155324.png)

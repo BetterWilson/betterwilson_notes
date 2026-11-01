@@ -1,4 +1,8 @@
-## The relationship between is and ==
+---
+description: "is vs ==. is determines whether two variables refer to the same memory address, that is, it checks via the id() function. == determines whether the values of two variables are the same."
+---
+
+# The relationship between is and ==
 
 `is` determines whether two variables refer to the same memory address, that is, it checks via the `id()` function.
 

@@ -1,8 +1,12 @@
+---
+description: "DRF Authentication, Permissions, Throttling, Versioning. With CBV, you can easily distinguish the two methods via GET and POST. In fact,"
+---
+
 # DRF Authentication, Permissions, Throttling, and Versioning
 
 ## 1. Frontend-Backend Separation
 
-![image-20220903102113338](assets/image-20220903102113338.png)
+![image-20220903102113338](/images/drf/image-20220903102113338.png)
 
 
 
@@ -123,13 +127,13 @@ class UserView(APIView):
 
 #### 3.1.4 DRF Request Entry Analysis
 
-![image-20240501153451481](assets/image-20240501153451481.png)
+![image-20240501153451481](/images/drf/image-20240501153451481.png)
 
 ### 3.2 Request and Parameters
 
 The `request` in DRF is different from the `request` in Django; in fact, it re-wraps Django's request object.
 
-![image-20240501121218606](assets/image-20240501121218606.png)
+![image-20240501121218606](/images/drf/image-20240501121218606.png)
 
 As you can see, in Django the request is a `WSGIRequest` object, while in DRF the request is a `rest_framework.request.Request` object.
 
@@ -137,11 +141,11 @@ As you can see, in Django the request is a `WSGIRequest` object, while in DRF th
 
 - For plain routes, you can access the parameters passed in the request route via `self.kwargs`.
 
-  ![image-20240501121814393](assets/image-20240501121814393.png)
+  ![image-20240501121814393](/images/drf/image-20240501121814393.png)
 
 - For routes containing regular expressions, you can access the route parameters via `self.args`.
 
-  ![image-20240501122300016](assets/image-20240501122300016.png)
+  ![image-20240501122300016](/images/drf/image-20240501122300016.png)
 
 #### 3.2.2 The request Object
 
@@ -149,21 +153,21 @@ As you can see, in Django the request is a `WSGIRequest` object, while in DRF th
 
 At the routing entry point `dispatch`, there is a function `initialize_request(request, *args, **kwargs)`.
 
-![image-20240501123746747](assets/image-20240501123746747.png)
+![image-20240501123746747](/images/drf/image-20240501123746747.png)
 
 Now let's look at what the function `initialize_request(request, *args, **kwargs)` actually does.
 
 This function takes the original Django request as a parameter and returns a `Request` object as well.
 
-![image-20240501124034380](assets/image-20240501124034380.png)
+![image-20240501124034380](/images/drf/image-20240501124034380.png)
 
 In the source code of the `Request` object, the original Django `request` is assigned to `_request`.
 
-![image-20240501124519485](assets/image-20240501124519485.png)
+![image-20240501124519485](/images/drf/image-20240501124519485.png)
 
 Additionally, there is a `__getattr__` method in the source code. Its purpose is: when you access a variable that does not exist in the class, this `__getattr__` method is invoked and its return value is used.
 
-![image-20240501124701677](assets/image-20240501124701677.png)
+![image-20240501124701677](/images/drf/image-20240501124701677.png)
 
 In other words, you can access values inside the original Django request object via `request._request.xxx`.
 
@@ -173,13 +177,13 @@ The principle behind `request.xxx` getting a value from the Django request objec
 
 Flowchart:
 
-![image-20210819150601089](assets/image-20210819150601089.png)
+![image-20210819150601089](/images/drf/image-20210819150601089.png)
 
 
 
 ##### 2. Getting Values from the request Object
 
-![image-20240501125645869](assets/image-20240501125645869.png)
+![image-20240501125645869](/images/drf/image-20240501125645869.png)
 
 
 
@@ -209,11 +213,11 @@ If you want anonymous users to be able to access views as well, you can configur
 
 - Set it to `None`.
 
-  ![image-20240501140713358](assets/image-20240501140713358.png)
+  ![image-20240501140713358](/images/drf/image-20240501140713358.png)
 
 - Besides defining it as `None`, you can also define it as a function; `request.user` and `request.auth` will then correspond to the return values of the two functions respectively.
 
-  ![image-20240501141250592](assets/image-20240501141250592.png)
+  ![image-20240501141250592](/images/drf/image-20240501141250592.png)
 
 
 
@@ -221,7 +225,7 @@ If you want anonymous users to be able to access views as well, you can configur
 
 `authentication_classes` is a list, so multiple authentication components can be applied at once.
 
-![image-20240501133058471](assets/image-20240501133058471.png)
+![image-20240501133058471](/images/drf/image-20240501133058471.png)
 
 
 
@@ -229,7 +233,7 @@ If you want anonymous users to be able to access views as well, you can configur
 
 In this case, you need to use DRF's global configuration. **(The authentication component class cannot be placed in the view's `view.py`, because importing `APIView` would cause a circular reference.)**
 
-![image-20240501133711825](assets/image-20240501133711825.png)
+![image-20240501133711825](/images/drf/image-20240501133711825.png)
 
 
 
@@ -239,7 +243,7 @@ In DRF, by default, it first reads from the global configuration, then from the 
 
 We can set the `authentication_classes` list of a specific view class to be empty.
 
-![image-20240501134846789](assets/image-20240501134846789.png)
+![image-20240501134846789](/images/drf/image-20240501134846789.png)
 
 
 
@@ -247,7 +251,7 @@ We can set the `authentication_classes` list of a specific view class to be empt
 
 
 
-![image-20240501162055511](assets/image-20240501162055511.png)
+![image-20240501162055511](/images/drf/image-20240501162055511.png)
 
 ### 3.4 Permissions
 
@@ -260,11 +264,11 @@ The configuration of the permission component is similar to the authentication c
 
 #### 3.4.1 Single-View Usage
 
-![image-20240501154905696](assets/image-20240501154905696.png)
+![image-20240501154905696](/images/drf/image-20240501154905696.png)
 
 #### 3.4.2 Multi-View Usage
 
-![image-20240501155055984](assets/image-20240501155055984.png)
+![image-20240501155055984](/images/drf/image-20240501155055984.png)
 
 #### 3.4.3 Combining Single-View and Multi-View
 
@@ -272,7 +276,7 @@ In DRF, by default, it first reads from the global configuration, then from the 
 
 We can set the `authentication_classes` list of a specific view class to be empty.
 
-![image-20240501155423437](assets/image-20240501155423437.png)
+![image-20240501155423437](/images/drf/image-20240501155423437.png)
 
 #### 3.4.4 Relationships Among Multiple Permission Components
 
@@ -326,7 +330,7 @@ class DemoView(APIView):
 
 #### 3.4.5 Source Code Analysis
 
-![image-20240501164709247](assets/image-20240501164709247.png)
+![image-20240501164709247](/images/drf/image-20240501164709247.png)
 
 #### Thought Question 1: Customizing the request Object
 
@@ -367,7 +371,7 @@ Throttling limits the frequency of user access. For example: a user can access a
 - For anonymous users, use the user's IP as the unique identifier.
 - For logged-in users, use the user's primary key, user ID, or name as the unique identifier.
 
-![image-20240502091541849](assets/image-20240502091541849.png)
+![image-20240502091541849](/images/drf/image-20240502091541849.png)
 
 
 
@@ -381,15 +385,15 @@ Throttling limits the frequency of user access. For example: a user can access a
 
 #### 3.5.1 Single-View Usage
 
-![image-20240502090507786](assets/image-20240502090507786.png)
+![image-20240502090507786](/images/drf/image-20240502090507786.png)
 
 #### 3.5.2 Multi-View Usage
 
-![image-20240502104742468](assets/image-20240502104742468.png)
+![image-20240502104742468](/images/drf/image-20240502104742468.png)
 
 #### 3.5.3 Combining Single-View and Multi-View
 
-![image-20240502104821087](assets/image-20240502104821087.png)
+![image-20240502104821087](/images/drf/image-20240502104821087.png)
 
 
 
@@ -397,15 +401,15 @@ Throttling limits the frequency of user access. For example: a user can access a
 
 - Based on the throttle classes provided by DRF
 
-  ![image-20240502091925735](assets/image-20240502091925735.png)
+  ![image-20240502091925735](/images/drf/image-20240502091925735.png)
 
 - Source code analysis of the throttle classes provided by DRF
 
-  ![image-20240502102914790](assets/image-20240502102914790.png)
+  ![image-20240502102914790](/images/drf/image-20240502102914790.png)
 
 #### 3.5.5 Source Code Analysis
 
-![image-20240502104319930](assets/image-20240502104319930.png)
+![image-20240502104319930](/images/drf/image-20240502104319930.png)
 
 **Global Configuration**
 
@@ -433,7 +437,7 @@ from rest_framework.versioning import QueryParameterVersioning
 
 - Single-View Usage
 
-  ![image-20240502105555121](assets/image-20240502105555121.png)
+  ![image-20240502105555121](/images/drf/image-20240502105555121.png)
 
 - Multi-View Usage
 
@@ -448,11 +452,11 @@ from rest_framework.versioning import QueryParameterVersioning
   }
   ```
 
-  ![image-20240502105901409](assets/image-20240502105901409.png)
+  ![image-20240502105901409](/images/drf/image-20240502105901409.png)
 
 Source code execution flow:
 
-![image-20210820105543193](assets/image-20210820105543193.png)
+![image-20210820105543193](/images/drf/image-20210820105543193.png)
 
 
 
@@ -464,7 +468,7 @@ Source code execution flow:
 from rest_framework.versioning import URLPathVersioning
 ```
 
-![image-20240502110650845](assets/image-20240502110650845.png)
+![image-20240502110650845](/images/drf/image-20240502110650845.png)
 
 
 
@@ -474,11 +478,11 @@ from rest_framework.versioning import URLPathVersioning
 from rest_framework.versioning import AcceptHeaderVersioning
 ````
 
-![image-20240502110937054](assets/image-20240502110937054.png)
+![image-20240502110937054](/images/drf/image-20240502110937054.png)
 
 #### 3.6.4 Source Code Analysis
 
-![image-20240502113926511](assets/image-20240502113926511.png)
+![image-20240502113926511](/images/drf/image-20240502113926511.png)
 
 
 
@@ -486,6 +490,6 @@ from rest_framework.versioning import AcceptHeaderVersioning
 
 Each versioning class also defines a `reverse` method, which is used to reverse-generate a URL and carry the relevant version information. For example:
 
-![image-20210820105543193](assets/image-20210820105543193-3386187.png)
+![image-20210820105543193](/images/drf/image-20210820105543193-3386187.png)
 
-![image-20210820112152615](assets/image-20210820112152615.png)
+![image-20210820112152615](/images/drf/image-20210820112152615.png)

@@ -1,3 +1,7 @@
+---
+description: "Manager Objects in Models. When we perform ORM CRUD operations, we usually write: But sometimes we need to customize some operations to implement a certain feature, for example In that case,"
+---
+
 # Manager objects in models
 
 When we perform ORM CRUD operations, we usually write:

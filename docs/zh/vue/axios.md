@@ -1,3 +1,7 @@
+---
+description: "vue-axios。npm install axios 新建plugins/axios.js"
+---
+
 # axios组件
 
 ## 安装与配置

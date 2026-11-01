@@ -1,3 +1,7 @@
+---
+description: "卷积神经网络CNN2。AlexNet是由Alex Krizhevsky、Ilya Sutskever和Geoffrey Hinton在2012年提出的一种深度卷积神经网络结构，被广泛认为是深度学习领域的重要突破之一。其中，"
+---
+
 # 卷积神经网络CNN2
 
 ## [AlexNet](https://docs.pytorch.org/vision/main/models/generated/torchvision.models.alexnet.html)
@@ -8,7 +12,7 @@ AlexNet是由Alex Krizhevsky、Ilya Sutskever和Geoffrey Hinton在2012年提出�
 
 Sutskever于2012年与Alex Krizhevsky和Geoffrey Hinton一起提出了AlexNet，这是一种深度卷积神经网络结构，引领了计算机视觉和深度学习的发展方向。他还在序列建模领域做出了突出的工作，如提出了 **Seq2Seq** 模型，极大地提高了机器翻译的准确性与效率。
 
-![image-20260720194136065](assets/image-20260720194136065.png)
+![image-20260720194136065](/images/deep_learning/image-20260720194136065.png)
 
 ### 网络架构的特点
 
@@ -163,7 +167,7 @@ VGG是由牛津大学Visual Geometry Group的Karen Simonyan和Andrew Zisserman�
 
 Karen Simonyan和Andrew Zisserman都是英国知名的计算机视觉科学家，在图像分类、物体检测、人脸识别等领域做出了许多重要贡献。他们在VGG中使用了小尺寸的卷积核和多个同样大小的卷积层堆叠，通过增加网络深度来提高特征表达的能力，最终将输入图像映射到类别概率上。VGG在当时的ImageNet挑战赛上取得了很好的成绩，被视为深度学习模型设计的经典案例之一。
 
-![image-20260720201149618](assets/image-20260720201149618.png)
+![image-20260720201149618](/images/deep_learning/image-20260720201149618.png)
 
 ### 网络结构特点
 
@@ -249,7 +253,7 @@ VGG19相较于VGG16，增加了3个额外的卷积层，具有更深的网络结
 
 除了卷积核数量和层数的不同，VGG16和VGG19的网络结构是非常相似的。这种简单规整的结构使得VGG模型易于理解和实现，并为深度学习的研究和应用提供了基础。然而，由于其较深的结构，VGG模型在训练和推理过程中较慢，后续的一些模型如ResNet和 Inception等则采取了更高效的结构。
 
-![image-20260720201149618](assets/image-20260720201149618.png)
+![image-20260720201149618](/images/deep_learning/image-20260720201149618.png)
 
 - 从11层（没有参数的层不算）增至19层
 
@@ -314,7 +318,7 @@ ResNet是由微软亚洲研究院的何凯明（Kaiming He）和他的团队在2
 
 模型深度达到某个程度后继续加深，反而会导致**训练集**准确率下降。下图是 **56 层和 20 层普通网络（plain network）在 CIFAR-10 上的对比效果图**：
 
-![image-20260722211712570](assets/image-20260722211712570.png)
+![image-20260722211712570](/images/deep_learning/image-20260722211712570.png)
 
 **注意：** 并不是过拟合，因为**训练集**的 error 也很高（过拟合的典型特征是训练误差低、测试误差高，这里训练误差本身就高）。真正的原因是较深的网络**比较难优化（收敛）**。
 
@@ -333,12 +337,12 @@ ResNet是由微软亚洲研究院的何凯明（Kaiming He）和他的团队在2
 
 **残差网络的做法：**
 
-![residual_networks](assets/residual_networks.png)
+![residual_networks](/images/deep_learning/residual_networks.png)
 
 数学表达：
 $$H(x) = F(x) + x$$
 
-![image-20260722212002020](assets/image-20260722212002020.png)
+![image-20260722212002020](/images/deep_learning/image-20260722212002020.png)
 
 > **上图解读（残差块 Residual Block）**：输入 $x$ 兵分两路——一路经过两层权重层（通常是卷积层）和 ReLU，学习出**残差映射** $F(x)$；另一路通过一条**捷径连接（shortcut / identity mapping）** 原封不动地跳过这些权重层。两路在末端相加得到 $F(x)+x$，再过一次 ReLU 作为输出。正因为多了这条"什么都不做"的捷径，网络只需学习输入与目标之间的**差值（残差）**，而不必从头学习整个复杂映射，从而缓解了深层网络的梯度消失和退化问题。
 
@@ -464,14 +468,14 @@ $$\mathbf{y} = \mathcal{F}(\mathbf{x}, \{W_i\}) + \mathbf{x}$$
 
 **BasicBlock（基础残差块）—— ResNet-18/34 使用：**
 
-![BasicBlock](assets/BasicBlock.png)
+![BasicBlock](/images/deep_learning/BasicBlock.png)
 
 - 两个 3×3 卷积，通道数不变
 - 当需要改变维度时（stride=2 或通道数变化），跳跃连接通过 1×1 卷积做投影（projection shortcut）
 
 **Bottleneck（瓶颈残差块）—— ResNet-50/101/152 使用：**
 
-![Bottleneck](assets/Bottleneck.png)
+![Bottleneck](/images/deep_learning/Bottleneck.png)
 
 - **为什么叫"瓶颈"？** 先用 1×1 卷积把通道压缩（256→64），在低维度做 3×3 卷积（省钱），再用 1×1 恢复（64→256）
 - **参数对比**（输入输出均为 256 通道）：
@@ -704,7 +708,7 @@ print("eval 两次结果相同（确定性）:",
 
 **整体数据流（以 ResNet-50 为例）：**
 
-![ResNet-50](assets/ResNet-50.png)
+![ResNet-50](/images/deep_learning/ResNet-50.png)
 
 **关键观察：**
 - ResNet 只有**一个全连接层**（2048 → 1000），而 AlexNet/VGG 有三层 4096 的 FC。这是因为 ResNet 把"特征提取"的工作全部交给了卷积层（通过残差连接可以堆到 152 层），最后的 FC 只做简单的分类
@@ -718,7 +722,7 @@ print("eval 两次结果相同（确定性）:",
 
 #### 五个 ResNet 版本的配置对比
 
-![image-20260722212338297](assets/image-20260722212338297.png)
+![image-20260722212338297](/images/deep_learning/image-20260722212338297.png)
 
 这张图（ResNet 原论文 Table 1）对比了五个 ResNet 版本的**残差块数量**和**卷积核配置**。下面把它整理成文字表格：
 
@@ -807,7 +811,7 @@ print(f"自适应池化: {x.shape} → {out_adapt.shape}")  # [1,64,56,56] → [
 
 #### VGG-19 vs Plain-34 vs ResNet-34 结构对比
 
-![image-20260722222223804](assets/image-20260722222223804.png)
+![image-20260722222223804](/images/deep_learning/image-20260722222223804.png)
 
 **左：VGG-19（2014年）**
 
@@ -955,7 +959,7 @@ InceptionNet V3的成功推动了图像识别和计算机视觉领域的发展�
 
 - 256到480通道，就是64(1×1通道）+128(3×3通道）+32(5×5通道）+256=480
 
-![Inception_module](assets/image-20260725103132325.png)
+![Inception_module](/images/deep_learning/image-20260725103132325.png)
 
 > **上图解读（Naive Inception 模块）**：输入分别通过 1×1 卷积、3×3 卷积、5×5 卷积、3×3 最大池化四条并行路径，各自提取不同尺度的特征，最后在通道维度上**拼接（concatenate）**。但这会带来计算量爆炸——尤其是 3×3 和 5×5 卷积直接作用在高维输入上。因此 Inception V1 在 3×3 和 5×5 卷积前**增加了 1×1 卷积 bottleneck**（图中未画出，见下方"带降维的 Inception 模块"），先压缩通道再做大核卷积，大幅降低计算量。
 

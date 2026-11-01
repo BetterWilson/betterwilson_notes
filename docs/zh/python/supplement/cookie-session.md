@@ -1,3 +1,7 @@
+---
+description: "cookie,session缓存"
+---
+
 # Cookie，Session和缓存
 
 ### cookie:保存在浏览器上的键值对
@@ -13,7 +17,7 @@ def index(request):
     return res
 ```
 
-![image-20230509155322021](assets/image-20230509155322021.png)
+![image-20230509155322021](/images/python/supplement/image-20230509155322021.png)
 
 ```python
 [[views]].py
@@ -23,7 +27,7 @@ deE home(request):
     return HttpResponse("向home发请求")
 ```
 
-![image-20230509155717274](assets/image-20230509155717274.png)
+![image-20230509155717274](/images/python/supplement/image-20230509155717274.png)
 
 set_cookie参数
 

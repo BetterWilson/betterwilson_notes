@@ -1,3 +1,7 @@
+---
+description: "Connecting Redis with Django. The relationship between django-redis, the redis software, and the redis-py module To operate the redis software directly from Python,"
+---
+
 # Django Connects to Redis
 
 **The relationship between django-redis, the redis software, and the redis-py module**

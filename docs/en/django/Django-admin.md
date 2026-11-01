@@ -1,3 +1,7 @@
+---
+description: "Django-admin Singleton Pattern and Lazy Loading. When we instantiate an object, a space is allocated in memory."
+---
+
 # Django-admin singleton pattern and lazy loading
 
 ## Singleton pattern
@@ -68,7 +72,7 @@ This way, if no instance has been created yet, `instance=None`, so an object is 
 
 If the object has already been created, i.e. `instance=object`, that object is returned directly.
 
-![image-20240428200728946](assets/image-20240428200728946-1714308960488-1.png)
+![image-20240428200728946](/images/django/image-20240428200728946-1714308960488-1.png)
 
 As you can see, the memory addresses of the two objects are the same.
 
@@ -92,7 +96,7 @@ obj.name = "Li Si"
 print(obj.name)
 ```
 
-![image-20240428203043808](assets/image-20240428203043808.png)
+![image-20240428203043808](/images/django/image-20240428203043808.png)
 
 When we access an attribute that does not exist on an instantiated object, it normally raises an error.
 
@@ -112,27 +116,27 @@ obj = Info()
 print(obj.xxxxxxxxxxx)
 ```
 
-![image-20240428203334676](assets/image-20240428203334676.png)
+![image-20240428203334676](/images/django/image-20240428203334676.png)
 
-# How django-admin implements the singleton pattern and lazy loading
+## How django-admin implements the singleton pattern and lazy loading
 
 In the django-admin source code, when the `site` object is instantiated, the object is not actually created.
 
 When it calls the `register` method, the method does not exist, so the `__getattr__` method of its parent class `LazyObject` is executed.
 
-![image-20240428203824126](assets/image-20240428203824126.png)
+![image-20240428203824126](/images/django/image-20240428203824126.png)
 
-![image-20240428203912956](assets/image-20240428203912956.png)
+![image-20240428203912956](/images/django/image-20240428203912956.png)
 
-![image-20240428204339952](assets/image-20240428204339952.png)
+![image-20240428204339952](/images/django/image-20240428204339952.png)
 
 And here the `__getattr__` method actually executes the `new_method_proxy` method.
 
-![image-20240428204519387](assets/image-20240428204519387.png)
+![image-20240428204519387](/images/django/image-20240428204519387.png)
 
 We need to note that the parent class `LazyObject` has a class variable `_wrapped` that defaults to `None`.
 
-![image-20240428204710087](assets/image-20240428204710087.png)
+![image-20240428204710087](/images/django/image-20240428204710087.png)
 
 When we execute the `new_method_proxy` method, the `_setup()` method is executed and its result is assigned to `_wrapped`.
 
@@ -140,7 +144,7 @@ This way, the next time the object is instantiated, since `_wrapped` is no longe
 
 `self._wrapped` is actually the real instantiated object, which implements **lazy loading**.
 
-![image-20240428205133813](assets/image-20240428205133813.png)
+![image-20240428205133813](/images/django/image-20240428205133813.png)
 
 
 

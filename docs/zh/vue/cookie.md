@@ -1,3 +1,7 @@
+---
+description: "vue-cookie。官网：GitHub - KanHarI/vue3-cookies: A simple Vue.js plugin for handling browser cookies npm install vue3-cookie…"
+---
+
 # vue-cookie组件
 
 官网：[GitHub - KanHarI/vue3-cookies: A simple Vue.js plugin for handling browser cookies](https://github.com/KanHarI/vue3-cookies)

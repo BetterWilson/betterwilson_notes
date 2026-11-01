@@ -1,6 +1,10 @@
+---
+description: "Git Useful Commands Cheat Sheet. Git's settings file is .gitconfig. It can live in your home directory (global config) or in a project directory (project config)."
+---
+
 # Common Git Commands Cheat Sheet
 
-![img](./assets/bg2015120901.png)
+![img](/images/git/bg2015120901.png)
 
 - Workspace: the working directory
 - Index / Stage: the staging area

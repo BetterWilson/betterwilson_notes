@@ -1,4 +1,8 @@
-## Python Connects to Redis Sentinel
+---
+description: "Connecting Redis Sentinel with Python"
+---
+
+# Python Connects to Redis Sentinel
 
 ```python
 from redis.sentinel import Sentinel

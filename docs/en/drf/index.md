@@ -1,3 +1,7 @@
+---
+description: "Django REST Framework. DRF Return Values, Transactions, Logging DRF Parsers, Serializers, Pagination DRF Authentication, Permissions, Throttling, Versioning DRF Views, Routing, Filters"
+---
+
 # Django REST Framework
 
 [DRF Return Values, Transactions, Logging](response-transaction-logging)

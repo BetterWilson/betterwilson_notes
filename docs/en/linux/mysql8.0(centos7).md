@@ -1,4 +1,8 @@
-## MySQL 8.0 Installation (CentOS 7)
+---
+description: "MySQL 8.0 Installation (CentOS 7). Uninstall any leftover mariadb, then install the libaio-devel dependency library to avoid errors later."
+---
+
+# MySQL 8.0 Installation (CentOS 7)
 
 ## 0 Pre-installation Preparation
 

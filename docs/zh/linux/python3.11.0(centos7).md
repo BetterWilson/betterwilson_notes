@@ -1,3 +1,7 @@
+---
+description: "Python3.11.0解释器安装(centos7)。内容包含：1 依赖下载、2 从官网下载Python的tar包、3 将python3.11下载并且解压安装到/opt目录下、4 编译安装、5 添加环境变量并且设置软连接。"
+---
+
 # Python3.11.0解释器安装(centos7)
 
 ## 1 依赖下载
@@ -12,7 +16,7 @@ yum install gcc patch libffi-devel python-devel  zlib-devel bzip2-devel openssl-
 
 https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tgz
 
-![image-20240215220631343](assets\image-20240215220631343.png)
+![image-20240215220631343](/images/linux/image-20240215220631343.png)
 
 ## 3 将python3.11下载并且解压安装到`/opt`目录下
 
@@ -78,13 +82,13 @@ pip 23.1.2 from /opt/python311/lib/python3.11/site-packages/pip (python 3.11)
 
 
 
-# 相关问题
+## 相关问题
 
 ### ModuleNotFoundError: No module named '_ssl'
 
 尝试导入ssl，看是否报错
 
-![img](assets\1168165-20231122195039876-1769554304.png)
+![img](/images/linux/1168165-20231122195039876-1769554304.png)
 
 ### 解决方法：
 

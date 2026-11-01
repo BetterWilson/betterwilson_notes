@@ -1,3 +1,7 @@
+---
+description: "Python Object-Oriented Programming. Members, member modifiers Built-in functions, exceptions, reflection The self object, encapsulation, inheritance, polymorphism"
+---
+
 # Python Object-Oriented Programming
 [Members, member modifiers](member)
 

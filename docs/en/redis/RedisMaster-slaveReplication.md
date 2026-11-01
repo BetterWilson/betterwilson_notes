@@ -1,3 +1,7 @@
+---
+description: "Redis Master-Slave Replication. The master handles writes, replicas handle reads, and the master and replicas always keep their data consistent. You can configure multiple replicas, e.g.,"
+---
+
 # Redis Cluster - Master-Slave Replication
 
 **The master handles writes, replicas handle reads, and the master and replicas always keep their data consistent.**
@@ -120,7 +124,7 @@ In master-slave replication mode, Redis uses a pair of `Replication ID, offset` 
 - offset (replication offset): in master-slave mode, the master node continuously propagates commands that cause dataset changes to the slave node. The offset represents the total number of command bytes the master has passed to the slave. It does not exist in isolation; it needs to work together with the replication backlog buffer.
 - backlog (replication backlog buffer): it is a circular buffer used to store the commands the master passes to the slave. Its size is fixed, so the commands it can store are limited, and the overflow will be deleted. It can be used both for partial synchronization and for re-pushing commands during the command propagation phase.
 
-![image-20240316211322483](assets/image-20240316211322483.png)
+![image-20240316211322483](/images/redis/image-20240316211322483.png)
 
 We can also verify this from the logs. Below I have sorted the process by the chronological order of the printed logs (some key logs):
 

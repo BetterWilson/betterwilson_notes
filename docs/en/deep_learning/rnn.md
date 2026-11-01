@@ -1,3 +1,7 @@
+---
+description: "Recurrent Neural Network RNN. A Recurrent Neural Network (RNN) is a neural network capable of processing sequential data and retaining historical information. At its core,"
+---
+
 # Recurrent Neural Network RNN
 
 A Recurrent Neural Network (RNN) is a neural network capable of processing sequential data and retaining historical information. At its core, a "recurrent structure" lets the network make use of the computation result from "the previous moment" while processing the current data (similar to how a person can remember what happened earlier)
@@ -33,7 +37,7 @@ Disadvantages of merging + padding:
 > - **Unequal**: each sample has a different amount of padding, hence a different noise concentration, so the features the model learns are unstable
 > Precisely for this reason, the code uses `padding_first=True` for the RNN to place PAD at the start of the sentence — so that what the RNN reads at its final step is real text rather than a pile of PADs.
 
-![image-20260804204252501](assets/image-20260804204252501.png)
+![image-20260804204252501](/images/deep_learning/image-20260804204252501.png)
 
 - Figure 1: Vanilla Neural Networks — one sample corresponds to one output (convolutional neural networks, fully connected neural networks)
 
@@ -62,11 +66,11 @@ The biggest difference between an RNN and a traditional neural network is: **at 
 
    Feed the sequential data $x_1,x_2,...,x_T$ into the network in order; each time step computes a hidden state $h_t$, and $h_t$ in turn becomes one of the inputs of the next time step:
 
-   ![image-20260804090613829](assets/image-20260804090613829.png)
+   ![image-20260804090613829](/images/deep_learning/image-20260804090613829.png)
 
 2. If we take the time step as the unit, the unrolled form of an RNN is:
 
-   ![image-20260804090700910](assets/image-20260804090700910.png)
+   ![image-20260804090700910](/images/deep_learning/image-20260804090700910.png)
 
    Inside each small block after unrolling, the **same set of weights** is still used; only the input $x_t$ and the memory $h_{t-1}$ differ.
 
@@ -659,7 +663,7 @@ Different tokenizers use different markers for "subword boundaries", and these a
 **It acts before the softmax: the model's final layer first computes the logits, the score of each word, and these are divided by T before entering the softmax to become probabilities:**
 
 $$
-P(词_i)=\frac{\exp(z_i\,/\,T)}{\sum_j \exp(z_j\,/\,T)}
+P(\text{word}_i)=\frac{\exp(z_i\,/\,T)}{\sum_j \exp(z_j\,/\,T)}
 $$
 
 - **`T = 1`**: the original distribution, output as-is
@@ -711,7 +715,7 @@ Each gate is a **sigmoid** (outputting 0~1: 0 = fully closed, 1 = fully open), a
 
 **① The forget gate $f_t$ — decides what to forget from the old memory $C_{t-1}$**
 
-![image-20260805162919729](assets/image-20260805162919729.png)
+![image-20260805162919729](/images/deep_learning/image-20260805162919729.png)
 
 $$
 f_t=\sigma(W_f\cdot[h_{t-1},x_t]+b_f)
@@ -722,7 +726,7 @@ $$
 
 **② The input gate $i_t$ + candidate memory $\tilde{C}_t$ — decide what new information to write into the cell state**
 
-![image-20260805162950578](assets/image-20260805162950578.png)
+![image-20260805162950578](/images/deep_learning/image-20260805162950578.png)
 
 $$
 i_t = \sigma(W_i\cdot[h_{t-1},x_t]+b_i)
@@ -737,7 +741,7 @@ $$
 
 **③ The output gate $o_t$ — decides which part of the updated $C_t$ to output externally as $h_t$**
 
-![image-20260805163012823](assets/image-20260805163012823.png)
+![image-20260805163012823](/images/deep_learning/image-20260805163012823.png)
 
 $$
 o_t = \sigma(W_o\cdot[h_{t-1},x_t]+b_o)
@@ -749,7 +753,7 @@ $$
 
 ### The Core: How the Cell State Is Updated
 
-![image-20260805164005172](assets/image-20260805164005172.png)
+![image-20260805164005172](/images/deep_learning/image-20260805164005172.png)
 
 $$
 C_t = f_t\odot C_{t-1}+i_t\odot\tilde{C}_t
@@ -849,7 +853,7 @@ A plain RNN's gradient must be **multiplied** by many factors of $\partial h_t/\
 The key to LSTM is that the cell state update is **additive** rather than multiplicative:
 
 $$
-\frac{\partial C_t}{\partial C_{t-1}} = f_t + (\text{与 } i_t,\ \tilde{C}_t \text{ 等有关的项})
+\frac{\partial C_t}{\partial C_{t-1}} = f_t + (\text{terms involving } i_t,\ \tilde{C}_t \text{, etc.})
 $$
 
 As long as the model learns a forget gate $f_t$ close to 1, the error signal can **propagate back along the conveyor belt with almost no decay** — this is where the word "long" in "long short-term memory" comes from. Early in training the forget gate bias is often set large ($b_f=2\sim3$) precisely so that it first "does not forget carelessly" and only then learns gradually.

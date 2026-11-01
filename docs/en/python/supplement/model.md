@@ -1,3 +1,7 @@
+---
+description: "Modules. Every module has a __name__ attribute that identifies the module's \"name\": Core principle (how it works) So,"
+---
+
 # Python modules
 
 ## Module search paths

@@ -1,3 +1,7 @@
+---
+description: "drf返回值，事务，Logging日志。另一种方法，适合ser.is_valid(raise_exception=True) 基于上下文管理，如果出现异常则自动回滚；无异常则自动提交。 事务提交的回调函数（本质上就是事务完成后，"
+---
+
 # drf返回值，事务，Logging日志
 
 ## 1 返回值
@@ -21,9 +25,9 @@
 
 ### 1.1 正常返回
 
-![image-20240502142352055](assets/image-20240502142352055.png)
+![image-20240502142352055](/images/drf/image-20240502142352055.png)
 
-![image-20240502142414330](assets/image-20240502142414330.png)
+![image-20240502142414330](/images/drf/image-20240502142414330.png)
 
 ```python
 from rest_framework.views import APIView
@@ -243,7 +247,7 @@ class DemoView(ListModelMixin, CreateModelMixin, RetrieveModelMixin, DestroyMode
 
 ### 1.3 drf返回值机制源码
 
-![image-20240502155015927](assets/image-20240502155015927.png)
+![image-20240502155015927](/images/drf/image-20240502155015927.png)
 
 
 
@@ -544,7 +548,7 @@ logging.info("中午好")  # 10,你好呀
 logging.error("你傻呀")  # 40,你傻呀
 ```
 
-![image-20230115005930027](assets/image-20230115005930027.png)
+![image-20230115005930027](/images/drf/image-20230115005930027.png)
 
 
 
@@ -1146,7 +1150,7 @@ LOGGING = {
 }
 ```
 
-![image-20240307134506546](assets/image-20240307134506546.png)
+![image-20240307134506546](/images/drf/image-20240307134506546.png)
 
 ### 3.6 Django中按照时间进行切割日志
 

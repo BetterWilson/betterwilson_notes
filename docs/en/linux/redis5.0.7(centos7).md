@@ -1,3 +1,7 @@
+---
+description: "Redis 5.0.7 Installation (CentOS 7). Note: download links for all versions: At this point, we can call Redis-related commands from any path,"
+---
+
 # Redis 5.0.7 Installation (CentOS 7)
 
 ## 1 Disable the Firewall and Download Dependencies

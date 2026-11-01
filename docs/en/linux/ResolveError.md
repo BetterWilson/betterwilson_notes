@@ -1,8 +1,12 @@
+---
+description: "Error Resolution. Update and install the yum packages Download the latest OpenSSL source code, extract it, and compile it I chose the /usr/src directory to work with the source code."
+---
+
 # Installing uwsgi in a virtual environment
 
 #### ERROR: Could not build wheels for uwsgi, which is required to install pyproject.toml-based projects
 
-![image-20240216225748743](assets\image-20240216225748743.png)
+![image-20240216225748743](/images/linux/image-20240216225748743.png)
 
 **Update and install the yum packages**
 
@@ -51,7 +55,7 @@ pip install uwsgi==2.0.23
 
 
 
-# nginx reports the `ngx_http_ssl_module` module is missing when configuring the SSL certificate
+## nginx reports the `ngx_http_ssl_module` module is missing when configuring the SSL certificate
 
 ### nginx: [emerg] the "ssl" parameter requires ngx_http_ssl_module in...
 

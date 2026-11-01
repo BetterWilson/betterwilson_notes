@@ -1,3 +1,7 @@
+---
+description: "聚类算法。欧氏距离（Euclidean Distance）就是我们日常生活中最常用的\"直线距离\"。 这就是勾股定理——直角三角形斜边的长度。 直观理解：K-means 就是把每个样本点\"划给\"离它最近的那个中心点，"
+---
+
 # 聚类算法
 
 ## k-means
@@ -42,7 +46,7 @@ K-means算法的实现流程：
 
 - 若新旧中心点不再变化，则停止迭代；否则返回第 2 步
 
-![image-20260629094223858](assets/image-20260629094223858.png)
+![image-20260629094223858](/images/machine_learning/image-20260629094223858.png)
 
 K-means的关键在于：
 
@@ -71,7 +75,7 @@ $$
 
 - $m_i$表示第 $i$ 个簇内的中心点（质心）
 
-  ![image-20260629095239616](assets/image-20260629095239616.png)
+  ![image-20260629095239616](/images/machine_learning/image-20260629095239616.png)
 
 - **取值意义**：SSE 越小，簇内样本越紧凑；**但随** **K** **增大** **SSE** **必然下降，需结合肘部法则判断最优 K（而非单独看SSE）**
 
@@ -119,7 +123,7 @@ $$
 
 - 在决定什么时候停止训练时，肘形判据同样有效，数据通常有更多的噪音，在增加分类无法带来更多回报时，我们停止增加类别
 
-![image-20260629095623647](assets/image-20260629095623647.png)
+![image-20260629095623647](/images/machine_learning/image-20260629095623647.png)
 
 > 📖 **肘部法——为什么叫"肘部"？**
 >
@@ -151,7 +155,7 @@ $$
 
 - 轮廓系数的范围是[-1,1]
 
-  ![image-20260629100503026](assets/image-20260629100503026.png)
+  ![image-20260629100503026](/images/machine_learning/image-20260629100503026.png)
 
 - **取值意义**: 范围 [-1,1]，越接近 1 说明 “簇内紧凑、簇间分散”，0 代表样本在两簇边界，-1 代表样本分配错误
 
@@ -263,4 +267,4 @@ plt.tight_layout()
 plt.show()
 ```
 
-![kmeans_elbow_sc](assets/kmeans_elbow_sc.png)
+![kmeans_elbow_sc](/images/machine_learning/kmeans_elbow_sc.png)

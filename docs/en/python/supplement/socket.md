@@ -1,8 +1,12 @@
+---
+description: "socket Module. Let's first look at a socket programming flow diagram. Here, the server side is the server deployed on the server machine, and the client side corresponds to our PC software/browser,"
+---
+
 # The socket module
 
 Let's first look at a socket programming flow diagram.
 
-![image-20240518145239078](assets/image-20240518145239078.png)
+![image-20240518145239078](/images/python/supplement/image-20240518145239078.png)
 
 Here, the server side is the server deployed on the server machine, and the client side corresponds to our PC software/browser, though the browser has already encapsulated socket for us internally.
 
@@ -41,7 +45,7 @@ Here, the server side is the server deployed on the server machine, and the clie
 
 First start the server side (if you start the client side first, it will fail to start because it cannot connect to the server). The server side will hang, waiting for the client to send a network request. After receiving the network request, the server side also sends data to the client.
 
-![image-20240518152412799](assets/image-20240518152412799.png)
+![image-20240518152412799](/images/python/supplement/image-20240518152412799.png)
 
 **Note**: Data is transmitted as binary, so we need to convert it to utf-8 when printing.
 
@@ -97,7 +101,7 @@ For multi-user connections, we can use multi-threading.
       print(data.decode('utf-8'))
   ```
 
-![image-20240518154037645](assets/image-20240518154037645.png)
+![image-20240518154037645](/images/python/supplement/image-20240518154037645.png)
 
 ## Simulating an HTTP request with socket
 
@@ -137,7 +141,7 @@ if __name__ == "__main__":
 
 In this example, socket is used to simulate an HTTP request to obtain the front-end page data of Baidu.
 
-![image-20240518161958596](assets/image-20240518161958596.png)
+![image-20240518161958596](/images/python/supplement/image-20240518161958596.png)
 
 ## Resolving errors:
 
@@ -145,6 +149,6 @@ In this example, socket is used to simulate an HTTP request to obtain the front-
 
 Each time through the loop, the socket client is closed, so it cannot connect properly, which causes the error.
 
-![image-20240518154423928](assets/image-20240518154423928.png)
+![image-20240518154423928](/images/python/supplement/image-20240518154423928.png)
 
 The simple and direct solution is to not manually close the connection channel between the client and the server, that is, remove the closing `close` code block at the end.

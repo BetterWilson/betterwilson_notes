@@ -1,3 +1,7 @@
+---
+description: "Django-auth Component. Let's start by looking at the built-in tables of the auth component created for us by python manage.py migrate. Its fields fall into two categories: basic user info (username,"
+---
+
 # Django-auth component
 
 ## 1 Table structure
@@ -26,7 +30,7 @@ When we run `python manage.py createsuperuser`, a superuser is created.
 
 Let's look at the login route of the superuser.
 
-![image-20240526093534520](assets/image-20240526093534520.png)
+![image-20240526093534520](/images/django/image-20240526093534520.png)
 
 The source code is heavily nested (needs repeated reading); the focus is on reuse and decoupling, which allows for a lot of customization.
 
@@ -38,17 +42,17 @@ After a user logs in successfully, the displayed page is based on the tables reg
 
 - The superuser can see everything.
 
-  ![image-20240526103329872](assets/image-20240526103329872.png)
+  ![image-20240526103329872](/images/django/image-20240526103329872.png)
 
 - For other users, as long as at least one of the four CRUD permissions is assigned, the table is visible.
 
-  ![image-20240526105619193](assets/image-20240526105619193.png)
+  ![image-20240526105619193](/images/django/image-20240526105619193.png)
 
 Let's look at how the auth source code controls this permission assignment.
 
 From the earlier route analysis, after we log in successfully, `self.index` is executed to display the home page information.
 
-![image-20240526140027403](assets/image-20240526140027403.png)
+![image-20240526140027403](/images/django/image-20240526140027403.png)
 
 
 
@@ -119,4 +123,4 @@ We can determine permission based on the true/false value of each table's perms 
 
 The specific check is done in the HTML template of each table.
 
-![image-20240526141743040](assets/image-20240526141743040.png)
+![image-20240526141743040](/images/django/image-20240526141743040.png)

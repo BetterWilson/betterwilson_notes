@@ -1,3 +1,7 @@
+---
+description: "PyTorch. A Tensor is the core data structure in PyTorch. The term \"tensor\" carries different meanings across disciplines; in deep learning,"
+---
+
 # Pytorch
 
 ## Tensors
@@ -102,9 +106,9 @@ plt.ylabel('Frequency')
 plt.savefig('Normal Distribution')
 ```
 
-![Uniform Distribution](assets/Uniform Distribution.png)
+![Uniform Distribution](/images/deep_learning/uniform-distribution.png)
 
-![Normal Distribution](assets/Normal Distribution.png)
+![Normal Distribution](/images/deep_learning/normal-distribution.png)
 
 ### Creating Linear Tensors
 
@@ -486,7 +490,7 @@ When training a neural network, the most commonly used algorithm is Backpropagat
 
 In this algorithm, parameters (model weights) are adjusted based on the gradient of the loss function with respect to each parameter. To compute these gradients, PyTorch has a built-in automatic differentiation module — specifically, an automatic differentiation engine called `torch.autograd` — which supports automatic gradient computation over arbitrary computation graphs. A computation graph is a directed acyclic graph (DAG) formed by tensor operations (not limited to neural networks; any tensor computation builds a graph). PyTorch uses dynamic graphs, which are constructed on-the-fly as the forward computation executes.
 
-![image-20260630151811179](assets/image-20260630151811179.png)
+![image-20260630151811179](/images/deep_learning/image-20260630151811179.png)
 
 
 
@@ -546,7 +550,7 @@ print(b.grad)  # 16
 
 ## Linear Regression
 
-![image-20260630155111495](assets/image-20260630155111495.png)
+![image-20260630155111495](/images/deep_learning/image-20260630155111495.png)
 
 ```python
 import torch
@@ -642,9 +646,9 @@ print("Learned bias:", model.bias.item())
 print("True coef:", coef)
 ```
 
-![Loss during training](assets/Loss during training.png)
+![Loss during training](/images/deep_learning/loss-during-training.png)
 
-![Fitted vs True Linear Relationship](assets/Fitted vs True Linear Relationship.png)
+![Fitted vs True Linear Relationship](/images/deep_learning/fitted-vs-true-linear-relationship.png)
 
 ## Dataset
 

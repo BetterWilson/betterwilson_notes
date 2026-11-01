@@ -1,3 +1,7 @@
+---
+description: "Custom Loss / FC Layers / Differentiation & Backprop. PyTorch ships with common loss functions such as nn.MSELoss, nn.CrossEntropyLoss, and nn.BCELoss. In real projects, though,"
+---
+
 # Custom Loss / Fully Connected Layer / Differentiation and Backpropagation
 
 ## Understanding Tensor Ranks

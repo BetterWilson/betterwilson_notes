@@ -1,3 +1,7 @@
+---
+description: "scikit-learn. DictVectorizer converts a list of dictionaries containing features into a numeric matrix (feature vectors) that machine learning models can use directly."
+---
+
 # scikit-learn
 
 ## Installation
@@ -9,7 +13,7 @@ pip install -U scikit-learn
 
 ## Model Selection
 
-![image-20260629140715883](assets/image-20260629140715883.png)
+![image-20260629140715883](/images/machine_learning/image-20260629140715883.png)
 
 ## Feature Extraction
 
@@ -50,13 +54,13 @@ pd.DataFrame(X, columns=dict_vec.get_feature_names_out())
 
 Interpreting the result:
 
-- The numeric feature "价格" (price) keeps its original value directly (first column);
-- The categorical feature "颜色" (color) is one-hot encoded into "颜色=红" (color=red) and "颜色=蓝" (color=blue)
-- The categorical feature "尺寸" (size) is one-hot encoded into "尺寸=大" (size=large), "尺寸=中" (size=medium), and "尺寸=小" (size=small)
+- The numeric feature `price` keeps its original value directly (first column);
+- The categorical feature `color` is one-hot encoded into `color=red` and `color=blue`
+- The categorical feature `size` is one-hot encoded into `size=large`, `size=medium`, and `size=small`
 
 Additional notes: One-hot encoding is a **one-bit effective encoding**. Its core characteristic is: within a group of codes, **only one binary bit is 1 at any time, and all the remaining bits are 0**. Instead of conveying information through numeric magnitudes, this encoding uses "which bit is 1" to uniquely identify a state or category, which is why it is also called a "one-hot code" or "one-bit effective code".
 
-- For example, for the three labels "猫、狗、鸟" (cat, dog, bird), the one-hot codes are [1,0,0] (cat), [0,1,0] (dog), and [0,0,1] (bird)
+- For example, for the three labels "cat, dog, bird", the one-hot codes are [1,0,0] (cat), [0,1,0] (dog), and [0,0,1] (bird)
 
 - It avoids the "numeric magnitude association" of labels (e.g., binary codes 00, 01, 10 may be misinterpreted by a model as "cat < dog < bird", whereas one-hot encoding does not have this problem), and it also fits the output layer of neural networks (e.g., the cross-entropy computation between the Softmax layer output and one-hot labels)
 
@@ -314,7 +318,7 @@ print(selected_data)
 
 Dimensionality reduction maps high-dimensional features into a lower-dimensional space through linear or nonlinear mathematical transformations, producing entirely new low-dimensional features (not a subset of the original features). The core goal is to preserve as much of the original information as possible while reducing dimensionality.
 
-![image-20260625092047210](assets/image-20260625092047210.png)
+![image-20260625092047210](/images/machine_learning/image-20260625092047210.png)
 
 Dimensionality reduction: a 2D plane has 5 sample points. If we find a 1D number axis and project the 5 sample points onto it, minimizing the sum of perpendicular distances determines the axis position. The coordinates of the 5 sample points in the new axis coordinate system are the feature values after dimensionality reduction.
 

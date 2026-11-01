@@ -1,3 +1,7 @@
+---
+description: "vue-axios. npm install axios Create plugins/axios.js"
+---
+
 # axios component
 
 ## Installation and configuration

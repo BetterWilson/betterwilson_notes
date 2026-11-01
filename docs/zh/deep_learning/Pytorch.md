@@ -1,3 +1,7 @@
+---
+description: "Pytorch。Tensor（张量）是PyTorch的核心数据结构。张量在不同学科中有不同的意义，在深度学习中张量表示一个多维数组，是标量、向量、矩阵的拓展。如一个RGB图像的数组就是一个三维张量，第1维是图像的高，第2维是图像的宽，"
+---
+
 # Pytorch
 
 ## 张量
@@ -102,9 +106,9 @@ plt.ylabel('Frequency')
 plt.savefig('Normal Distribution')
 ```
 
-![Uniform Distribution](assets/Uniform Distribution.png)
+![Uniform Distribution](/images/deep_learning/uniform-distribution.png)
 
-![Normal Distribution](assets/Normal Distribution.png)
+![Normal Distribution](/images/deep_learning/normal-distribution.png)
 
 ### 创建线性张量
 
@@ -491,7 +495,7 @@ print(z.shape)
 
 在该算法中，参数（模型权重）会根据损失函数关于对应的参数的梯度进行调整。为了计算这些梯度，Pytorch内置了自动微分模块，具体来说就是名为`torch.autograd`的自动微分引擎，支持任意计算图的自动梯度计算。计算图是由张量运算构成的有向无环图（不限于神经网络，任何张量计算都会建图）；PyTorch 是动态图，在前向计算执行时即时构建
 
-![image-20260630151811179](assets/image-20260630151811179.png)
+![image-20260630151811179](/images/deep_learning/image-20260630151811179.png)
 
 
 
@@ -550,7 +554,7 @@ print(b.grad)  # 16
 
 ## 线性回归
 
-![image-20260630155111495](assets/image-20260630155111495.png)
+![image-20260630155111495](/images/deep_learning/image-20260630155111495.png)
 
 ```python
 import torch
@@ -642,9 +646,9 @@ print("Learned bias:", model.bias.item())
 print("True coef:", coef)
 ```
 
-![Loss during training](assets/Loss during training.png)
+![Loss during training](/images/deep_learning/loss-during-training.png)
 
-![Fitted vs True Linear Relationship](assets/Fitted vs True Linear Relationship.png)
+![Fitted vs True Linear Relationship](/images/deep_learning/fitted-vs-true-linear-relationship.png)
 
 ## Dataset
 

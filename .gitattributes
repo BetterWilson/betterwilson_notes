@@ -1,0 +1,14 @@
+# 仓库内统一用 LF 存储。此前 core.autocrlf=true 让 Windows 上几乎所有 markdown
+# 都因换行符差异显示为"已修改"，掩盖了真实改动。
+* text=auto eol=lf
+
+# 二进制资源不做任何换行符转换
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+
+# 构建产物入库但不参与 diff（dist 每次重建都会整体变化，diff 无意义）
+docs/.vitepress/dist/** -diff linguist-generated

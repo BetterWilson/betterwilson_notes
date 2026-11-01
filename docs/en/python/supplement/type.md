@@ -1,3 +1,7 @@
+---
+description: "type Metaclass. When we want to create classes dynamically, we can use the following function: But this approach is cumbersome; we can use the type() function to create classes."
+---
+
 # The type metaclass
 
 ### Two ways to create classes dynamically
@@ -111,4 +115,4 @@ When using a metaclass, the process of creating the class object can be handed o
 
 In Python's `abc` module, a `metaclass` is customized and the `__new__` method is overridden.
 
-![image-20240516150231478](assets/image-20240516150231478.png)
+![image-20240516150231478](/images/python/supplement/image-20240516150231478.png)

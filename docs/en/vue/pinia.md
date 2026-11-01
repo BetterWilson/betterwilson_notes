@@ -1,3 +1,7 @@
+---
+description: "vue-pinia. When developing a project, we use many Vue components — how should components share data with each other? Pinia is the official state management library. Compared to Vuex,"
+---
+
 # vue-pinia component
 
 When developing a project, we use many Vue components — how should components share data with each other?
@@ -16,7 +20,7 @@ It has three state management members:
 
 The default installation method is recommended, as it lets you skip manual configuration.
 
-![image-20241017153123579](assets/image-20241017153123579.png)
+![image-20241017153123579](/images/vue/image-20241017153123579.png)
 
 ## Basic usage
 

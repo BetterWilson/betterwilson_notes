@@ -1,3 +1,7 @@
+---
+description: "Abstract Classes in Models. When we define a model table in the models.py file of an app and run python manage.py makemigrations and python manage.py migrate,"
+---
+
 # Abstract classes in models
 
 When we define a model table in the `models.py` file of an app and run `python manage.py makemigrations` and `python manage.py migrate`, Django creates the table in the database.
@@ -15,12 +19,12 @@ class Info(models.Model):
         abstract = True
 ```
 
-![image-20240519121201584](assets/image-20240519121201584.png)
+![image-20240519121201584](/images/django/image-20240519121201584.png)
 
 `abstract = True` is a flag indicating that this class is only used to provide common fields for other classes (via inheritance) and will not be created as its own table.
 
-![image-20240519122021319](assets/image-20240519122021319.png)
+![image-20240519122021319](/images/django/image-20240519122021319.png)
 
 In the `Mine` table, besides its own `size` field, there is also the inherited `title` field.
 
-![image-20240519122120702](assets/image-20240519122120702.png)
+![image-20240519122120702](/images/django/image-20240519122120702.png)

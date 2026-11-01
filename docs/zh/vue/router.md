@@ -1,3 +1,7 @@
+---
+description: "vue-router。vue-router可以实现单页面应用（一个网站就一个页面）（通过加载不同的组件实现） 显示效果：点击不同的按钮，显示不同的信息 先来看App.vue文件：router-link即为导航栏，"
+---
+
 # vue-router组件
 
 vue-router可以实现单页面应用（一个网站就一个页面）（通过加载不同的组件实现）
@@ -10,7 +14,7 @@ vue-router可以实现单页面应用（一个网站就一个页面）（通过�
 
 - 创建项目的时候引入vue-router（自动配置文件）
 
-  ![image-20240920142043290](assets/image-20240920142043290.png)
+  ![image-20240920142043290](/images/vue/image-20240920142043290.png)
 
 ## 使用
 
@@ -37,7 +41,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </style>
 ```
 
-![image-20241017152729299](assets/image-20241017152729299.png)
+![image-20241017152729299](/images/vue/image-20241017152729299.png)
 
 具体的RouterView路径在router的配置文件`index.js`中
 
@@ -272,7 +276,7 @@ from:从哪里来；to:到哪里去
 
   使用方法与sessionStorage，但只在浏览器打开时有效，关闭浏览器后sessionStorage会清空
 
-  ![image-20240922143853606](assets/image-20240922143853606.png)
+  ![image-20240922143853606](/images/vue/image-20240922143853606.png)
 
 简单判断逻辑：
 

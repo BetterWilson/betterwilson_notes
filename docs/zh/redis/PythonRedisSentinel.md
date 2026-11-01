@@ -1,4 +1,8 @@
-## Python连接Redis哨兵
+---
+description: "Python连接Redis哨兵"
+---
+
+# Python连接Redis哨兵
 
 ```python
 from redis.sentinel import Sentinel

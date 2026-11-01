@@ -1,3 +1,7 @@
+---
+description: "集成学习。集成学习：将多个分类器的结果统一成一个最终的决策，其中的每个单独的分类器称为基分类器 📖 Boosting vs Bagging —— 用\"考试\"来理解 Boosting（串行）= 错题本学习法 你做了第1套模拟卷 → 发现错了…"
+---
+
 # 集成学习
 
 **集成学习**：将多个分类器的结果统一成一个最终的决策，其中的每个单独的分类器称为**基分类器**
@@ -37,7 +41,7 @@
 >
 > 算法示意图：
 >
-> ![image-20260629130251346](assets/image-20260629130251346.png)
+> ![image-20260629130251346](/images/machine_learning/image-20260629130251346.png)
 >
 > Model 1、Model 2、Model 3 都是用训练集的一个子集训练出来的，单独来看决策边界都很曲折，有过拟合倾向。**集成之后的模型的决策边界比各个独立模型平滑了**，这是由于集成的加权投票方法减小了方差
 
@@ -58,7 +62,7 @@
 
 通过 n 次采样得到 n 个大小为 m 的训练样本集合，训练出 n 个模型，对同一个样本做预测，相当于做了 n 次射击
 
-![image-20260629134334097](assets/image-20260629134334097.png)
+![image-20260629134334097](/images/machine_learning/image-20260629134334097.png)
 
 | 左上角 | 射击又准又集中  → 偏差和方差都很小（最理想） |
 | ------ | -------------------------------------------- |
@@ -340,7 +344,7 @@ plt.savefig("AdaBoost中弱分类器数量与准确率的关系", dpi=200)
 plt.grid(True)
 ```
 
-![AdaBoost中各弱分类器的权重分布](assets/AdaBoost中各弱分类器的权重分布.png)
+![AdaBoost中各弱分类器的权重分布](/images/machine_learning/adaboost-weak-classifier-weight-distribution.png)
 
 画的是 `estimator_weights_`，也就是每个弱分类器的 α 值：
 
@@ -348,7 +352,7 @@ plt.grid(True)
 - 后面的 α 整体下降并波动（剩下的都是难样本，错误率接近 0.5，α 自然小）
 - 这正是 AdaBoost 的特征：先解决容易的，再啃硬骨头，发言权也按贡献分配
 
-![AdaBoost中弱分类器数量与准确率的关系](assets/AdaBoost中弱分类器数量与准确率的关系.png)
+![AdaBoost中弱分类器数量与准确率的关系](/images/machine_learning/adaboost-classifier-count-vs-accuracy.png)
 
 ## GBDT——串行
 
@@ -628,7 +632,7 @@ Huber 损失对大残差（$> \delta$）切换为线性增长，几乎不受异�
 >
 > 最终预测 = 第1棵树 + 第2棵树 + 第3棵树 + ... = 越来越接近真实值！
 >
-> ![image-20260629133427635](assets/image-20260629133427635.png)
+> ![image-20260629133427635](/images/machine_learning/image-20260629133427635.png)
 
 ### 示例
 
@@ -686,7 +690,7 @@ plt.grid(True)
 plt.savefig('GBDT训练过程中的得分变化', dpi=200)
 ```
 
-![GBDT训练过程中的得分变化](assets/GBDT训练过程中的得分变化.png)
+![GBDT训练过程中的得分变化](/images/machine_learning/gbdt-score-during-training.png)
 
 >训练集得分变化`gbdt_clf.train_score_ `这个数组记录的是每加一棵树之后，训练集上的损失值（二分类默认是 log loss / 负对数似然，所以这条曲线是下降的，值越小越好——尽管 y 轴标签写的是"得分"，本质上是损失）
 

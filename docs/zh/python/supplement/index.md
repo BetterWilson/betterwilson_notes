@@ -1,3 +1,7 @@
+---
+description: "Python补充知识点。isinstance和type区别 type,object,class三者关系 cookie,session缓存"
+---
+
 # Python补充知识点
 [魔法函数](MagicFunction)
 

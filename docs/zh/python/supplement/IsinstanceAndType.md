@@ -1,3 +1,7 @@
+---
+description: "isinstance和type区别。在python中，我们由两种方式来判断一个类所属的类型： 通过type(x) is A来判断x是不是由A来创建的，"
+---
+
 # isinstance和type区别
 
 在python中，我们由两种方式来判断一个类所属的类型：

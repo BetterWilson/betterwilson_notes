@@ -1,3 +1,7 @@
+---
+description: "项目部署。注意：先部署后端，使用postman测试请求没有问题后在修改vue中的axios文件中baseURL，顺序不要弄错 将Django项目settings.py中DEBUG改为True,ALLOWED_HOSTS写成[\"*\"] 这里可…"
+---
+
 # 前后端分离项目部署
 
 ```
@@ -15,17 +19,17 @@ Django + vue + uwsgi + nginx
 
 ### 1 服务器安全组端口设置
 
-![image-20240327194311322](assets\image-20240327194311322.png)
+![image-20240327194311322](/images/linux/image-20240327194311322.png)
 
 ### 2 服务器域名解析
 
-![image-20240327183117979](assets\image-20240327183117979.png)
+![image-20240327183117979](/images/linux/image-20240327183117979.png)
 
 ### 3 ssl证书申请
 
-![image-20240327183634817](assets\image-20240327183634817.png)
+![image-20240327183634817](/images/linux/image-20240327183634817.png)
 
-![image-20240327183916816](assets\image-20240327183916816.png)
+![image-20240327183916816](/images/linux/image-20240327183916816.png)
 
 ```
 申请后很快就能通过，下载nginx格式证书，备用
@@ -44,7 +48,7 @@ Django + vue + uwsgi + nginx
 - 所有`ssl`证书也都上传到`/od/`文件夹中，并且在此文件夹中解压，每个`ssl`证书都有一个单独的文件夹
 - 关于`python`的虚拟环境放在`/od/backend/`文件夹中，与项目根目录同级；`uwsgi`的启动脚本放在`/od/backend/script/`文件夹中；日志文件放在`/od/backend/log/`文件夹中
 
-![image-20240327185736072](assets\image-20240327185736072.png)
+![image-20240327185736072](/images/linux/image-20240327185736072.png)
 
 
 
@@ -52,7 +56,7 @@ Django + vue + uwsgi + nginx
 
 将Django项目`settings.py`中`DEBUG`改为`True`,`ALLOWED_HOSTS`写成`["*"]`
 
-![image-20240327194957533](assets\image-20240327194957533.png)
+![image-20240327194957533](/images/linux/image-20240327194957533.png)
 
 ```bash
 # 项目目录规划
@@ -119,7 +123,7 @@ cd /od/backend/dahe/
 python3 manage.py  runserver 0.0.0.0:8000
 ```
 
-![image-20240327190111409](assets\image-20240327190111409.png)
+![image-20240327190111409](/images/linux/image-20240327190111409.png)
 
 这里可以使用`postman`向后端的接口发送请求，看看能否得到正确的返回值
 
@@ -202,13 +206,13 @@ uwsgi --ini script/uwsgi.ini &
 - 这里建议直接删除原本`nginx.conf`里面的所有内容，在本地编辑完成之后拷贝到文件里
 - 下面将以前后端分离项目的nginx部署为例，纯前端项目类似
 
-![image-20240327192722530](assets\image-20240327192722530.png)
+![image-20240327192722530](/images/linux/image-20240327192722530.png)
 
 后端项目部署好之后我们需要再次进行postman测试
 
 因为我们这里已经配置了`HTTPS`和`uwsgi`，所以我们postman测试的URL需要更改为我们的域名
 
-![image-20240327192943689](assets\image-20240327192943689.png)
+![image-20240327192943689](/images/linux/image-20240327192943689.png)
 
 这里测试没问题之后我们就可以进行前端的配置了
 
@@ -218,7 +222,7 @@ uwsgi --ini script/uwsgi.ini &
 
 **注意：将`baseURL`改为我们上述在postman中测试的地址，这一点非常重要，不要忘记**
 
-![image-20240327193259203](assets\image-20240327193259203.png)
+![image-20240327193259203](/images/linux/image-20240327193259203.png)
 
 ### 2 项目编译
 
@@ -232,7 +236,7 @@ npm run build
 
 ### 3 在`nginx`配置文件中添加前端模块
 
-![image-20240327192330206](assets\image-20240327192330206.png)添加完成之后重新加载配置文件(重启nginx)
+![image-20240327192330206](/images/linux/image-20240327192330206.png)添加完成之后重新加载配置文件(重启nginx)
 
 ```
 nginx -s reload
@@ -394,7 +398,7 @@ http {
 
 在部署和测试完成后关闭云服务器mysql和redis的端口，增加云服务器的安全性
 
-![image-20240327194546837](assets\image-20240327194546837.png)
+![image-20240327194546837](/images/linux/image-20240327194546837.png)
 
 
 

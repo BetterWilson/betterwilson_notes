@@ -8,6 +8,10 @@
 # Node
 node_modules/
 
+# VitePress 本地缓存（Vite 依赖预构建产物，纯本地、无需入库）
+# 注意：docs/.vitepress/dist/ 是刻意提交的 —— 线上站点直接发布该产物
+docs/.vitepress/cache/
+
 # OS
 .DS_Store
 Thumbs.db

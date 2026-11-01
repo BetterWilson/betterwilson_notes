@@ -1,3 +1,7 @@
+---
+description: "Built-in Functions, Exceptions, Reflection. This section explains 8 built-in functions, all of which relate to object-oriented programming. So when you encounter the following situation later,"
+---
+
 # Built-in Functions, Exceptions, and Reflection
 
 
@@ -131,7 +135,7 @@ This section explains 8 built-in functions, all of which relate to object-orient
       d = D()
   ```
 
-  ![image-20240511103953454](assets/image-20240511103953454.png)
+  ![image-20240511103953454](/images/python/ObjectOriented/image-20240511103953454.png)
 
   **Application Scenario**
 
@@ -165,7 +169,7 @@ This section explains 8 built-in functions, all of which relate to object-orient
   print(value)
   ```
 
-  ![image-20210131150707551](assets/image-20210131150707551.png)
+  ![image-20210131150707551](/images/python/ObjectOriented/image-20210131150707551.png)
 
   
 
@@ -658,7 +662,7 @@ while True:
 
 **Case 3**: Trigger the specified exception as required; each exception type has its own special meaning.
 
-![image-20210131231423064](assets/image-20210131231423064.png)
+![image-20210131231423064](/images/python/ObjectOriented/image-20210131231423064.png)
 
 
 

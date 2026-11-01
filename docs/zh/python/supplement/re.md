@@ -1,3 +1,7 @@
+---
+description: "re正则。re.match(pattern,text,flags=0) 从字符串开头开始匹配，仅验证“开头是否符合规则” re.search(pattern,text,flags=0) 从字符串任意位置匹配，"
+---
+
 # re正则表达式
 
 ## match
